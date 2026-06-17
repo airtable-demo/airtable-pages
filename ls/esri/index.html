@@ -1,0 +1,525 @@
+<!-- THEME: dark (brand accent #0079C1 on rgb(0,12,19)) -->
+<!--
+  CANONICAL TEMPLATE — populated by build_landing_page.py via mustache-style {{KEY}}
+  substitution. Do NOT generate this HTML by hand — the build script handles all
+  base64 inlining, palette computation, sub-component rendering, and template fill-in.
+
+  See build_landing_page.py and SKILL.md for the input JSON schema.
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>One live view for every team, every program | Airtable × Esri</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAe1BMVEX///8AesIAdcAAd8EAcb+ArdjL2+0bf8QAbr72+fyMtNvU4vAAc7+jwuHh6/X6/f7u9vtems9lpNQag8ZXndF8uN7m8fi21uxDls7D3O5Qk8xxr9rR5fMAaLuWvuCt0uooisk4kMynyuWPw+OcxuTY7PZQodOgzeh1p9X29W1kAAAEG0lEQVR42u2Z23aCOBSGSTYKaCpIJGChHARs3/8JB5RAglh00RkuZv9XutiYj2Qf0TBQKBQKhUKhUCgUCoVCof5XCtNdmnmrLS8iQhklebjS+oeCklYA53UA4vv6DUEh1ljftYkUW+UQ6gGAlmsAJOYAkK4B4ClHcFnFCaPeCXmyCsCeQ3cCl5USwdliAMDW8YC7G5Snz1NQY0lCvSRHiMNNnvsst3udhXBmf0i82QO45w+/ILbZyIo24dTd4rKJrNbAJoVfKYll+9Fpe/P7zM+5bfOieYyDvPIxt3wWcQog0xYjRfUQT3EOtLcAyk89wsZmN9m75kvVmYHd7NL2636FkZl0UZhANIEZ6bnzwunYhAXdPm26hEt3hvCZNLsByGpk/fr4KRn99u3XtOxdTpqcnDHAifZXXwbwCkqmBNbQRlXTJsx3dYCAKfe/CCCi/iag7XH1jwq5bKMOFkwDZNoOQJEr6+fuSwCOLx+OkqjMwjCI+tXoqTPyB0aLc27d3RXgovuAvoH8NYBS9gw0lhWj9keNnDcsn7aOkVTFjSAzJgGafbSIyV4DqK2JlsktqeZlodwSLjvL1tntvsRrAIxeL/tkvw+urwC48gBAj3tJQM7qN9gpFpAZEwBgxWoOmwXYW9J99Ozr3PeYsKD9toNHSkeZNBQAS+98ZgFk2LDx4HLpJpp8FOeTGgDYqPmeBehaNijGuT/J71dsTz0Qq3J/BYDCeA9AmDICHrPTHcBs3e57SA2nsv4FgJ7fBPhmcm/3Y33CsKdCLQA2NF5+cKYAHgfAOYA+c1JzLFD3JqJ6nEPup2IC4Md9EyCeTvFavbmlYj6uhHo5fuqkcwBHmAOAz/trjoliCDRw/jOA24DxuD3XpQDxywCGW32ScUtCWOwuBJA+wOwn+sqHmD0HBTMZaBTnZQAyDEnmOs+klQ63qdbcGlyX+ssA5AsE9s7sWIc/SlAsA3BNmeCct1r4uug7z3oRgHGFJ8VobuaVbYR5XgYQsulybDjjLXG0GuDK+FkK4J36lKut6Pm5N24dk38DwMj6SuorKyYnRiO1sDixCVx50yfkEdhiIcBQZ2jx3R2DiFsvV3sEp00YYMnU27TyskfKjaUAIlcmwmuQpnHOaEck+s7R7Br3YJvUydbvk9E9fhcBaHWmHUyGTAfdKThxPxYw4DkHSvSXb8sAjDN5VhFY3IWKaqB+7l6+LQRoZmM2WYdkuXUuFKYNUuNPAJqgo3RiNs363BDyCQRKKuOPAJpN8AnTZ3++U8NQ7LjeDwCz/D/oiNQ5I+A2YxSgHZHtohq/2q3T3DRv1xsD0+ZxMmSun6+udm8eALorNnspwX8HwfF4DIIn/zF5YRn4x6MflOF6f0KhUCgUCoVCoVAoFAqFQqFQKNSf6B8skEDDQmnsbAAAAABJRU5ErkJggg==" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg:            rgb(0,12,19);
+    --bg-card:       rgba(0,121,193,0.06);
+    --bg-cta-alt:    rgba(0,121,193,0.04);
+    --border:        rgba(255,255,255,0.07);
+    --nav-border:    rgba(255,255,255,0.05);
+    --section-bdr:   rgba(255,255,255,0.055);
+    --text-1:        #f0f0f8;
+    --text-2:        rgba(240,240,248,0.5);
+    --text-3:        rgba(240,240,248,0.48);
+    --accent:        #0079C1;
+    --accent-hover:  rgba(0,121,193,0.82);
+    --accent-glow:   rgba(0,121,193,0.42);
+    --accent-muted:  rgba(0,121,193,0.1);
+    --accent-ring:   rgba(0,121,193,0.28);
+    --card-shadow:   none;
+    --card-shadow-h: 0 0 0 1px rgba(0,121,193,0.38),0 0 20px rgba(0,121,193,0.12);
+    --photo-border:  rgba(255,255,255,0.25);
+    --h1-grad:       linear-gradient(148deg,#ffffff 15%,#0079C1 60%,rgba(0,121,193,0.85) 100%);
+    --hero-glow:     radial-gradient(ellipse 80% 55% at 50% 0%,rgba(0,121,193,0.18) 0%,transparent 65%);
+    --noise-opacity: 0.02;
+    --chip-bdr:      rgba(255,255,255,0.11);
+    --chip-text:     rgba(240,240,248,0.62);
+    --page-bg-image: linear-gradient(135deg,rgba(0,121,193,0.07) 0%,rgba(0,121,193,0.04) 100%);
+    --story-tag:     rgba(0,121,193,0.9);
+    --proof-bg:      rgba(0,121,193,0.08);
+    --proof-bdr:     rgba(0,121,193,0.22);
+    --btn-text:      #ffffff;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background-color:var(--bg);
+    background-image:var(--page-bg-image,none);
+    background-attachment:fixed;
+    color:var(--text-1);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{
+    content:'';pointer-events:none;
+    position:fixed;inset:0;z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:var(--noise-opacity);
+    mix-blend-mode:overlay;
+  }
+  nav,section,.cta-sec,footer{position:relative;z-index:1}
+
+  /* Typing animation */
+  .hero h1 .typed-caret {
+    display:inline-block; width:.06em; background:var(--accent);
+    margin-left:.05em; animation:caret-blink 1s steps(2) infinite;
+    vertical-align:baseline; height:0.95em; border-radius:1px;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
+  @keyframes caret-blink { 50% { background:transparent } }
+  .hero h1.typing { min-height:1.3em }
+
+  /* Hero photos */
+  .hero-photos {
+    display:flex; align-items:center; justify-content:center;
+    flex-wrap:nowrap; gap:12px; margin-bottom:28px;
+  }
+  .hero-photo {
+    display:block;
+    width:60px; height:60px; min-width:60px; min-height:60px;
+    border-radius:50%; overflow:hidden; object-fit:cover;
+    border:2.5px solid var(--photo-border);
+    flex-shrink:0; background:var(--border);
+  }
+  .hero-photo-sep {
+    display:block; font-size:18px; font-weight:300;
+    color:var(--text-1); opacity:0.35;
+    user-select:none; flex-shrink:0;
+  }
+
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:100;
+    padding:14px 48px;min-height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--nav-border);
+    background:transparent;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    gap:16px;
+  }
+  .nav-logos{display:flex;align-items:center;gap:12px}
+  .prospect-logo{
+    height:38px;width:auto;max-width:147px;object-fit:contain;
+    background:rgba(127,127,127,0.10);border-radius:10px;padding:5px 8px;overflow:hidden;
+  }
+  .logo-sep{
+    font-size:14px;font-weight:300;
+    color:var(--text-1);opacity:0.45;
+    line-height:1;flex-shrink:0;user-select:none;
+  }
+  .airtable-logo{height:38px;width:auto;flex-shrink:0;display:block}
+  .nav-tag{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center}
+  .nav-prepared{
+    font-size:10.5px;color:var(--text-2);
+    letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;
+  }
+  .nav-cta{
+    display:inline-block;padding:9px 20px;
+    background:var(--accent);color:var(--btn-text);
+    text-decoration:none;border-radius:7px;
+    font-weight:600;font-size:13px;white-space:nowrap;
+    box-shadow:0 2px 12px var(--accent-glow);
+    transition:background .18s,transform .13s,box-shadow .18s;
+  }
+  .nav-cta:hover{opacity:0.90;transform:translateY(-1px);box-shadow:0 4px 18px var(--accent-glow)}
+
+  /* Hero */
+  .hero{
+    max-width:820px;margin:0 auto;padding:104px 32px 88px;text-align:center;
+    position:relative;
+  }
+  .hero::before{
+    content:'';pointer-events:none;
+    position:absolute;inset:0;
+    background:var(--hero-glow);
+    z-index:0;
+    animation: glow-shimmer 6s ease-in-out infinite;
+    transform-origin: 50% 0%;
+  }
+  @keyframes glow-shimmer {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 1.0;  transform: scale(1.09); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero::before { animation: none; opacity: 1; }
+  }
+  .hero>*{position:relative;z-index:1}
+  .chip{
+    display:inline-block;padding:5px 16px;border-radius:100px;
+    border:1px solid var(--chip-bdr);
+    font-size:12px;color:var(--chip-text);
+    margin-bottom:32px;letter-spacing:.04em;
+    background:transparent;
+  }
+  h1{
+    font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+    font-size:clamp(2rem,5.2vw,3.4rem);
+    font-weight:800;line-height:1.18;letter-spacing:-.03em;
+    margin-bottom:22px;padding-bottom:0.06em;
+    background:var(--h1-grad);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .hero-sub{font-size:1.1rem;color:var(--text-2);max-width:680px;margin:0 auto 42px;line-height:1.68}
+  .logo-text-fallback{font-size:14px;font-weight:700;color:var(--text-1);letter-spacing:.02em;white-space:nowrap}
+  .btn{
+    display:inline-block;padding:15px 38px;
+    background:var(--accent);color:var(--btn-text);text-decoration:none;
+    border-radius:8px;font-weight:600;font-size:.97rem;
+    box-shadow:0 4px 20px var(--accent-glow);
+    transition:background .18s,transform .13s,box-shadow .18s;
+  }
+  .btn:hover{opacity:0.92;transform:translateY(-2px);box-shadow:0 6px 28px var(--accent-glow)}
+
+  /* Section shell */
+  .section{padding:80px 0 88px;border-top:1px solid var(--section-bdr)}
+  .inner{max-width:1040px;margin:0 auto;padding:0 32px}
+  .section-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.11em;
+    color:var(--text-3);margin-bottom:10px;
+  }
+  h2{
+    font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+    font-size:clamp(1.45rem,2.9vw,2rem);
+    font-weight:700;letter-spacing:-.018em;
+    margin-bottom:44px;color:var(--text-1);max-width:700px;line-height:1.25;
+  }
+
+  /* Value cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin-bottom:56px}
+  .card{
+    padding:26px 22px;border-radius:12px;
+    background:rgba(0,121,193,0.06);
+    border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    transition:box-shadow .2s,border-color .2s,transform .2s;
+  }
+  .card:hover{box-shadow:var(--card-shadow-h);border-color:var(--accent-ring);transform:translateY(-1px)}
+  .card-icon{color:var(--accent);margin-bottom:14px;line-height:1}
+  .card-title{font-size:.92rem;font-weight:600;margin-bottom:7px;line-height:1.4}
+  .card-body{font-size:.845rem;color:var(--text-2);line-height:1.6}
+
+  /* Diagram */
+  .diagram-label{font-size:11.5px;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+  .diagram-wrap{overflow-x:auto;padding:4px 0 8px}
+
+  /* Videos — native HTML5 */
+  .videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:28px}
+  .video-wrap{display:flex;flex-direction:column;gap:10px}
+  .video-label{font-size:.875rem;font-weight:600;color:var(--text-2)}
+  .video-card-native{
+    display:block;width:100%;aspect-ratio:16/9;
+    border-radius:10px;overflow:hidden;
+    background:#000;border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .video-card-native:hover{transform:translateY(-1px);box-shadow:0 12px 32px var(--accent-glow),0 0 0 1px var(--accent-ring);border-color:var(--accent-ring)}
+
+  /* Stories */
+  .stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px}
+  .story-card{
+    padding:26px 24px;border-radius:12px;
+    background:rgba(0,121,193,0.06);border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    display:flex;flex-direction:column;gap:9px;
+    transition:box-shadow .2s,border-color .2s,transform .2s;
+  }
+  .story-card:hover{box-shadow:var(--card-shadow-h);border-color:var(--accent-ring);transform:translateY(-1px)}
+  .story-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--story-tag);font-weight:600}
+  .story-title{font-size:.95rem;font-weight:600;line-height:1.4}
+  .story-csr{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;flex:1}
+  .story-csr-line{font-size:.835rem;color:var(--text-2);line-height:1.5}
+  .story-csr-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--story-tag);margin-right:6px;display:inline}
+  .story-btn{
+    display:inline-block;padding:8px 20px;border-radius:7px;
+    background:none;border:1.5px solid var(--accent);color:var(--accent);
+    cursor:pointer;font-size:.845rem;font-weight:600;font-family:inherit;
+    transition:background .18s,color .18s;
+    text-decoration:none;
+  }
+  .story-btn:hover{background:var(--accent);color:var(--btn-text)}
+
+  /* Story modal */
+  .story-modal-bg{
+    display:none;position:fixed;inset:0;z-index:500;
+    background:rgba(8,8,14,0.96);
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .story-modal-bg.open{display:flex}
+  .story-modal-panel{
+    position:relative;max-width:840px;width:80vw;max-height:88vh;overflow-y:auto;
+    background:rgba(0,121,193,0.06);border-radius:16px;
+    border:1px solid var(--border);padding:40px 48px;
+    box-shadow:0 32px 80px rgba(0,0,0,0.5);
+  }
+  .story-modal-close{
+    position:absolute;top:16px;right:20px;background:none;border:none;
+    cursor:pointer;font-size:24px;color:var(--text-2);padding:4px;line-height:1;
+  }
+  .story-modal-close:hover{color:var(--text-1)}
+  .story-modal-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--story-tag);font-weight:600;margin-bottom:10px}
+  .story-modal-headline{font-size:1.35rem;font-weight:700;margin-bottom:20px;color:var(--text-1);line-height:1.3}
+  .story-modal-section{margin-bottom:20px}
+  .story-modal-section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);font-weight:700;margin-bottom:6px}
+  .story-modal-body{font-size:.94rem;color:var(--text-2);line-height:1.72;margin-bottom:28px}
+  .story-modal-cta{margin-top:28px}
+
+  /* Final CTA */
+  .cta-sec{
+    padding:88px 32px 100px;text-align:center;
+    background:var(--bg-cta-alt);border-top:1px solid var(--section-bdr);
+  }
+  .cta-sec h2{max-width:none;margin-bottom:14px}
+  .cta-sec p{color:var(--text-2);margin-bottom:36px;font-size:.97rem;max-width:420px;margin-left:auto;margin-right:auto}
+
+  /* Footer */
+  footer{
+    padding:28px 48px;border-top:1px solid var(--section-bdr);
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .footer-logos{display:flex;align-items:center;gap:10px}
+  .footer-logos .prospect-logo{height:18px;opacity:.55;filter:grayscale(1);background:transparent;padding:0}
+  .footer-logos .logo-sep{opacity:0.30}
+  .footer-logos .airtable-logo{height:14px;opacity:0.55;filter:grayscale(1)}
+  .footer-note{font-size:11.5px;color:var(--text-3)}
+
+  /* Animations */
+  .fade{opacity:0;transform:translateY(18px);transition:opacity .52s ease,transform .52s ease}
+  .fade.in{opacity:1;transform:none}
+
+  /* Proof quote */
+  .proof-quote{
+    margin-top:44px;padding:28px 32px;border-radius:12px;
+    background:var(--proof-bg);border:1px solid var(--proof-bdr);
+    font-size:.97rem;color:var(--text-1);font-style:italic;max-width:680px;
+  }
+
+  /* Responsive */
+  @media(max-width:640px){
+    nav{padding:12px 18px}
+    .nav-tag{display:none}
+    .hero{padding:68px 20px 60px}
+    .inner{padding:0 20px}
+    .videos{grid-template-columns:1fr}
+    footer{padding:22px 20px}
+    .hero-photo{width:48px;height:48px;min-width:48px;min-height:48px}
+    .hero-photo-sep{font-size:15px}
+    .story-modal-panel{width:95vw;padding:28px 22px}
+  }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logos">
+      <img class="prospect-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAe1BMVEX///8AesIAdcAAd8EAcb+ArdjL2+0bf8QAbr72+fyMtNvU4vAAc7+jwuHh6/X6/f7u9vtems9lpNQag8ZXndF8uN7m8fi21uxDls7D3O5Qk8xxr9rR5fMAaLuWvuCt0uooisk4kMynyuWPw+OcxuTY7PZQodOgzeh1p9X29W1kAAAEG0lEQVR42u2Z23aCOBSGSTYKaCpIJGChHARs3/8JB5RAglh00RkuZv9XutiYj2Qf0TBQKBQKhUKhUCgUCoVCof5XCtNdmnmrLS8iQhklebjS+oeCklYA53UA4vv6DUEh1ljftYkUW+UQ6gGAlmsAJOYAkK4B4ClHcFnFCaPeCXmyCsCeQ3cCl5USwdliAMDW8YC7G5Snz1NQY0lCvSRHiMNNnvsst3udhXBmf0i82QO45w+/ILbZyIo24dTd4rKJrNbAJoVfKYll+9Fpe/P7zM+5bfOieYyDvPIxt3wWcQog0xYjRfUQT3EOtLcAyk89wsZmN9m75kvVmYHd7NL2636FkZl0UZhANIEZ6bnzwunYhAXdPm26hEt3hvCZNLsByGpk/fr4KRn99u3XtOxdTpqcnDHAifZXXwbwCkqmBNbQRlXTJsx3dYCAKfe/CCCi/iag7XH1jwq5bKMOFkwDZNoOQJEr6+fuSwCOLx+OkqjMwjCI+tXoqTPyB0aLc27d3RXgovuAvoH8NYBS9gw0lhWj9keNnDcsn7aOkVTFjSAzJgGafbSIyV4DqK2JlsktqeZlodwSLjvL1tntvsRrAIxeL/tkvw+urwC48gBAj3tJQM7qN9gpFpAZEwBgxWoOmwXYW9J99Ozr3PeYsKD9toNHSkeZNBQAS+98ZgFk2LDx4HLpJpp8FOeTGgDYqPmeBehaNijGuT/J71dsTz0Qq3J/BYDCeA9AmDICHrPTHcBs3e57SA2nsv4FgJ7fBPhmcm/3Y33CsKdCLQA2NF5+cKYAHgfAOYA+c1JzLFD3JqJ6nEPup2IC4Md9EyCeTvFavbmlYj6uhHo5fuqkcwBHmAOAz/trjoliCDRw/jOA24DxuD3XpQDxywCGW32ScUtCWOwuBJA+wOwn+sqHmD0HBTMZaBTnZQAyDEnmOs+klQ63qdbcGlyX+ssA5AsE9s7sWIc/SlAsA3BNmeCct1r4uug7z3oRgHGFJ8VobuaVbYR5XgYQsulybDjjLXG0GuDK+FkK4J36lKut6Pm5N24dk38DwMj6SuorKyYnRiO1sDixCVx50yfkEdhiIcBQZ2jx3R2DiFsvV3sEp00YYMnU27TyskfKjaUAIlcmwmuQpnHOaEck+s7R7Br3YJvUydbvk9E9fhcBaHWmHUyGTAfdKThxPxYw4DkHSvSXb8sAjDN5VhFY3IWKaqB+7l6+LQRoZmM2WYdkuXUuFKYNUuNPAJqgo3RiNs363BDyCQRKKuOPAJpN8AnTZ3++U8NQ7LjeDwCz/D/oiNQ5I+A2YxSgHZHtohq/2q3T3DRv1xsD0+ZxMmSun6+udm8eALorNnspwX8HwfF4DIIn/zF5YRn4x6MflOF6f0KhUCgUCoVCoVAoFAqFQqFQKNSf6B8skEDDQmnsbAAAAABJRU5ErkJggg==" alt="Esri" loading="eager" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='inline')"><span class="logo-text-fallback" style="display:none">Esri</span>
+      <span class="logo-sep">×</span>
+      <svg class="airtable-logo" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" aria-label="Airtable"><path d="M21.16 15.916l-12.878 5.33c-.716.296-.7 1.314.012 1.6l12.932 5.128a4.8 4.8 0 003.538 0l12.932-5.128c.72-.286.728-1.303.012-1.6l-12.878-5.33a4.8 4.8 0 00-3.67 0" fill="#fcb400"/><path d="M24.144 30.773v12.8c0 .6.614 1.027 1.18.802l14.4-5.593a.86.86 0 00.545-.802v-12.8c0-.6-.614-1.027-1.18-.802l-14.4 5.593a.86.86 0 00-.545.802" fill="#18bfff"/><path d="M20.78 31.434l-4.7 2.275-9.028 4.326c-.572.276-1.303-.14-1.303-.777V25.234c0-.23.118-.43.276-.578a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#f82b60"/><path d="M20.78 31.434L16.502 33.5l-10.5-8.844a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#ba1e45"/><path d="M54.388 31.064l-1.74-4.693c-.07-.192-.343-.192-.414 0l-1.74 4.693a.22.22 0 00.207.297h3.48a.22.22 0 00.207-.297m.804 2.637H49.7a.22.22 0 00-.207.144l-1.083 2.92a.22.22 0 01-.207.144h-2.385a.22.22 0 01-.205-.303l5.5-13.68a.22.22 0 01.205-.138h2.284a.22.22 0 01.205.138l5.5 13.68a.22.22 0 01-.205.303H56.7a.22.22 0 01-.207-.144l-1.083-2.92a.22.22 0 00-.207-.144m5.204-6.112h2.04a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221v-8.9a.22.22 0 01.221-.221m9.7 2.16a.22.22 0 01-.221.221h-.062c-1 0-1.75.242-2.22.726s-.706 1.284-.706 2.4v3.592a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h2a.22.22 0 01.221.221v1.756h.04c.242-.726.625-1.284 1.15-1.674s1.17-.585 1.936-.585h.1zm5.578-.082a.22.22 0 00-.221.221v3.693c0 .377.074.645.222.807s.403.242.766.242h.203a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221h-.87c-.9 0-1.594-.232-2.078-.696s-.726-1.153-.726-2.068v-4.278a.22.22 0 00-.221-.221h-1.273a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h1.273a.22.22 0 00.221-.221v-3.3a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v3.3a.22.22 0 00.221.221h1.475a.22.22 0 01.221.221v1.637a.22.22 0 01-.221.221zm9.34 4.478c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.36.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-4.7 2.48a4.14 4.14 0 01-1.624-1.705c-.397-.746-.595-1.637-.595-2.673s.198-1.926.595-2.673.938-1.314 1.624-1.705a4.49 4.49 0 012.259-.585c.726 0 1.348.14 1.866.424s.93.68 1.24 1.2h.04V27.8a.22.22 0 01.221-.221h2.02a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221v-1.1h-.04c-.3.5-.723.908-1.24 1.2s-1.14.424-1.866.424c-.82 0-1.573-.195-2.26-.585m16.268-2.48c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.362.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-3.066 2.643a3.24 3.24 0 01-1.241-1.19h-.04v1.1a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v5.9h.04a3.24 3.24 0 011.241-1.19c.518-.283 1.14-.424 1.866-.424a4.49 4.49 0 012.259.585c.686.4 1.227.958 1.624 1.705s.595 1.638.595 2.673-.2 1.927-.595 2.673-.938 1.315-1.624 1.705-1.44.585-2.26.585c-.726 0-1.348-.14-1.866-.424m9.78.12h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221m4.812-7.16c-.338.264-.567.645-.685 1.143-.032.137.075.27.216.27h3.882c.135 0 .24-.12.22-.254-.078-.47-.28-.847-.606-1.128-.383-.33-.884-.494-1.503-.494s-1.126.155-1.523.464m4.973-1.16c.793.868 1.2 2.095 1.2 3.68v.264a.22.22 0 01-.221.221h-6.486c-.137 0-.242.125-.218.26.104.6.364 1.058.782 1.405.477.397 1.08.595 1.805.595.938 0 1.805-.366 2.603-1.098a.22.22 0 01.328.038l.992 1.424a.22.22 0 01-.034.292 7.29 7.29 0 01-1.61 1.07c-.645.316-1.405.474-2.28.474-1 0-1.9-.205-2.643-.615a4.35 4.35 0 01-1.755-1.735c-.417-.746-.625-1.6-.625-2.592s.202-1.85.605-2.602.968-1.338 1.695-1.755 1.573-.625 2.542-.625c1.425 0 2.535.434 3.328 1.3m-50.15-4.28a1.51 1.51 0 01-1.507 1.507 1.51 1.51 0 01-1.507-1.507 1.51 1.51 0 011.507-1.507 1.51 1.51 0 011.507 1.507" fill="rgba(240,240,248,0.88)"/></svg>
+    </div>
+    <div class="nav-tag">
+      <div class="nav-prepared">Prepared for Esri by Luke Sorensen</div>
+    </div>
+    <a class="nav-cta" href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer">Book time →</a>
+  </nav>
+
+  <section class="hero">
+    
+    <div class="chip">Esri · Product, Program & Partner Leadership · Esri</div>
+    <h1 class="typing"><span class="typed-text"></span><span class="typed-caret">&nbsp;</span></h1>
+    <p class="hero-sub">Esri runs large software and program organizations coordinating product research, rollouts, and partner programs across thousands of stakeholders. When status lives in static docs and spreadsheets, every team works from a different version of the truth. Structured interfaces give internal teams and external partners one current view of program and product status, without chasing it.</p>
+    <a class="btn" href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer">See how this works for your team</a>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">What this means for Esri</div>
+      <h2>What program and product teams at Esri can stop doing</h2>
+
+      <div class="cards">
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6 L15.5 6"/><path d="M6 8.5 L6 15.5"/><path d="M8.5 18 L15.5 18"/><path d="M18 8.5 L18 15.5"/></svg></div>
+          <div class="card-title">Replace the status chase</div>
+          <div class="card-body">Give every stakeholder, from product leads to partner teams, a live structured view of where programs and products stand, updated automatically.</div>
+        </div>
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <div class="card-title">Structured portals, not static docs</div>
+          <div class="card-body">Build interfaces tailored to each team's role: what a product manager needs to see is different from what a partner or program lead needs, even when the data is shared.</div>
+        </div>
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9 L21 9"/><path d="M9 4 L9 20"/><path d="M14 13 L17 13"/><path d="M14 16 L19 16"/></svg></div>
+          <div class="card-title">Research at scale</div>
+          <div class="card-body">Connect your existing 253-seat research footprint to the product and program layers it informs, so findings move from repository to roadmap without another manual handoff.</div>
+        </div>
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="12" width="3" height="8" rx="1"/><rect x="10.5" y="7" width="3" height="13" rx="1"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg></div>
+          <div class="card-title">Programs that coordinate themselves</div>
+          <div class="card-body">When intake, status, and reporting run in one system, rollout coordination and partner program visibility no longer require a weekly meeting to establish what everyone already knows.</div>
+        </div>
+      </div>
+
+      <div class="diagram-label">Program & Product Coordination Flow</div>
+      <div class="diagram-wrap"><svg viewBox="0 0 920 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;color:var(--text-1)">
+        <defs>
+          <marker id="wf-arr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#0079C1" opacity="0.7"/>
+          </marker>
+        </defs>
+        <line x1="183" y1="65" x2="201" y2="65" stroke="#0079C1" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="361" y1="65" x2="379" y2="65" stroke="#0079C1" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="539" y1="65" x2="557" y2="65" stroke="#0079C1" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="717" y1="65" x2="735" y2="65" stroke="#0079C1" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/>
+        <rect x="28" y="41" width="152" height="48" rx="8" fill="rgba(0,121,193,0.06)" stroke="rgba(0,121,193,0.55)" stroke-width="1.2"/><text x="104" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Research Signals</text><rect x="206" y="41" width="152" height="48" rx="8" fill="rgba(0,121,193,0.06)" stroke="rgba(0,121,193,0.55)" stroke-width="1.2"/><text x="282" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Structured Intake</text><rect x="384" y="41" width="152" height="48" rx="8" fill="rgba(0,121,193,0.06)" stroke="rgba(0,121,193,0.55)" stroke-width="1.2"/><text x="460" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Program Tracking</text><rect x="562" y="41" width="152" height="48" rx="8" fill="rgba(0,121,193,0.06)" stroke="rgba(0,121,193,0.55)" stroke-width="1.2"/><text x="638" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Partner Portals</text><rect x="740" y="41" width="152" height="48" rx="8" fill="rgba(0,121,193,0.06)" stroke="rgba(0,121,193,0.55)" stroke-width="1.2"/><text x="816" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Live Reporting</text>
+      </svg></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">See it in action</div>
+      <h2>What this looks like for teams like yours</h2>
+      <div class="videos">
+        <div class="video-wrap fade">
+          <div class="video-label">Portals: Live Interfaces for Every Stakeholder</div>
+          <a class="video-card-native" href="#" target="_blank" rel="noopener noreferrer" style="display:block;background:#000 url() center/cover no-repeat;text-decoration:none;"><span style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff;font-size:14px;background:rgba(0,0,0,0.4)">▶ Watch on Wistia</span></a>
+        </div>
+        <div class="video-wrap fade">
+          <div class="video-label">User Research Repository at Scale</div>
+          <a class="video-card-native" href="#" target="_blank" rel="noopener noreferrer" style="display:block;background:#000 url() center/cover no-repeat;text-decoration:none;"><span style="display:flex;align-items:center;justify-content:center;height:100%;color:#fff;font-size:14px;background:rgba(0,0,0,0.4)">▶ Watch on Wistia</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">Proven at scale</div>
+      <h2>Companies like yours already use Airtable</h2>
+      <div class="stories">
+        <div class="story-card fade">
+          <div class="story-tag">Customer Story</div>
+          <div class="story-title">Vimeo</div>
+          <div class="story-csr">
+            <div class="story-csr-line"><span class="story-csr-label">Challenge</span>Tool sprawl and no off-the-shelf software for their unique needs left Vimeo with inefficient workflows and no single source of data across 7 teams.</div><div class="story-csr-line"><span class="story-csr-label">Solution</span>Built a central hub with custom interfaces and automated workflows, creating 46 purpose-built apps for different teams and roles.</div><div class="story-csr-line"><span class="story-csr-label">Result</span>7 teams connected, 15+ workflows consolidated, and clear product health and usage tracking for revenue impact.</div>
+          </div>
+          <button class="story-btn" onclick="openStoryModal('story-modal-0')">Read story</button>
+        </div>
+        <div class="story-card fade">
+          <div class="story-tag">Customer Story</div>
+          <div class="story-title">LinkedIn</div>
+          <div class="story-csr">
+            <div class="story-csr-line"><span class="story-csr-label">Challenge</span>Research studies tracked in Google Sheets led to duplicate work, human error, and no single source of truth for reporting to executives.</div><div class="story-csr-line"><span class="story-csr-label">Solution</span>Built a research repository with autonumber fields and automations, creating full transparency through every stage of the research journey.</div><div class="story-csr-line"><span class="story-csr-label">Result</span>Doubled capacity to report research results to executives, freeing more time for the team to conduct studies instead of managing data.</div>
+          </div>
+          <button class="story-btn" onclick="openStoryModal('story-modal-1')">Read story</button>
+        </div>
+      </div>
+      <div class="proof-quote">"Connected 7 teams, 15+ workflows, and built 46 custom interfaces in one platform. — Vimeo"</div>
+    </div>
+  </section>
+
+  <section class="cta-sec">
+    <h2>Ready to see it for Esri?</h2>
+    <p>20 minutes. No deck. Just a live look at how your team could use Airtable.</p>
+    <a class="btn" href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer">Book 20 minutes</a>
+  </section>
+
+  <footer>
+    <div class="footer-logos">
+      <img class="prospect-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAIAAAACACAMAAAD04JH5AAAAe1BMVEX///8AesIAdcAAd8EAcb+ArdjL2+0bf8QAbr72+fyMtNvU4vAAc7+jwuHh6/X6/f7u9vtems9lpNQag8ZXndF8uN7m8fi21uxDls7D3O5Qk8xxr9rR5fMAaLuWvuCt0uooisk4kMynyuWPw+OcxuTY7PZQodOgzeh1p9X29W1kAAAEG0lEQVR42u2Z23aCOBSGSTYKaCpIJGChHARs3/8JB5RAglh00RkuZv9XutiYj2Qf0TBQKBQKhUKhUCgUCoVCof5XCtNdmnmrLS8iQhklebjS+oeCklYA53UA4vv6DUEh1ljftYkUW+UQ6gGAlmsAJOYAkK4B4ClHcFnFCaPeCXmyCsCeQ3cCl5USwdliAMDW8YC7G5Snz1NQY0lCvSRHiMNNnvsst3udhXBmf0i82QO45w+/ILbZyIo24dTd4rKJrNbAJoVfKYll+9Fpe/P7zM+5bfOieYyDvPIxt3wWcQog0xYjRfUQT3EOtLcAyk89wsZmN9m75kvVmYHd7NL2636FkZl0UZhANIEZ6bnzwunYhAXdPm26hEt3hvCZNLsByGpk/fr4KRn99u3XtOxdTpqcnDHAifZXXwbwCkqmBNbQRlXTJsx3dYCAKfe/CCCi/iag7XH1jwq5bKMOFkwDZNoOQJEr6+fuSwCOLx+OkqjMwjCI+tXoqTPyB0aLc27d3RXgovuAvoH8NYBS9gw0lhWj9keNnDcsn7aOkVTFjSAzJgGafbSIyV4DqK2JlsktqeZlodwSLjvL1tntvsRrAIxeL/tkvw+urwC48gBAj3tJQM7qN9gpFpAZEwBgxWoOmwXYW9J99Ozr3PeYsKD9toNHSkeZNBQAS+98ZgFk2LDx4HLpJpp8FOeTGgDYqPmeBehaNijGuT/J71dsTz0Qq3J/BYDCeA9AmDICHrPTHcBs3e57SA2nsv4FgJ7fBPhmcm/3Y33CsKdCLQA2NF5+cKYAHgfAOYA+c1JzLFD3JqJ6nEPup2IC4Md9EyCeTvFavbmlYj6uhHo5fuqkcwBHmAOAz/trjoliCDRw/jOA24DxuD3XpQDxywCGW32ScUtCWOwuBJA+wOwn+sqHmD0HBTMZaBTnZQAyDEnmOs+klQ63qdbcGlyX+ssA5AsE9s7sWIc/SlAsA3BNmeCct1r4uug7z3oRgHGFJ8VobuaVbYR5XgYQsulybDjjLXG0GuDK+FkK4J36lKut6Pm5N24dk38DwMj6SuorKyYnRiO1sDixCVx50yfkEdhiIcBQZ2jx3R2DiFsvV3sEp00YYMnU27TyskfKjaUAIlcmwmuQpnHOaEck+s7R7Br3YJvUydbvk9E9fhcBaHWmHUyGTAfdKThxPxYw4DkHSvSXb8sAjDN5VhFY3IWKaqB+7l6+LQRoZmM2WYdkuXUuFKYNUuNPAJqgo3RiNs363BDyCQRKKuOPAJpN8AnTZ3++U8NQ7LjeDwCz/D/oiNQ5I+A2YxSgHZHtohq/2q3T3DRv1xsD0+ZxMmSun6+udm8eALorNnspwX8HwfF4DIIn/zF5YRn4x6MflOF6f0KhUCgUCoVCoVAoFAqFQqFQKNSf6B8skEDDQmnsbAAAAABJRU5ErkJggg==" alt="Esri" loading="eager" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <span class="logo-sep">×</span>
+      <svg class="airtable-logo" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" aria-label="Airtable"><path d="M21.16 15.916l-12.878 5.33c-.716.296-.7 1.314.012 1.6l12.932 5.128a4.8 4.8 0 003.538 0l12.932-5.128c.72-.286.728-1.303.012-1.6l-12.878-5.33a4.8 4.8 0 00-3.67 0" fill="#fcb400"/><path d="M24.144 30.773v12.8c0 .6.614 1.027 1.18.802l14.4-5.593a.86.86 0 00.545-.802v-12.8c0-.6-.614-1.027-1.18-.802l-14.4 5.593a.86.86 0 00-.545.802" fill="#18bfff"/><path d="M20.78 31.434l-4.7 2.275-9.028 4.326c-.572.276-1.303-.14-1.303-.777V25.234c0-.23.118-.43.276-.578a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#f82b60"/><path d="M20.78 31.434L16.502 33.5l-10.5-8.844a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#ba1e45"/><path d="M54.388 31.064l-1.74-4.693c-.07-.192-.343-.192-.414 0l-1.74 4.693a.22.22 0 00.207.297h3.48a.22.22 0 00.207-.297m.804 2.637H49.7a.22.22 0 00-.207.144l-1.083 2.92a.22.22 0 01-.207.144h-2.385a.22.22 0 01-.205-.303l5.5-13.68a.22.22 0 01.205-.138h2.284a.22.22 0 01.205.138l5.5 13.68a.22.22 0 01-.205.303H56.7a.22.22 0 01-.207-.144l-1.083-2.92a.22.22 0 00-.207-.144m5.204-6.112h2.04a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221v-8.9a.22.22 0 01.221-.221m9.7 2.16a.22.22 0 01-.221.221h-.062c-1 0-1.75.242-2.22.726s-.706 1.284-.706 2.4v3.592a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h2a.22.22 0 01.221.221v1.756h.04c.242-.726.625-1.284 1.15-1.674s1.17-.585 1.936-.585h.1zm5.578-.082a.22.22 0 00-.221.221v3.693c0 .377.074.645.222.807s.403.242.766.242h.203a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221h-.87c-.9 0-1.594-.232-2.078-.696s-.726-1.153-.726-2.068v-4.278a.22.22 0 00-.221-.221h-1.273a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h1.273a.22.22 0 00.221-.221v-3.3a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v3.3a.22.22 0 00.221.221h1.475a.22.22 0 01.221.221v1.637a.22.22 0 01-.221.221zm9.34 4.478c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.36.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-4.7 2.48a4.14 4.14 0 01-1.624-1.705c-.397-.746-.595-1.637-.595-2.673s.198-1.926.595-2.673.938-1.314 1.624-1.705a4.49 4.49 0 012.259-.585c.726 0 1.348.14 1.866.424s.93.68 1.24 1.2h.04V27.8a.22.22 0 01.221-.221h2.02a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221v-1.1h-.04c-.3.5-.723.908-1.24 1.2s-1.14.424-1.866.424c-.82 0-1.573-.195-2.26-.585m16.268-2.48c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.362.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-3.066 2.643a3.24 3.24 0 01-1.241-1.19h-.04v1.1a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v5.9h.04a3.24 3.24 0 011.241-1.19c.518-.283 1.14-.424 1.866-.424a4.49 4.49 0 012.259.585c.686.4 1.227.958 1.624 1.705s.595 1.638.595 2.673-.2 1.927-.595 2.673-.938 1.315-1.624 1.705-1.44.585-2.26.585c-.726 0-1.348-.14-1.866-.424m9.78.12h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221m4.812-7.16c-.338.264-.567.645-.685 1.143-.032.137.075.27.216.27h3.882c.135 0 .24-.12.22-.254-.078-.47-.28-.847-.606-1.128-.383-.33-.884-.494-1.503-.494s-1.126.155-1.523.464m4.973-1.16c.793.868 1.2 2.095 1.2 3.68v.264a.22.22 0 01-.221.221h-6.486c-.137 0-.242.125-.218.26.104.6.364 1.058.782 1.405.477.397 1.08.595 1.805.595.938 0 1.805-.366 2.603-1.098a.22.22 0 01.328.038l.992 1.424a.22.22 0 01-.034.292 7.29 7.29 0 01-1.61 1.07c-.645.316-1.405.474-2.28.474-1 0-1.9-.205-2.643-.615a4.35 4.35 0 01-1.755-1.735c-.417-.746-.625-1.6-.625-2.592s.202-1.85.605-2.602.968-1.338 1.695-1.755 1.573-.625 2.542-.625c1.425 0 2.535.434 3.328 1.3m-50.15-4.28a1.51 1.51 0 01-1.507 1.507 1.51 1.51 0 01-1.507-1.507 1.51 1.51 0 011.507-1.507 1.51 1.51 0 011.507 1.507" fill="rgba(240,240,248,0.88)"/></svg>
+    </div>
+    <span class="footer-note">Prepared by Luke Sorensen · Airtable</span>
+  </footer>
+
+  <div class="story-modal-bg" id="story-modal-0" onclick="if(event.target===this)closeStoryModal('story-modal-0')">
+    <div class="story-modal-panel" role="dialog" aria-modal="true">
+      <button class="story-modal-close" onclick="closeStoryModal('story-modal-0')" aria-label="Close">&times;</button>
+      <div class="story-modal-tag">Customer Story</div>
+      <div class="story-modal-headline">How Vimeo unified 7 teams with custom interfaces</div>
+      <div class="story-modal-section"><div class="story-modal-section-label">Challenge</div><div class="story-modal-body" style="margin-bottom:0">Tool sprawl and the absence of off-the-shelf software for their unique operational needs resulted in inefficient workflows and no singular source of data shared across teams.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Solution</div><div class="story-modal-body" style="margin-bottom:0">Created a central hub using automations for smart workflows and interfaces to build customized tools for end users, resulting in 46 custom apps serving different functions.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Result</div><div class="story-modal-body" style="margin-bottom:0">Connected 7 teams and consolidated 15+ workflows into 46 custom apps. Vimeo can now track product health and usage for revenue impact while maximizing ROI across programs.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Why it matters for Esri</div><div class="story-modal-body" style="margin-bottom:0">Esri's program and product organization spans research, rollouts, and partner programs. The same interface model that let Vimeo give each team a tailored view of shared data applies directly to giving product managers, program leads, and partner teams each their own structured window into program status.</div></div>
+      <div class="story-modal-cta">
+        <a class="btn" href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 30px;font-size:.9rem">See how this works for your team →</a>
+      </div>
+    </div>
+  </div>
+  <div class="story-modal-bg" id="story-modal-1" onclick="if(event.target===this)closeStoryModal('story-modal-1')">
+    <div class="story-modal-panel" role="dialog" aria-modal="true">
+      <button class="story-modal-close" onclick="closeStoryModal('story-modal-1')" aria-label="Close">&times;</button>
+      <div class="story-modal-tag">Customer Story</div>
+      <div class="story-modal-headline">How LinkedIn doubled research reporting capacity</div>
+      <div class="story-modal-section"><div class="story-modal-section-label">Challenge</div><div class="story-modal-body" style="margin-bottom:0">Organizing research studies in Google Sheets was time-consuming, prone to human error, and led to duplicate work without a single source of truth for the team or for executives.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Solution</div><div class="story-modal-body" style="margin-bottom:0">Built a research repository using structured fields and automations to create full transparency throughout the project journey, from intake through results.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Result</div><div class="story-modal-body" style="margin-bottom:0">Doubled the capacity to report results to executives and gave the team more time to conduct studies rather than manage and reconcile data.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Why it matters for Esri</div><div class="story-modal-body" style="margin-bottom:0">Esri already has a 253-seat research footprint in Software Development. The same structured repository model that let LinkedIn double executive reporting capacity is the natural next layer: connecting that research base to the product and program systems it should inform, at the scale Esri operates.</div></div>
+      <div class="story-modal-cta">
+        <a class="btn" href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 30px;font-size:.9rem">See how this works for your team →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const els = document.querySelectorAll('.fade');
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const d = parseInt(e.target.dataset.d || '0');
+            setTimeout(() => e.target.classList.add('in'), d);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      els.forEach((el, i) => { el.dataset.d = String(i * 60); obs.observe(el); });
+    } else {
+      els.forEach(el => el.classList.add('in'));
+    }
+    function openStoryModal(id) {
+      var m = document.getElementById(id);
+      if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeStoryModal(id) {
+      var m = document.getElementById(id);
+      if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.story-modal-bg.open').forEach(function(m) {
+          m.classList.remove('open');
+        });
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Typing animation: show first half instantly, type back half slowly
+    (function(){
+      var target = document.querySelector('.hero h1 .typed-text');
+      if (!target) return;
+      var text = "One live view for every team, every program";
+      var mid = Math.floor(text.length / 2);
+      var splitIdx = text.lastIndexOf(' ', mid);
+      if (splitIdx <= 0) splitIdx = text.indexOf(' ', mid);
+      if (splitIdx <= 0) splitIdx = mid;
+      var staticPart = text.slice(0, splitIdx + 1);
+      var typedPart = text.slice(splitIdx + 1);
+      target.textContent = staticPart;
+      var idx = 0;
+      function step(){
+        if (idx < typedPart.length){
+          target.textContent += typedPart.charAt(idx);
+          idx += 1;
+          var nextDelay = 85 + Math.random() * 55;
+          if (typedPart.charAt(idx-1) === ' ') nextDelay += 30;
+          if (/[.,;:!?]/.test(typedPart.charAt(idx-1))) nextDelay += 120;
+          setTimeout(step, nextDelay);
+        }
+      }
+      setTimeout(step, 500);
+    })();
+  </script>
+</body>
+</html>
