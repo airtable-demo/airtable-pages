@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Dave &amp; Buster's × Airtable — One-pager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --orange:#FA761E; --orange-deep:#E25C0B; --ink:#191512; --slate:#4A433D;
+    --line:#EDE6DE; --cream:#FBF7F2; --blue:#1A3D8F;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{background:#cdc7c0;}
+  body{font-family:'Inter',system-ui,sans-serif; -webkit-font-smoothing:antialiased;}
+  .page{
+    width:1224px; min-height:1584px; margin:0 auto; background:#fff;
+    display:flex; flex-direction:column; position:relative; overflow:hidden;
+  }
+  /* Header band */
+  .hdr{background:var(--ink); color:#fff; padding:30px 64px; display:flex; align-items:center; justify-content:space-between;}
+  .hdr .brand{font-weight:800; font-size:23px; letter-spacing:-.01em; display:flex; align-items:center; gap:14px;}
+  .hdr .brand .x{color:var(--orange); font-weight:600;}
+  .hdr .prep{font-size:15px; color:rgba(255,255,255,.62); font-weight:500;}
+  .accentbar{height:8px; background:linear-gradient(90deg,var(--orange) 0%,var(--orange-deep) 100%);}
+  /* Hero */
+  .hero{padding:56px 64px 30px;}
+  .eyebrow{color:var(--orange-deep); font-weight:800; letter-spacing:.16em; font-size:14px; text-transform:uppercase; margin-bottom:20px;}
+  h1{font-size:58px; line-height:1.04; letter-spacing:-.025em; color:var(--ink); font-weight:900; max-width:1000px;}
+  h1 .hl{color:var(--orange);}
+  .sub{margin-top:24px; font-size:21px; line-height:1.5; color:var(--slate); max-width:980px; font-weight:400;}
+  .wedge{margin-top:22px; font-size:16px; color:var(--blue); font-weight:600; background:rgba(26,61,143,.07); border-left:4px solid var(--blue); padding:14px 20px; border-radius:0 8px 8px 0; max-width:980px;}
+  /* Pillars */
+  .pillars{display:grid; grid-template-columns:repeat(3,1fr); gap:22px; padding:34px 64px 6px;}
+  .pillar{border:1.5px solid var(--line); border-radius:16px; padding:28px 26px; background:var(--cream); position:relative;}
+  .pillar .num{width:42px; height:42px; border-radius:11px; background:var(--orange); color:#fff; font-weight:800; font-size:19px; display:flex; align-items:center; justify-content:center; margin-bottom:18px;}
+  .pillar h3{font-size:21px; color:var(--ink); font-weight:800; letter-spacing:-.01em; line-height:1.15; margin-bottom:12px;}
+  .pillar p{font-size:15.5px; line-height:1.52; color:var(--slate); font-weight:400;}
+  /* Fit band */
+  .fit{margin:34px 64px 0; padding:22px 28px; background:var(--ink); color:#fff; border-radius:14px; font-size:17px; line-height:1.5; font-weight:500;}
+  .fit b{color:var(--orange); font-weight:700;}
+  /* Proof */
+  .proof{padding:34px 64px 10px;}
+  .proof .lbl{font-size:13px; font-weight:800; letter-spacing:.16em; text-transform:uppercase; color:var(--slate); margin-bottom:18px;}
+  .proof-grid{display:grid; grid-template-columns:1fr 1fr; gap:22px;}
+  .pc{border-top:4px solid var(--orange); background:#fff; border:1px solid var(--line); border-top:4px solid var(--orange); border-radius:12px; padding:22px 24px;}
+  .pc .co{font-size:18px; font-weight:800; color:var(--ink); margin-bottom:8px;}
+  .pc p{font-size:14.5px; line-height:1.5; color:var(--slate);}
+  /* CTA footer */
+  .spacer{flex:1;}
+  .cta{margin-top:30px; background:linear-gradient(100deg,var(--orange) 0%,var(--orange-deep) 100%); color:#fff; padding:34px 64px; display:flex; align-items:center; justify-content:space-between;}
+  .cta .big{font-size:30px; font-weight:900; letter-spacing:-.02em;}
+  .cta .links{text-align:right; font-size:16px; line-height:1.7; font-weight:600;}
+  .cta .links .small{font-size:13.5px; font-weight:500; color:rgba(255,255,255,.85);}
+  .footnote{background:var(--ink); color:rgba(255,255,255,.55); font-size:12.5px; padding:14px 64px; display:flex; justify-content:space-between;}
+</style>
+</head>
+<body>
+  <div class="page">
+    <div class="hdr">
+      <div class="brand">Airtable <span class="x">×</span> Dave &amp; Buster's</div>
+      <div class="prep">Prepared by Quinn Daniell</div>
+    </div>
+    <div class="accentbar"></div>
+
+    <div class="hero">
+      <div class="eyebrow">For the 2025 turnaround</div>
+      <h1>Run every campaign, menu, and game launch as <span class="hl">one connected system</span></h1>
+      <p class="sub">The turnaround depends on marketing, menu, and games moving together across 232 venues. Today those launches live in separate tools, so timelines slip, budgets blur, and leadership loses the thread.</p>
+      <div class="wedge">You already run this in Talent Acquisition. The next step is extending that same operating model into the functions now under the most pressure.</div>
+    </div>
+
+    <div class="pillars">
+      <div class="pillar">
+        <div class="num">1</div>
+        <h3>Marketing campaign coordination</h3>
+        <p>Move from scattered promotions to fewer, sharper campaigns across 232 venues, with standardized intake, market-specific assets, and one shared calendar.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">2</div>
+        <h3>Menu rollout tracking</h3>
+        <p>Coordinate culinary development, supply chain, pricing, and store training on one timeline, so national menu launches hit the date.</p>
+      </div>
+      <div class="pillar">
+        <div class="num">3</div>
+        <h3>Game refresh pipeline</h3>
+        <p>Track procurement, install schedules, and performance against the ten-plus-games-a-year commitment, with budgets and approvals in one flow.</p>
+      </div>
+    </div>
+
+    <div class="fit">Works alongside the tools your teams already use, including Monday.com, Workday, Canva, and Microsoft. <b>It connects them. It does not replace them.</b></div>
+
+    <div class="proof">
+      <div class="lbl">Proven with teams like yours</div>
+      <div class="proof-grid">
+        <div class="pc">
+          <div class="co">Raising Cane's</div>
+          <p>Standardized new restaurant openings and field operations across roughly 1,000 locations, starting with one use case and expanding into operations, training, marketing, and finance.</p>
+        </div>
+        <div class="pc">
+          <div class="co">DraftKings</div>
+          <p>Orchestrates cross-functional launches like new state rollouts, giving leadership real-time portfolio visibility and automated executive reporting.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div class="cta">
+      <div class="big">See it for Dave &amp; Buster's in 20 minutes</div>
+      <div class="links">
+        meet.airtable.com/c/Quinn_Daniell
+        <div class="small">Full preview: airtable-demo.github.io/airtable-pages/qd/dave-and-busters</div>
+      </div>
+    </div>
+    <div class="footnote">
+      <span>Prepared by Quinn Daniell · Airtable</span>
+      <span>Dave &amp; Buster's · 232 venues · entertainment + dining</span>
+    </div>
+  </div>
+</body>
+</html>
