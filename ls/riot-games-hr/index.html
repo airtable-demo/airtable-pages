@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Riot Games x Airtable</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; line-height: 1.6; }
+.nav { background: rgba(10,10,15,0.95); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); }
+.nav-brand { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+.nav-brand span { color: #D13639; font-weight: 600; }
+.hero { padding: 80px 5% 60px; text-align: center; background: radial-gradient(ellipse at top center, #D1363915 0%, transparent 60%); }
+.hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 24px; line-height: 1.2; }
+.hero p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 40px; }
+.chip { display: inline-block; background: #D1363920; color: #D13639; border: 1px solid #D1363940; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+.section { padding: 60px 5%; max-width: 900px; margin: 0 auto; }
+.section h2 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 32px; border-left: 3px solid #D13639; padding-left: 16px; }
+.pov-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 32px; margin-bottom: 40px; }
+.pov-block p { font-size: 16px; color: rgba(255,255,255,0.8); }
+.signal-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.signal-date { font-size: 12px; color: #D13639; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.signal-item p { margin-top: 4px; font-size: 15px; }
+.persona-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+.persona-card h4 { color: #D13639; font-size: 15px; margin-bottom: 6px; }
+.persona-card p { font-size: 14px; color: rgba(255,255,255,0.6); }
+.cta-section { text-align: center; padding: 60px 5% 80px; }
+.cta-section h2 { font-size: 28px; color: #fff; margin-bottom: 12px; }
+.cta-section p { color: rgba(255,255,255,0.6); margin-bottom: 32px; font-size: 16px; }
+.cta-button { display: inline-block; background: #D13639; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; transition: opacity 0.2s; }
+.cta-button:hover { opacity: 0.85; }
+.footer { text-align: center; padding: 20px 5%; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand">Prepared for <span>Riot Games</span> by Luke Sorensen</div>
+  <div class="nav-brand" style="color: #D13639;">Account x Airtable</div>
+</nav>
+
+<section class="hero">
+  <div class="chip">EXPANSION PLAY</div>
+  <h1>Riot Games is simultaneously restructuring its entire organizational model, launching a physical TCG business from scratch, spinning up R&D studios across Shanghai and Singapore, and rebuilding its People infrastructure after a 530-person reduction — yet managing talent pipelines, headcount forecasting, onboarding flows, D&I tracking, and succession planning across a globally distributed workforce without a unified operational layer to hold it together.</h1>
+  <p>A focused look at what the data says and where the opportunity sits.</p>
+</section>
+
+<section class="section">
+  <h2>The Signal</h2>
+  <div class="pov-block">
+    <p>Riot Games is in the middle of one of the most complex organizational transformations in gaming: collapsing a five-pillar corporate structure into an integrated model, standing up an entirely new physical TCG business (Riftbound) with global retail and competitive circuits, expanding R&D studios in Shanghai and Singapore, and executing a company-wide culture reset after settling a $100M gender discrimination lawsuit. The People team is now accountable for a fundamentally different workforce than it was managing 24 months ago — new business lines, new geographies, a voluntary departure program for culture-misaligned employees, and a D&I mandate embedded directly into compensation and promotion decisions. The goal state is a Riot that runs as a cohesive enterprise rather than independent siloed pillars, with talent practices that are 'fair, scalable, and reflective of the complexity and pace of the business' — as the company's own HRBP job description states. But as headcount forecasting, onboarding and offboarding workflows, performance calibrations, and multi-country HR admin multiply across EMEA, APAC, and NA simultaneously, People Operations is absorbing the full combinatorial load of a company redesigning itself in real time. At that volume, the absence of a shared operational layer for tracking talent workflows, D&I program milestones, and cross-functional people data means decisions get made on stale inputs, compliance gaps go undetected, and the speed of business consistently outpaces the infrastructure meant to support it.</p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>What We're Seeing</h2>
+  <div class="signal-item"><span class="signal-date">2026-05-20</span><p>Riot Games executed a sweeping internal reorganization, collapsing its 'pillar' model (distinct Publishing, Games, Entertainment, Enterprise, Esports divisions) into a merged structure. Publishing and Esports were unified into a single 'PubSports' division under President John Needham in August 2024, with cross-functional alignment continuing through 2025-2026.</p></div><div class="signal-item"><span class="signal-date">2024-01-23</span><p>Riot Games laid off 530 employees (11% of workforce) in January 2024 and shut down Riot Forge. The restructure disproportionately impacted teams outside core game development, forcing rapid workforce redesign including severance packages, job placement services, counseling, and visa support for departing Rioters.</p></div><div class="signal-item"><span class="signal-date">2025-09-28</span><p>Riot introduced a company-wide 'queue dodge' severance policy — any employee unhappy with the new strategic direction can voluntarily exit with 25% of base salary, three months of benefits, and full bonuses. The program expanded from a new-hire-only policy to apply across the entire organization, signaling ongoing cultural transformation and people-process complexity at scale.</p></div><div class="signal-item"><span class="signal-date">2026-04-30</span><p>Riot posted a Senior HR Business Partner (Corporate) role (LA, $120K-$175K) explicitly calling for candidates to own workforce planning, org redesign, succession planning, performance calibrations, and change management across Riot's Enterprise Technology and Finance organizations — signaling active investment in scaling People infrastructure.</p></div>
+</section>
+
+<section class="section">
+  <h2>Who Feels This</h2>
+  <div class="persona-card"><h4>VP of People Operations / Head of People Ops</h4><p>Owns the end-to-end employee lifecycle infrastructure — onboarding, offboarding, HRIS data integrity, and shared services delivery across regions. As Riot rebuilds People Ops from a siloed-pillar model to a cohesive global function, this leader feels the friction of managing multi-country workflows, a company-wide voluntary exit program, and post-restructure process gaps without a unified operational workspace.</p></div><div class="persona-card"><h4>Director of HR Business Partners / Global HRBP Lead</h4><p>Riot is actively hiring Senior HRBPs to manage performance calibrations, workforce planning, succession, and org design across Enterprise Technology and Finance. The HRBP layer is the connective tissue between People strategy and business execution — and at Riot's scale of transformation, they need a structured way to track headcount requests, calibration outcomes, and leader action plans across client groups.</p></div><div class="persona-card"><h4>Head of Talent Acquisition / Director of Global Recruiting</h4><p>Riot is running simultaneous recruiting efforts across LA, Singapore, Dublin, and Shanghai for roles spanning game development, People Ops, and new business lines (Riftbound). The TA function needs headcount forecasting, pipeline tracking, and cross-studio requisition visibility — especially as Singapore's APAC Recruiting Lead is managing tech and production hiring for multiple game teams under 12-month contract constraints.</p></div><div class="persona-card"><h4>Head of Diversity, Equity & Inclusion / DEI Program Lead</h4><p>Riot has publicly committed to embedding D&I criteria into performance reviews, compensation, promotion processes, and surveys across a nine-person dedicated team. Running a program of that scope — across a post-restructure workforce in multiple regions — demands program tracking, milestone accountability, and cross-functional visibility that spreadsheets and HRIS alone cannot provide.</p></div>
+</section>
+
+<section class="cta-section">
+  <h2>20 minutes. No deck.</h2>
+  <p>A short conversation about where you are today and where you want to go.</p>
+  <a href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer" class="cta-button">Book 20 minutes</a>
+</section>
+
+<footer class="footer">
+  Prepared by Luke Sorensen | Airtable Enterprise
+</footer>
+</body>
+</html>
