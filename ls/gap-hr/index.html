@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Gap, Inc. x Airtable</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; line-height: 1.6; }
+.nav { background: rgba(10,10,15,0.95); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); }
+.nav-brand { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+.nav-brand span { color: #1A1A1A; font-weight: 600; }
+.hero { padding: 80px 5% 60px; text-align: center; background: radial-gradient(ellipse at top center, #1A1A1A15 0%, transparent 60%); }
+.hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 24px; line-height: 1.2; }
+.hero p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 40px; }
+.chip { display: inline-block; background: #1A1A1A20; color: #1A1A1A; border: 1px solid #1A1A1A40; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+.section { padding: 60px 5%; max-width: 900px; margin: 0 auto; }
+.section h2 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 32px; border-left: 3px solid #1A1A1A; padding-left: 16px; }
+.pov-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 32px; margin-bottom: 40px; }
+.pov-block p { font-size: 16px; color: rgba(255,255,255,0.8); }
+.signal-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.signal-date { font-size: 12px; color: #1A1A1A; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.signal-item p { margin-top: 4px; font-size: 15px; }
+.persona-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+.persona-card h4 { color: #1A1A1A; font-size: 15px; margin-bottom: 6px; }
+.persona-card p { font-size: 14px; color: rgba(255,255,255,0.6); }
+.cta-section { text-align: center; padding: 60px 5% 80px; }
+.cta-section h2 { font-size: 28px; color: #fff; margin-bottom: 12px; }
+.cta-section p { color: rgba(255,255,255,0.6); margin-bottom: 32px; font-size: 16px; }
+.cta-button { display: inline-block; background: #1A1A1A; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; transition: opacity 0.2s; }
+.cta-button:hover { opacity: 0.85; }
+.footer { text-align: center; padding: 20px 5%; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand">Prepared for <span>The Gap, Inc.</span> by Luke Sorensen</div>
+  <div class="nav-brand" style="color: #1A1A1A;">Account x Airtable</div>
+</nav>
+
+<section class="hero">
+  <div class="chip">EXPANSION PLAY</div>
+  <h1>Gap Inc. installed a new Chief People Officer in January 2024 with a mandate to build a high-performance talent model across ~3,500 locations and four brands — yet at $15.4B in revenue and eight straight quarters of growth, the infrastructure to plan and track that workforce at retail scale remains an open question.</h1>
+  <p>A focused look at what the data says and where the opportunity sits.</p>
+</section>
+
+<section class="section">
+  <h2>The Signal</h2>
+  <div class="pov-block">
+    <p>Gap Inc. appointed Amy Thompson as Chief People Officer in January 2024 with a mandate to modernize people operations and build a high-performance talent culture across Old Navy, Gap, Banana Republic, and Athleta — and has since elevated talent development to one of five board-level strategic priorities in its FY2025 annual report. The operational stakes are immediate: Gap operates approximately 2,497 company-operated stores, roughly 1,000 franchise locations, and is accelerating international store expansion while simultaneously rolling out an enterprise AI enablement program across its entire workforce. The goal is to execute a multi-brand talent transformation — recruiting, onboarding, developing, and retaining store associates and HQ employees with greater speed and consistency than the prior operating model ever required. But a people organization of this scale, managing seasonal hiring surges, multi-country workforce planning, and AI skilling cohorts across four distinct brands, cannot operate on fragmented systems and manual coordination. The core bottleneck is visibility: without a connected, flexible layer to track workforce programs, headcount plans, TA operations, and enablement initiatives across brands and geographies, the CPO's transformation agenda runs on spreadsheets and institutional memory.</p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>What We're Seeing</h2>
+  <div class="signal-item"><span class="signal-date">2024-01-12</span><p>Gap Inc. hired Amy Thompson as Chief People Officer in January 2024, succeeding Sheila Peters. Thompson joined from Mattel with a mandate to drive cultural transformation, build a high-performance talent model, and modernize people operations across Gap Inc.'s portfolio of four brands. CEO Richard Dickson publicly framed this hire as a foundational move to 'redefine Gap Inc. for a new era' built on best-in-class talent.</p></div><div class="signal-item"><span class="signal-date">2026-01-07</span><p>Gap Inc. posted a Director, Talent Acquisition Operations role (closing March 2026) tasked with reimagining enterprise-wide talent acquisition strategy, building scalable hiring systems, embedding workforce planning into Annual Operating Plan cycles, and leveraging platforms including Workday for forecasting. The job description explicitly calls out a 'Field-First mindset' — signaling that store-level workforce ops is a known gap in TA capability.</p></div><div class="signal-item"><span class="signal-date">2026-03-17</span><p>Gap Inc.'s FY2025 10-K (fiscal year ending January 31, 2026) lists 'strengthening our culture by developing talent and fostering a high-performance environment' as one of five core strategic priorities — elevated from an operational note to a board-level imperative alongside financial rigor and brand reinvigoration. Gap operates approximately 2,497 company-operated stores and 1,000 franchise stores, with $15.4B in net sales.</p></div><div class="signal-item"><span class="signal-date">2026-04-16</span><p>Gap Inc. and Microsoft Research published a joint study in April 2026 showing that how employees are trained on AI — not just given access — drives double the quality output. The study was conducted with 388 Gap Inc. employees across functions and job levels. Gap's CTO stated the company is 'investing in enablement at scale' and embedding AI into workflows company-wide — creating a direct HR/People Ops need for structured tracking of skilling programs, headcount readiness, and enablement cohorts.</p></div>
+</section>
+
+<section class="section">
+  <h2>Who Feels This</h2>
+  <div class="persona-card"><h4>Chief People Officer (Amy Thompson)</h4><p>Executive sponsor of the talent transformation mandate. Responsible for delivering on the strategic priority of developing a high-performance culture across ~3,500 locations. Needs visibility into programs, headcount progress, and talent initiatives across all four brands without building custom engineering solutions.</p></div><div class="persona-card"><h4>VP or Director, Talent Acquisition Operations</h4><p>Gap is actively hiring for this role with a stated need to manage Annual Operating Plan cycles, SLA reporting, vendor management, and scalable hiring systems. This persona owns the exact workflow gaps — recruiting pipelines, forecasting, and cross-functional coordination — where a flexible work-tracking layer creates immediate value.</p></div><div class="persona-card"><h4>VP, HR Business Partners (Retail / Store Operations)</h4><p>Owns the field-side people operations for 2,497+ company-operated stores. Responsible for workforce planning at the store level, seasonal headcount modeling, and associate development programs — all of which require a structured, shareable system of record that adapts to brand-by-brand variability.</p></div><div class="persona-card"><h4>Director, People Analytics / Workforce Planning</h4><p>Responsible for translating Gap Inc.'s AI enablement and talent data into actionable insights for the CPO and brand HRBPs. At $15.4B in revenue with eight quarters of growth momentum, this team is under pressure to move from reactive reporting to proactive workforce forecasting — a use case that benefits directly from a flexible, structured data layer outside of Workday's rigidity.</p></div>
+</section>
+
+<section class="cta-section">
+  <h2>20 minutes. No deck.</h2>
+  <p>A short conversation about where you are today and where you want to go.</p>
+  <a href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer" class="cta-button">Book 20 minutes</a>
+</section>
+
+<footer class="footer">
+  Prepared by Luke Sorensen | Airtable Enterprise
+</footer>
+</body>
+</html>
