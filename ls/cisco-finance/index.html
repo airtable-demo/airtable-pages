@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cisco Systems x Airtable</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; line-height: 1.6; }
+.nav { background: rgba(10,10,15,0.95); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); }
+.nav-brand { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+.nav-brand span { color: #049fd9; font-weight: 600; }
+.hero { padding: 80px 5% 60px; text-align: center; background: radial-gradient(ellipse at top center, #049fd915 0%, transparent 60%); }
+.hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 24px; line-height: 1.2; }
+.hero p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 40px; }
+.chip { display: inline-block; background: #049fd920; color: #049fd9; border: 1px solid #049fd940; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+.section { padding: 60px 5%; max-width: 900px; margin: 0 auto; }
+.section h2 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 32px; border-left: 3px solid #049fd9; padding-left: 16px; }
+.pov-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 32px; margin-bottom: 40px; }
+.pov-block p { font-size: 16px; color: rgba(255,255,255,0.8); }
+.signal-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.signal-date { font-size: 12px; color: #049fd9; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.signal-item p { margin-top: 4px; font-size: 15px; }
+.persona-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+.persona-card h4 { color: #049fd9; font-size: 15px; margin-bottom: 6px; }
+.persona-card p { font-size: 14px; color: rgba(255,255,255,0.6); }
+.cta-section { text-align: center; padding: 60px 5% 80px; }
+.cta-section h2 { font-size: 28px; color: #fff; margin-bottom: 12px; }
+.cta-section p { color: rgba(255,255,255,0.6); margin-bottom: 32px; font-size: 16px; }
+.cta-button { display: inline-block; background: #049fd9; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; transition: opacity 0.2s; }
+.cta-button:hover { opacity: 0.85; }
+.footer { text-align: center; padding: 20px 5%; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand">Prepared for <span>Cisco Systems</span> by Luke Sorensen</div>
+  <div class="nav-brand" style="color: #049fd9;">Account x Airtable</div>
+</nav>
+
+<section class="hero">
+  <div class="chip">EXPANSION PLAY</div>
+  <h1>Cisco is simultaneously executing a $1B+ restructuring program, managing $5B+ in AI infrastructure commitments, and navigating tariff-adjusted guidance across a $56B revenue base — yet its Finance and FP&A organization has no shared operational layer to drive real-time budget reallocation, scenario modeling, and cross-functional planning at that pace and complexity.</h1>
+  <p>A focused look at what the data says and where the opportunity sits.</p>
+</section>
+
+<section class="section">
+  <h2>The Signal</h2>
+  <div class="pov-block">
+    <p>In May 2026, Cisco announced the reduction of nearly 4,000 roles while reporting record revenue of $15.8 billion — a deliberate cost-structure realignment designed to accelerate investment in AI and security, executed simultaneously with a $1 billion restructuring program from FY2025 and rapidly escalating AI infrastructure commitments now projected to exceed $5 billion in FY2026 orders. For the Finance and FP&A organization, this compression of restructuring, capital reallocation, and demand-driven investment across a $56+ billion business creates an unprecedented planning velocity challenge: budgets need to be remodeled in weeks, not quarters, as headcount cost structures shift and investment priorities pivot across business units and geographies. The goal state for Cisco Finance is a planning environment where scenario modeling, cross-functional budget visibility, and real-time variance analysis operate from a single, consolidated source of truth — not from fragmented ERPs, disconnected spreadsheets, and ad hoc reporting processes across siloed finance teams. But Cisco's own internal case study reveals the obstacle: planning and reporting systems across business units were described as fragmented and inconsistent, making it difficult to produce reliable consolidated financial views — and that architectural gap is what prevents Finance from moving at the speed the business now demands.</p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>What We're Seeing</h2>
+  <div class="signal-item"><span class="signal-date">2026-05-13</span><p>Cisco announced a reduction of nearly 4,000 jobs (~5% of workforce) in Q4 FY2026, explicitly framed as restructuring its 'cost structure' to shift investment toward AI, silicon, optics, and security. CEO Chuck Robbins stated companies that win in the AI era must have 'focus, urgency, and the discipline to continuously shift investment toward the areas where demand and long-term value creation are strongest.'</p></div><div class="signal-item"><span class="signal-date">2026-05-13</span><p>Cisco reported record Q3 FY2026 revenue of $15.8 billion (up 12% YoY) alongside the workforce reduction announcement, signaling that the restructuring is a deliberate cost-structure realignment — not a financial distress play — requiring Finance/FP&A to rapidly remodel budgets, headcount costs, and capital reallocation across business units in real time.</p></div><div class="signal-item"><span class="signal-date">2025-09-03</span><p>Cisco's FY2025 10-K (filed September 2025) reported $744 million in restructuring charges for fiscal 2025, tied to a planned program estimated at ~$1 billion pre-tax covering ~7% of the workforce. The filing also noted that operating income margin declined ~1.8 percentage points despite 5% revenue growth, putting renewed pressure on FP&A to improve margin visibility and planning accuracy.</p></div><div class="signal-item"><span class="signal-date">2025-08-13</span><p>CFO Mark Patterson stated in the Q4 FY2025 earnings call (August 2025): 'As we enter fiscal 2026, we remain focused on making strategic investments in innovation, driving durable, profitable growth and delivering shareholder value.' Cisco guided FY2026 revenue of $59–60 billion and non-GAAP EPS of $4.00–$4.06, with guidance explicitly incorporating tariff impacts — a new complexity variable requiring scenario-based financial planning at scale.</p></div>
+</section>
+
+<section class="section">
+  <h2>Who Feels This</h2>
+  <div class="persona-card"><h4>VP of Finance Operations</h4><p>Owns the planning infrastructure, close process, and financial systems architecture across Cisco's global finance org. Directly accountable for the operational efficiency of FP&A workflows — the exact layer where fragmented systems, manual processes, and siloed reporting create bottlenecks during restructuring and investment reallocation cycles.</p></div><div class="persona-card"><h4>Director of FP&A, Corporate Planning</h4><p>Leads consolidated budgeting, quarterly commit, and variance analysis at the enterprise level. Feels the pain of stitching together inputs from multiple business unit finance teams during a period of simultaneous headcount restructuring, tariff-adjusted guidance, and accelerating AI infrastructure spend commitments.</p></div><div class="persona-card"><h4>Head of Financial Planning & Analysis, Business Unit Finance</h4><p>Manages $1B+ OpEx budgets within product groups like Networking and Security, coordinates with Corporate Finance on forecasting cycles, and is being asked to model investment trade-offs in real time as Cisco reallocates spend post-restructuring. Currently relies on Excel and legacy ERP exports for these workflows.</p></div><div class="persona-card"><h4>Senior Director, Finance Reporting & AI Strategy</h4><p>An active role Cisco is hiring for (posted January 2026), explicitly tasked with connecting financial reporting to AI strategy. This persona is architecting the future state of Cisco Finance's data and planning infrastructure — and is evaluating what operational tools can bridge the gap between Finance's current fragmented tooling and the integrated planning environment needed to support AI-era decision velocity.</p></div>
+</section>
+
+<section class="cta-section">
+  <h2>20 minutes. No deck.</h2>
+  <p>A short conversation about where you are today and where you want to go.</p>
+  <a href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer" class="cta-button">Book 20 minutes</a>
+</section>
+
+<footer class="footer">
+  Prepared by Luke Sorensen | Airtable Enterprise
+</footer>
+</body>
+</html>
