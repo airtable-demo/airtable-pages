@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Electronic Arts x Airtable</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: #0a0a0f; color: #e0e0e0; line-height: 1.6; }
+.nav { background: rgba(10,10,15,0.95); border-bottom: 1px solid rgba(255,255,255,0.08); padding: 16px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; backdrop-filter: blur(20px); }
+.nav-brand { font-size: 13px; color: rgba(255,255,255,0.5); letter-spacing: 0.5px; }
+.nav-brand span { color: #FF4747; font-weight: 600; }
+.hero { padding: 80px 5% 60px; text-align: center; background: radial-gradient(ellipse at top center, #FF474715 0%, transparent 60%); }
+.hero h1 { font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: #fff; max-width: 800px; margin: 0 auto 24px; line-height: 1.2; }
+.hero p { font-size: 18px; color: rgba(255,255,255,0.7); max-width: 600px; margin: 0 auto 40px; }
+.chip { display: inline-block; background: #FF474720; color: #FF4747; border: 1px solid #FF474740; padding: 6px 16px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 24px; }
+.section { padding: 60px 5%; max-width: 900px; margin: 0 auto; }
+.section h2 { font-size: 24px; font-weight: 700; color: #fff; margin-bottom: 32px; border-left: 3px solid #FF4747; padding-left: 16px; }
+.pov-block { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 32px; margin-bottom: 40px; }
+.pov-block p { font-size: 16px; color: rgba(255,255,255,0.8); }
+.signal-item { padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.signal-date { font-size: 12px; color: #FF4747; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.signal-item p { margin-top: 4px; font-size: 15px; }
+.persona-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+.persona-card h4 { color: #FF4747; font-size: 15px; margin-bottom: 6px; }
+.persona-card p { font-size: 14px; color: rgba(255,255,255,0.6); }
+.cta-section { text-align: center; padding: 60px 5% 80px; }
+.cta-section h2 { font-size: 28px; color: #fff; margin-bottom: 12px; }
+.cta-section p { color: rgba(255,255,255,0.6); margin-bottom: 32px; font-size: 16px; }
+.cta-button { display: inline-block; background: #FF4747; color: #fff; padding: 14px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 16px; transition: opacity 0.2s; }
+.cta-button:hover { opacity: 0.85; }
+.footer { text-align: center; padding: 20px 5%; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: rgba(255,255,255,0.3); }
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-brand">Prepared for <span>Electronic Arts</span> by Luke Sorensen</div>
+  <div class="nav-brand" style="color: #FF4747;">Account x Airtable</div>
+</nav>
+
+<section class="hero">
+  <div class="chip">EXPANSION PLAY</div>
+  <h1>EA is entering private equity ownership carrying $20B in acquisition debt, a 24% GAAP operating income decline, and three restructuring cycles that have forced FP&A teams to remodel studio P&Ls and portfolio plans in rapid succession — yet the Finance organization managing that complexity still operates without a unified planning environment scaled to the pace those decisions now demand.</h1>
+  <p>A focused look at what the data says and where the opportunity sits.</p>
+</section>
+
+<section class="section">
+  <h2>The Signal</h2>
+  <div class="pov-block">
+    <p>Electronic Arts closed FY26 with record net bookings of $8B while simultaneously navigating the largest LBO in gaming history — a $55B take-private that layered $20B in debt onto a Finance organization already absorbing three workforce restructurings, a live-services revenue model generating quarter-to-quarter deferred revenue swings exceeding $1B, and a structural portfolio shift away from catalog games toward massive online communities. The operational implication is that EA's FP&A teams are now simultaneously remodeling studio-level P&Ls after each studio closure or game cancellation, reforecasting franchise-level live-services bookings on a near-weekly cadence, and preparing post-LBO capital allocation reporting for private equity owners who are measuring performance through free cash flow and deleverage speed — not quarterly EPS. The goal state is a Finance function capable of continuous, integrated planning across a dynamic franchise portfolio: scenario-modeling debt service against live-services volatility, generating rapid reforecasts when studios are reshuffled, and providing CFO Stuart Canfield with the real-time strategic intelligence he needs to manage a 9.95x leveraged balance sheet. The bottleneck is that the planning infrastructure required to do this at EA's scale — spanning 9+ internal functions, multiple studios across 117 countries, and a revenue mix where a single game update can shift a quarter's net bookings by hundreds of millions — is fragmented across tools that were built for a public-company planning cadence, not the speed and scrutiny of a post-LBO operating environment.</p>
+  </div>
+</section>
+
+<section class="section">
+  <h2>What We're Seeing</h2>
+  <div class="signal-item"><span class="signal-date">2025-09-29 (deal announced); 2026-03-22 (debt roadshow); 2026-05-05 (FY26 results confirming close progress)</span><p>EA announced a $55B take-private by a consortium of PIF, Silver Lake, and Affinity Partners — the largest LBO in history — at $210/share. The deal saddles EA with ~$20B in debt and a pro forma net debt-to-EBITDA of ~9.95x, generating ~$1.4B in annual interest expense that consumes ~75% of projected free cash flow. CFO Stuart Canfield and CEO Andrew Wilson personally roadshowed JPMorgan debt investors in March 2026 to defend EA's financial model. The Finance organization now faces a fundamentally new capital allocation mandate: demonstrate deleverage discipline while funding live-services growth.</p></div><div class="signal-item"><span class="signal-date">2026-05-05</span><p>EA delivered record FY26 net bookings of $8.026B (+9% YoY) and record operating cash flow of $2.553B (+23% YoY), but GAAP operating income fell 24% to $1.162B versus $1.520B in FY25. Live services now represent 71% of net revenue ($5.383B). The CFO organization must now model, forecast, and report across an increasingly complex live-services revenue mix — with deferred revenue swings of up to $1.145B in a single quarter (Q3 FY26) — while operating under a post-LBO scrutiny environment where no earnings call was held for Q4 FY26 due to the pending transaction.</p></div><div class="signal-item"><span class="signal-date">2025-05-06</span><p>EA's CFO Stuart Canfield stated on the Q4 FY25 earnings call (May 2025) that FY25 was a year of 'focused execution' — 'prioritizing highest impact initiatives and realigning investments around our long-term growth framework.' He cited the need for 'operational agility' and 'disciplined investment' going into FY26 and FY27, with the company targeting a margin expansion framework anchored on live-services growth and two major franchise launches (Battlefield 6, Skate). He flagged a structural portfolio transition reducing catalog contribution and a ~40% YoY Apex Legends decline, requiring Finance teams to rapidly reforecast revenue across a shifting slate.</p></div><div class="signal-item"><span class="signal-date">2025-01-30 (BioWare); 2025-04-29 (Titanfall/Respawn); 2025-05-28 (Cliffhanger)</span><p>EA executed its third workforce reduction in under 26 months in April-May 2025: 300-400 employees cut, including ~100 at Respawn (Titanfall game cancelled), closure of Cliffhanger Games (Black Panther game cancelled), and BioWare downsized in January 2025 after Dragon Age: The Veilguard underperformed. Each restructuring round requires Finance/FP&A teams to remodel studio-level P&Ls, reallocate capitalised development costs, and update long-range plans — all while the organization shrinks its own headcount.</p></div>
+</section>
+
+<section class="section">
+  <h2>Who Feels This</h2>
+  <div class="persona-card"><h4>SVP / VP of FP&A, EA Entertainment or EA SPORTS</h4><p>Directly owns the franchise-level financial planning process and is actively being hired or promoted into expanded scope (Wei-Lin Tong promoted July 2025; VP FP&A EA SPORTS role open). They are accountable for the reforecasting cadence tied to live-services performance and would feel the planning fragmentation most acutely as the go-private introduces new reporting demands from Silver Lake and PIF.</p></div><div class="persona-card"><h4>CFO / EVP Finance — Stuart Canfield</h4><p>As the architect of EA's post-LBO financial framework, Canfield is responsible for demonstrating to the consortium that EA can operate with discipline at 9.95x leverage. He personally roadshowed debt investors and set the 'operational agility' mandate on the Q4 FY25 earnings call. He is the executive who would sponsor a Finance-wide planning transformation.</p></div><div class="persona-card"><h4>VP or Director, Corporate FP&A / Long-Range Planning</h4><p>The active VP Strategic Planning posting explicitly requires building a 'unified planning framework' connecting enterprise priorities to franchise-level decisions, ownership of QBRs and Board-level inputs, and alignment between financial planning and investor messaging — the exact pain point created by a fragmented planning environment under private ownership scrutiny.</p></div><div class="persona-card"><h4>Finance Data Governance Manager / Head of Finance Technology (FinTech)</h4><p>EA's active jobs.ea.com posting for a Data Steward, FinTech describes a Finance org explicitly 'modernizing how data is governed, integrated, and trusted.' The manager of this function is actively building the data infrastructure layer that underpins any scalable FP&A planning environment — making them a critical technical champion for any planning modernization effort.</p></div>
+</section>
+
+<section class="cta-section">
+  <h2>20 minutes. No deck.</h2>
+  <p>A short conversation about where you are today and where you want to go.</p>
+  <a href="https://calendar.app.google/j9bkoFAUpSbwwcZeA" target="_blank" rel="noopener noreferrer" class="cta-button">Book 20 minutes</a>
+</section>
+
+<footer class="footer">
+  Prepared by Luke Sorensen | Airtable Enterprise
+</footer>
+</body>
+</html>
