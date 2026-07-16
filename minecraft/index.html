@@ -136,7 +136,7 @@ function genWorld(){
   // trees on land
   for(var x2=3;x2<WX-3;x2++) for(var z2=3;z2<WZ-3;z2++){
     var hh2=tops[x2][z2];
-    if(hh2>SEA+1 && h2(x2*7.3,z2*3.1)>0.86){
+    if(hh2>SEA+1 && h2(x2*7.3,z2*3.1)>0.9){
       var th=4+Math.floor(h2(x2,z2)*3);
       for(var t=1;t<=th;t++) set(x2,hh2+t,z2,4);
       var cy=hh2+th;
@@ -329,7 +329,16 @@ renderHotbar();
 // ---------- start ----------
 var playing=false, built=false;
 function play(){
-  if(!built){ genWorld(); buildAll(); built=true; }
+  if(!built){
+    genWorld();
+    // safe spawn: stand on the ground at world center with clear headroom
+    var sx=WX>>1, sz=WZ>>1, gy=0;
+    for(var yy=WY-1; yy>=0; yy--){ if(get(sx,yy,sz)!==0){ gy=yy; break; } }
+    for(var c=1;c<=3;c++){ set(sx,gy+c,sz,0); }
+    set(sx+1,gy+1,sz,0); set(sx-1,gy+1,sz,0); set(sx,gy+1,sz+1,0); set(sx,gy+1,sz-1,0);
+    pos.set(sx+0.5, gy+1, sz+0.5); vel.set(0,0,0);
+    buildAll(); built=true;
+  }
   document.getElementById('intro').classList.add('hidden');
   document.getElementById('hud').classList.add('on');
   playing=true;
