@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+<title>ERA — a game about the race you were never meant to win</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#f4efe6;
+    --dim:#a9a29a;
+    --cyan:#57e4ff;
+    --amber:#ffb457;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:100%;height:100%;overflow:hidden;background:#0b0a12;color:var(--ink);
+    font-family:'Space Grotesk',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  #app{position:fixed;inset:0}
+  canvas{display:block}
+
+  /* cinematic overlays */
+  #vignette{position:fixed;inset:0;pointer-events:none;z-index:5;
+    background:radial-gradient(120% 120% at 50% 45%, rgba(0,0,0,0) 42%, rgba(0,0,0,.34) 78%, rgba(0,0,0,.72) 100%);
+    mix-blend-mode:multiply}
+  #grain{position:fixed;inset:-50%;pointer-events:none;z-index:6;opacity:.05;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    animation:grain .6s steps(3) infinite}
+  @keyframes grain{0%{transform:translate(0,0)}33%{transform:translate(-3%,2%)}66%{transform:translate(2%,-3%)}100%{transform:translate(0,0)}}
+
+  /* HUD */
+  #hud{position:fixed;inset:0;z-index:4;pointer-events:none;opacity:0;transition:opacity .8s}
+  #hud.on{opacity:1}
+  .panel{position:absolute;font-family:'IBM Plex Mono',monospace;letter-spacing:.02em}
+  #top{top:22px;left:0;right:0;display:flex;justify-content:center;gap:46px;text-align:center}
+  .stat .k{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.22em}
+  .stat .v{font-size:30px;font-weight:700;line-height:1.1}
+  #outputV{color:var(--cyan)}
+  #meterWrap{position:absolute;bottom:34px;left:50%;transform:translateX(-50%);width:min(46vw,420px);text-align:center}
+  #meterBar{height:7px;border-radius:6px;background:rgba(255,255,255,.12);overflow:hidden;margin-top:8px}
+  #meterFill{height:100%;width:100%;background:linear-gradient(90deg,var(--amber),#ff7a59);transition:width .25s}
+  #meterLbl{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.22em}
+  #clock{top:24px;right:26px;font-size:13px;color:var(--dim)}
+  #hint{bottom:70px;left:50%;transform:translateX(-50%);font-size:13px;color:var(--ink);opacity:.0;transition:opacity .5s;text-align:center;max-width:80vw}
+  #crosshair{position:absolute;top:50%;left:50%;width:6px;height:6px;margin:-3px 0 0 -3px;border-radius:50%;background:rgba(255,255,255,.5)}
+
+  /* screens */
+  .screen{position:fixed;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;
+    padding:6vw;text-align:center;background:radial-gradient(130% 130% at 50% 30%,#151129 0%,#0b0a12 70%);
+    pointer-events:auto;cursor:pointer}
+  .screen.hidden{display:none}
+  .wrap{max-width:760px}
+  .kicker{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.5em;color:var(--cyan);text-transform:uppercase;margin-bottom:20px}
+  h1{font-size:clamp(58px,13vw,140px);font-weight:700;letter-spacing:.04em;line-height:.92;
+    background:linear-gradient(180deg,#fff,#b9b2ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{margin:22px auto 0;max-width:560px;color:var(--dim);font-size:clamp(15px,2vw,18px);line-height:1.6}
+  .controls{margin:26px auto 0;display:flex;flex-wrap:wrap;gap:10px 14px;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--dim)}
+  .controls b{color:var(--ink);font-weight:500}
+  .cta{margin-top:34px;display:inline-block;pointer-events:auto;cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:.18em;text-transform:uppercase;
+    padding:15px 34px;border:1px solid rgba(255,255,255,.25);border-radius:999px;color:var(--ink);
+    background:rgba(255,255,255,.03);transition:all .25s}
+  .cta:hover{background:var(--ink);color:#0b0a12;border-color:var(--ink);transform:translateY(-2px)}
+
+  /* ending */
+  #end .cols{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin:30px 0 6px;text-align:left}
+  @media(max-width:640px){#end .cols{grid-template-columns:1fr;gap:18px}}
+  .col{border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:22px}
+  .col h3{font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:.24em;text-transform:uppercase;margin-bottom:14px}
+  .col.record h3{color:var(--cyan)} .col.room h3{color:var(--amber)}
+  .col p{color:var(--dim);font-size:14px;line-height:1.65;margin-bottom:9px}
+  .col p.strong{color:var(--ink)}
+  .verdict{margin:14px auto 0;max-width:620px;font-size:clamp(16px,2.4vw,21px);line-height:1.5;color:#fff}
+  #loaderr{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:8vw;
+    font-family:'IBM Plex Mono',monospace;color:#ff8a8a;text-align:center}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="vignette"></div>
+<div id="grain"></div>
+
+<div id="hud">
+  <div id="crosshair"></div>
+  <div id="top" class="panel">
+    <div class="stat"><div class="k">Output</div><div class="v" id="outputV">0</div></div>
+    <div class="stat"><div class="k">Presence</div><div class="v" id="presenceV">0</div></div>
+  </div>
+  <div id="clock" class="panel">ERA I · <span id="timeV">--</span></div>
+  <div id="meterWrap" class="panel">
+    <div id="meterLbl">Warmth of the world</div>
+    <div id="meterBar"><div id="meterFill"></div></div>
+  </div>
+  <div id="hint" class="panel"></div>
+</div>
+
+<div id="intro" class="screen">
+  <div class="wrap">
+    <div class="kicker">A game in one sitting</div>
+    <h1>ERA</h1>
+    <p class="sub">Two scores run at once. One glows on the wall for everyone to see. The other is never displayed — and it's the only one the ending counts.</p>
+    <div class="controls">
+      <span><b>W A S D</b> move</span>
+      <span><b>Mouse / Arrows</b> look</span>
+      <span><b>Shift</b> hurry</span>
+      <span><b>Chase</b> the cyan orbs</span>
+      <span><b>Or stay</b> with the amber figures</span>
+    </div>
+    <div class="cta" id="startBtn">Begin your era</div>
+  </div>
+</div>
+
+<div id="end" class="screen hidden">
+  <div class="wrap">
+    <div class="kicker" id="endKicker">The era ends</div>
+    <h1 style="font-size:clamp(40px,8vw,84px)">The ledger</h1>
+    <div class="cols">
+      <div class="col record"><h3>What the algorithm kept</h3><div id="recordBody"></div></div>
+      <div class="col room"><h3>Who was in the room</h3><div id="roomBody"></div></div>
+    </div>
+    <p class="verdict" id="verdict"></p>
+    <div class="cta" id="againBtn">Live it again</div>
+  </div>
+</div>
+
+<div id="loaderr"><div>Couldn't start the 3D engine in this view.<br/>Open the page in a full browser tab and reload.</div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+  "use strict";
+  if(!window.THREE){ document.getElementById('loaderr').style.display='flex'; return; }
+
+  var app=document.getElementById('app');
+  var W=window.innerWidth, H=window.innerHeight;
+
+  var renderer, scene, camera, clock;
+  try{
+    renderer=new THREE.WebGLRenderer({antialias:true, powerPreference:'high-performance'});
+  }catch(e){ document.getElementById('loaderr').style.display='flex'; return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(W,H);
+  renderer.outputEncoding=THREE.sRGBEncoding;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.05;
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  app.appendChild(renderer.domElement);
+
+  scene=new THREE.Scene();
+  camera=new THREE.PerspectiveCamera(70, W/H, 0.1, 400);
+  camera.rotation.order='YXZ';
+  clock=new THREE.Clock();
+
+  // ---- palettes (alive vs drained) ----
+  var ALIVE={ fog:new THREE.Color(0x241a3a), ground:new THREE.Color(0x2c2748),
+              sky:new THREE.Color(0xffcf9b), grnd:new THREE.Color(0x4b3b6b),
+              mono:new THREE.Color(0x3a3556), npc:new THREE.Color(0xffb457) };
+  var DEAD ={ fog:new THREE.Color(0x9c9ca2), ground:new THREE.Color(0x8f9096),
+              sky:new THREE.Color(0xd7d7db), grnd:new THREE.Color(0x9a9aa0),
+              mono:new THREE.Color(0x9a9aa0), npc:new THREE.Color(0x8a8a90) };
+  var cFog=new THREE.Color(), cGround=new THREE.Color(), cMono=new THREE.Color(), cNpc=new THREE.Color();
+
+  scene.fog=new THREE.Fog(ALIVE.fog.clone(), 8, 90);
+  scene.background=ALIVE.fog.clone();
+
+  // ---- lights ----
+  var hemi=new THREE.HemisphereLight(ALIVE.sky.clone(), ALIVE.grnd.clone(), 0.85); scene.add(hemi);
+  var amb=new THREE.AmbientLight(0xffffff,0.18); scene.add(amb);
+  var key=new THREE.DirectionalLight(0xfff0dd,1.15);
+  key.position.set(24,40,16); key.castShadow=true;
+  key.shadow.mapSize.width=1024; key.shadow.mapSize.height=1024;
+  key.shadow.camera.near=1; key.shadow.camera.far=140;
+  key.shadow.camera.left=-70; key.shadow.camera.right=70;
+  key.shadow.camera.top=70; key.shadow.camera.bottom=-70;
+  key.shadow.bias=-0.0004;
+  scene.add(key);
+  var rim=new THREE.DirectionalLight(0x6a7bff,0.5); rim.position.set(-20,14,-24); scene.add(rim);
+
+  // ---- ground ----
+  var groundMat=new THREE.MeshStandardMaterial({color:ALIVE.ground.clone(),roughness:0.92,metalness:0.05});
+  var ground=new THREE.Mesh(new THREE.PlaneGeometry(400,400,1,1),groundMat);
+  ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+  var grid=new THREE.GridHelper(400,120,0x000000,0x000000);
+  grid.material.opacity=0.08; grid.material.transparent=true; scene.add(grid);
+
+  // ---- monoliths (depth + shadow) ----
+  var monoMat=new THREE.MeshStandardMaterial({color:ALIVE.mono.clone(),roughness:0.8,metalness:0.15});
+  var monoliths=[];
+  for(var i=0;i<26;i++){
+    var h=6+Math.random()*22;
+    var m=new THREE.Mesh(new THREE.BoxGeometry(2+Math.random()*3,h,2+Math.random()*3),monoMat);
+    var a=Math.random()*Math.PI*2, r=18+Math.random()*70;
+    m.position.set(Math.cos(a)*r,h/2,Math.sin(a)*r);
+    m.rotation.y=Math.random()*Math.PI; m.castShadow=true; m.receiveShadow=true;
+    scene.add(m); monoliths.push(m);
+  }
+
+  // ---- starfield ----
+  (function(){
+    var g=new THREE.BufferGeometry(), n=900, pos=new Float32Array(n*3);
+    for(var i=0;i<n;i++){var a=Math.random()*Math.PI*2,b=Math.random()*Math.PI*0.5+0.05,rr=160+Math.random()*120;
+      pos[i*3]=Math.cos(a)*Math.cos(b)*rr; pos[i*3+1]=Math.sin(b)*rr; pos[i*3+2]=Math.sin(a)*Math.cos(b)*rr;}
+    g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    scene.add(new THREE.Points(g,new THREE.PointsMaterial({color:0xffffff,size:0.6,transparent:true,opacity:0.55})));
+  })();
+
+  // ---- floating dust ----
+  var dust; (function(){
+    var g=new THREE.BufferGeometry(), n=260, pos=new Float32Array(n*3);
+    for(var i=0;i<n;i++){pos[i*3]=(Math.random()-.5)*120;pos[i*3+1]=Math.random()*24;pos[i*3+2]=(Math.random()-.5)*120;}
+    g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+    dust=new THREE.Points(g,new THREE.PointsMaterial({color:0xbfd0ff,size:0.14,transparent:true,opacity:0.5}));
+    scene.add(dust);
+  })();
+
+  // ---- ORBS (visible "Output") ----
+  var orbs=[], ORB_R=1.7;
+  function spawnOrb(){
+    var geo=new THREE.IcosahedronGeometry(0.5,0);
+    var mat=new THREE.MeshStandardMaterial({color:0x0a2a33,emissive:0x57e4ff,emissiveIntensity:1.6,roughness:0.3,metalness:0.2});
+    var o=new THREE.Mesh(geo,mat);
+    var a=Math.random()*Math.PI*2, r=6+Math.random()*40;
+    o.position.set(Math.cos(a)*r, 1+Math.random()*2.4, Math.sin(a)*r);
+    o.userData.ph=Math.random()*6.28; o.castShadow=true;
+    var halo=new THREE.PointLight(0x57e4ff,1.1,7); o.add(halo);
+    scene.add(o); orbs.push(o);
+  }
+  for(var k=0;k<16;k++) spawnOrb();
+
+  // ---- NPCs (hidden "Presence") ----
+  var npcs=[];
+  function makeNPC(x,z){
+    var grp=new THREE.Group();
+    var bodyMat=new THREE.MeshStandardMaterial({color:0x151221,emissive:ALIVE.npc.clone(),emissiveIntensity:0.9,roughness:0.6});
+    var body=new THREE.Mesh(new THREE.CylinderGeometry(0.34,0.5,1.5,10),bodyMat); body.position.y=0.95; body.castShadow=true;
+    var head=new THREE.Mesh(new THREE.SphereGeometry(0.34,16,16),bodyMat); head.position.y=1.95; head.castShadow=true;
+    var gl=new THREE.PointLight(ALIVE.npc.clone(),0.8,6); gl.position.y=1.4;
+    grp.add(body,head,gl);
+    grp.position.set(x,0,z); grp.userData={mat:bodyMat,light:gl,ph:Math.random()*6.28,warm:0.9};
+    scene.add(grp); npcs.push(grp);
+  }
+  for(var j=0;j<9;j++){var a=Math.random()*Math.PI*2,r=8+Math.random()*34;makeNPC(Math.cos(a)*r,Math.sin(a)*r);}
+
+  // ---- player / state ----
+  var EYE=1.7, BOUND=54;
+  var player=new THREE.Vector3(0,EYE,0);
+  var yaw=0,pitch=0, vel=new THREE.Vector3();
+  var keys={};
+  var state={playing:false, output:0, presence:0, warmth:1, time:100, near:false, bob:0, ended:false};
+
+  // ---- input ----
+  window.addEventListener('keydown',function(e){keys[e.code]=true; if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Space'].indexOf(e.code)>=0)e.preventDefault();});
+  window.addEventListener('keyup',function(e){keys[e.code]=false;});
+  var cv=renderer.domElement, locked=false, dragging=false;
+  cv.addEventListener('click',function(){ if(state.playing && cv.requestPointerLock) cv.requestPointerLock(); });
+  document.addEventListener('pointerlockchange',function(){ locked=(document.pointerLockElement===cv); });
+  cv.addEventListener('mousedown',function(){dragging=true;});
+  window.addEventListener('mouseup',function(){dragging=false;});
+  window.addEventListener('mousemove',function(e){
+    if(!state.playing) return;
+    if(locked || dragging){ yaw-=e.movementX*0.0024; pitch-=e.movementY*0.0024;
+      pitch=Math.max(-1.2,Math.min(1.2,pitch)); }
+  });
+  // touch look
+  var lastT=null;
+  cv.addEventListener('touchmove',function(e){ if(!state.playing)return; var t=e.touches[0];
+    if(lastT){ yaw-=(t.clientX-lastT.x)*0.005; pitch=Math.max(-1.2,Math.min(1.2,pitch-(t.clientY-lastT.y)*0.005)); }
+    lastT={x:t.clientX,y:t.clientY}; e.preventDefault(); },{passive:false});
+  cv.addEventListener('touchend',function(){lastT=null;});
+
+  window.addEventListener('resize',function(){
+    W=window.innerWidth;H=window.innerHeight;camera.aspect=W/H;camera.updateProjectionMatrix();renderer.setSize(W,H);
+  });
+
+  // ---- HUD refs ----
+  var hud=document.getElementById('hud'), outputV=document.getElementById('outputV'),
+      presenceV=document.getElementById('presenceV'), timeV=document.getElementById('timeV'),
+      meterFill=document.getElementById('meterFill'), hintEl=document.getElementById('hint');
+  var hints=[
+    "The cyan orbs are Output. They count, and everyone can see them.",
+    "The amber figures don't give points. Walk close and just… stay.",
+    "Notice what the world does each time you grab an orb.",
+    "There is a second score. It is not on the wall.",
+    "You cannot top both charts. No one can. That's the point."
+  ];
+  var hintIdx=0, hintTimer=0;
+
+  // ---- game control ----
+  function start(){
+    document.getElementById('intro').classList.add('hidden');
+    document.getElementById('end').classList.add('hidden');
+    hud.classList.add('on');
+    state={playing:true,output:0,presence:0,warmth:1,time:100,near:false,bob:0,ended:false};
+    player.set(0,EYE,0); yaw=0; pitch=0; hintIdx=0; hintTimer=0;
+    showHint();
+    try{ if(cv.requestPointerLock) cv.requestPointerLock(); }catch(_){}
+  }
+  function showHint(){ hintEl.textContent=hints[hintIdx]; hintEl.style.opacity=1;
+    setTimeout(function(){hintEl.style.opacity=0;},4200); }
+
+  function beginGame(e){ if(e&&e.preventDefault)e.preventDefault(); if(!state.playing) start(); }
+  document.getElementById('intro').addEventListener('click',beginGame);
+  document.getElementById('intro').addEventListener('touchend',beginGame,{passive:false});
+  document.getElementById('againBtn').addEventListener('click',function(e){ if(e)e.stopPropagation(); if(!state.playing) start(); });
+  window.addEventListener('keydown',function(e){
+    if(state.playing) return;
+    var introVis=!document.getElementById('intro').classList.contains('hidden');
+    var endVis=!document.getElementById('end').classList.contains('hidden');
+    if((introVis||endVis) && ['Enter','Space','KeyW','KeyA','KeyS','KeyD'].indexOf(e.code)>=0){ e.preventDefault(); start(); }
+  });
+
+  function endGame(){
+    state.playing=false; state.ended=true; hud.classList.remove('on');
+    if(document.exitPointerLock) document.exitPointerLock();
+    var out=state.output, pres=Math.round(state.presence);
+    var recBody=document.getElementById('recordBody'), roomBody=document.getElementById('roomBody');
+    var rec=[]; var room=[];
+    rec.push({t:"Logged "+out+" units of visible output.",s:true});
+    rec.push({t: out>=22? "A relentless quarter. Truly optimized." : out>=10? "Steady numbers. Defensible." : "The dashboard stayed quiet."});
+    rec.push({t:"Out-produced by the machine anyway. It never slept."});
+    var warmthPct=Math.round(state.warmth*100);
+    if(pres>=18){ room.push({t:"People came, and stayed, unprompted.",s:true});
+      room.push({t:"The room was warm the whole way through — "+warmthPct+"% lit."});
+      room.push({t:"Names that will say yours out loud, later."});
+    } else if(pres>=7){ room.push({t:"A few chairs were filled.",s:true});
+      room.push({t:"You looked up sometimes. It mattered more than you scored it."});
+      room.push({t:"Room warmth faded to "+warmthPct+"%."});
+    } else { room.push({t:"The chairs were mostly empty.",s:true});
+      room.push({t:"The world dimmed to "+warmthPct+"% and you didn't notice."});
+      room.push({t:"No one was assigned to remember this part."});
+    }
+    recBody.innerHTML=rec.map(function(x){return '<p'+(x.s?' class="strong"':'')+'>'+x.t+'</p>';}).join('');
+    roomBody.innerHTML=room.map(function(x){return '<p'+(x.s?' class="strong"':'')+'>'+x.t+'</p>';}).join('');
+    var verdict;
+    if(out>pres*1.4) verdict="You spent your one era racing something built to win that race. The score that decided the ending was never on the board.";
+    else if(pres>out) verdict="You fell behind on the numbers the world watched — and kept the only ones it couldn't measure.";
+    else verdict="You split yourself between two scoreboards. Only one of them showed up at the end.";
+    document.getElementById('verdict').textContent=verdict;
+    document.getElementById('end').classList.remove('hidden');
+  }
+
+  // ---- loop ----
+  var tmp=new THREE.Vector3(), fwd=new THREE.Vector3(), right=new THREE.Vector3(), up=new THREE.Vector3(0,1,0);
+  function animate(){
+    requestAnimationFrame(animate);
+    var dt=Math.min(clock.getDelta(),0.05), t=clock.elapsedTime;
+
+    if(state.playing){
+      // keyboard look
+      if(keys['ArrowLeft'])yaw+=1.6*dt; if(keys['ArrowRight'])yaw-=1.6*dt;
+      if(keys['ArrowUp'])pitch=Math.min(1.2,pitch+1.3*dt); if(keys['ArrowDown'])pitch=Math.max(-1.2,pitch-1.3*dt);
+
+      // movement
+      fwd.set(-Math.sin(yaw),0,-Math.cos(yaw));
+      right.crossVectors(fwd,up).normalize();
+      var sp=(keys['ShiftLeft']||keys['ShiftRight']?9.5:5.4);
+      tmp.set(0,0,0);
+      if(keys['KeyW'])tmp.add(fwd); if(keys['KeyS'])tmp.sub(fwd);
+      if(keys['KeyD'])tmp.add(right); if(keys['KeyA'])tmp.sub(right);
+      var moving=tmp.lengthSq()>0.001;
+      if(moving){tmp.normalize().multiplyScalar(sp*dt); player.add(tmp); state.bob+=dt*sp;}
+      var pr=Math.hypot(player.x,player.z);
+      if(pr>BOUND){player.x*=BOUND/pr;player.z*=BOUND/pr;}
+
+      camera.position.set(player.x, EYE+Math.sin(state.bob*2.1)*0.06, player.z);
+      camera.rotation.set(pitch,yaw,0);
+
+      // orbs
+      for(var i=orbs.length-1;i>=0;i--){var o=orbs[i];
+        o.userData.ph+=dt; o.position.y=1.2+Math.sin(o.userData.ph*1.6)*0.35+0.6; o.rotation.y+=dt*1.3; o.rotation.x+=dt*0.7;
+        if(Math.hypot(o.position.x-player.x,o.position.z-player.z)<ORB_R){
+          scene.remove(o); orbs.splice(i,1); spawnOrb();
+          state.output++; state.warmth=Math.max(0,state.warmth-0.075);
+        }
+      }
+
+      // NPC proximity -> presence + warmth
+      state.near=false;
+      for(var n=0;n<npcs.length;n++){var g=npcs[n]; g.userData.ph+=dt;
+        g.position.y=Math.sin(g.userData.ph*1.2)*0.05;
+        var d=Math.hypot(g.position.x-player.x,g.position.z-player.z);
+        if(d<3.4){ state.near=true;
+          // face player
+          g.rotation.y=Math.atan2(player.x-g.position.x,player.z-g.position.z);
+          state.presence+=dt*1.6; state.warmth=Math.min(1,state.warmth+0.12*dt);
+          g.userData.mat.emissiveIntensity=1.6; g.userData.light.intensity=1.5;
+        } else {
+          g.userData.mat.emissiveIntensity=0.5+state.warmth*0.6; g.userData.light.intensity=0.4+state.warmth*0.7;
+        }
+      }
+
+      // timer
+      state.time-=dt;
+      if(state.time<=0){ state.time=0; endGame(); }
+
+      // hud
+      outputV.textContent=state.output;
+      presenceV.textContent=Math.round(state.presence);
+      var mm=Math.floor(state.time/60), ss=Math.floor(state.time%60);
+      timeV.textContent=mm+":"+(ss<10?'0':'')+ss+" left";
+      meterFill.style.width=(state.warmth*100).toFixed(0)+"%";
+
+      hintTimer+=dt;
+      if(hintTimer>15 && hintIdx<hints.length-1){hintIdx++;hintTimer=0;showHint();}
+    }
+
+    // world color grade by warmth (runs always so intro looks alive)
+    var w=state.playing?state.warmth:1;
+    cFog.copy(DEAD.fog).lerp(ALIVE.fog,w); scene.fog.color.copy(cFog); scene.background.copy(cFog);
+    cGround.copy(DEAD.ground).lerp(ALIVE.ground,w); groundMat.color.copy(cGround);
+    cMono.copy(DEAD.mono).lerp(ALIVE.mono,w); monoMat.color.copy(cMono);
+    hemi.color.copy(DEAD.sky).lerp(ALIVE.sky,w);
+    hemi.intensity=0.55+w*0.4; key.intensity=0.7+w*0.55;
+    scene.fog.far=70+w*40;
+    if(dust) dust.rotation.y+=dt*0.01;
+
+    renderer.render(scene,camera);
+  }
+  animate();
+})();
+</script>
+</body>
+</html>
