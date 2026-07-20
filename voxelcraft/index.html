@@ -53,7 +53,7 @@
 <div id="vign"></div><div id="wet"></div>
 <div id="xh" class="hud">+</div>
 <div id="coords" class="hud"></div>
-<div id="hint" class="hud">WASD move · SPACE jump · F fly<br>LEFT click mine · RIGHT click build<br>1-9 / wheel blocks · R respawn · ESC pause</div>
+<div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build<br>1-9 / wheel blocks · X more blocks · G gamemode<br>R respawn · ESC pause</div>
 <div id="hotbar"></div>
 <div id="hearts"></div>
 <div id="bubbles"></div>
@@ -1592,6 +1592,12 @@ document.getElementById('reset').addEventListener('click',function(){
 function initWorld(){for(var idx=-1;idx<=1;idx++)for(var jdx=-1;jdx<=1;jdx++)genChunk(idx,jdx);chunks.forEach(function(c){buildChunk(c);});}
 initWorld();
 
+var hookErr={};
+function safeHook(name,fn){
+ if(hookErr[name]>=5)return;
+ try{fn();}catch(e){hookErr[name]=(hookErr[name]||0)+1;
+  if(hookErr[name]===5){console.error('module disabled:',name,e);toast('A module hiccuped and was disabled ('+name+') - game continues');}}
+}
 var last=performance.now(),fpsN=0,fpsT=0,fps=0,ready=false,readyTarget=25;
 function frame(now){
  requestAnimationFrame(frame);
@@ -1653,8 +1659,8 @@ function frame(now){
  }
  if(state==='play'){
    if(mining)mineFrame(dt);
-   if(typeof updateMobs==='function')updateMobs(dt);
-   if(typeof survivalTick==='function')survivalTick(dt);
+   safeHook('mobs',function(){if(typeof updateMobs==='function')updateMobs(dt);});
+   safeHook('surv',function(){if(typeof survivalTick==='function')survivalTick(dt);});
  }
  if(typeof updateTorchLights==='function')updateTorchLights(dt);
  updateSky(dt);updParts(dt);
