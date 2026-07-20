@@ -54,15 +54,20 @@
   #chatline{width:100%;box-sizing:border-box;background:rgba(8,10,18,.88);border:1px solid rgba(140,160,220,.45);border-radius:8px;color:#fff;font-size:14px;padding:10px 12px;font-family:monospace;outline:none}
   #chatBtn{position:fixed;bottom:16px;left:calc(50% + 300px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:20px;cursor:pointer}
   #chatBtn:hover{border-color:#fff}
-  #nooksPanel{position:fixed;left:12px;top:62px;width:432px;height:min(74vh,780px);z-index:8;display:none;flex-direction:column;background:rgba(10,13,22,.93);border:1px solid rgba(140,160,220,.35);border-radius:12px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55)}
-  #nooksHead{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(20,26,44,.92);cursor:move;user-select:none;-webkit-user-select:none;font-size:11px;letter-spacing:2px;color:#9fb2dd}
+  #nooksPanel{position:fixed;left:12px;top:70px;width:330px;z-index:8;display:none;flex-direction:column;background:rgba(8,10,18,.66);border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #nooksHead{display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:move;user-select:none;-webkit-user-select:none;font-size:11px;letter-spacing:3px;color:#aab6d8;font-family:monospace;border-bottom:1px solid rgba(255,255,255,.09);text-shadow:0 1px 3px rgba(0,0,0,.8)}
   #nooksHead .sp{flex:1}
-  #nooksHead button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#dfe7fb;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;letter-spacing:1px}
-  #nooksHead button:hover{border-color:#fff}
-  #nooksFrame{flex:1;border:0;background:#0b0e18;width:100%}
-  #nooksBar{padding:9px 10px;background:rgba(20,26,44,.92);font-size:11px;color:#8fa0c8;line-height:1.5}
-  #nooksBar button{width:100%;margin-bottom:7px;background:#8fd15c;color:#0c1a06;font-weight:800;border:none;border-radius:8px;padding:11px;letter-spacing:1px;cursor:pointer;font-size:12px}
-  #nooksResize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.4) 55%)}
+  #nooksHead button{background:transparent;border:1px solid rgba(255,255,255,.22);color:#aab6d8;border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:monospace}
+  #nooksHead button:hover{border-color:#fff;color:#fff}
+  #nooksFrame{display:none}
+  #nooksBody{padding:12px 14px 4px;font-family:monospace;font-size:12px;color:#8fa0c8;line-height:1.65}
+  #nooksBody .big{color:#e8ecf7;font-size:12.5px;letter-spacing:1.5px;margin-bottom:6px}
+  .ndot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#8fd15c;margin-right:7px;box-shadow:0 0 9px #8fd15c;animation:npulse 2.2s ease-in-out infinite}
+  @keyframes npulse{0%,100%{opacity:.5}50%{opacity:1}}
+  #nooksBar{padding:10px 14px 12px;font-size:10.5px;color:#5f6f96;line-height:1.55;font-family:monospace}
+  #nooksBar button{width:100%;margin-bottom:8px;background:rgba(143,209,92,.14);border:1px solid rgba(143,209,92,.6);color:#c8f09a;font-weight:700;border-radius:8px;padding:10px;letter-spacing:2px;cursor:pointer;font-size:11px;font-family:monospace;text-shadow:0 0 8px rgba(143,209,92,.45)}
+  #nooksBar button:hover{background:rgba(143,209,92,.26);border-color:#c8f09a}
+  #nooksResize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.3) 55%)}
   #invBtn{position:fixed;bottom:16px;left:calc(50% + 242px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:22px;cursor:pointer}
   #invBtn:hover{border-color:#fff}
   #death .in h1{color:#ff6b5e;text-shadow:0 4px 30px rgba(255,60,40,.4)}
@@ -95,10 +100,15 @@
 <div id="chatlog"></div>
 <div id="chatwrap"><input id="chatline" autocomplete="off" spellcheck="false" placeholder="chat or /command — try /help"></div>
 <div id="nooksPanel">
- <div id="nooksHead"><span>NOOKS DIALER</span><span class="sp"></span><button id="nooksPop">POP OUT ↗</button><button id="nooksClose">✕</button></div>
+ <div id="nooksHead"><span>☎ NOOKS</span><span class="sp"></span><button id="nooksPop" title="Open floating dialer window">↗</button><button id="nooksClose">✕</button></div>
  <iframe id="nooksFrame" allow="microphone; camera; autoplay; clipboard-read; clipboard-write" allowfullscreen></iframe>
- <div id="nooksBar"><button id="nooksOpenWin">OPEN FLOATING DIALER WINDOW ↗</button><span id="nooksNote"></span></div>
+ <div id="nooksBody">
+  <div class="big"><span class="ndot"></span>DIALER BRIDGE READY</div>
+  <div>Launches the full Nooks dialer in a slim window docked to the left edge of your screen — mic, calls, dialing — while the world keeps running.</div>
+ </div>
+ <div id="nooksBar"><button id="nooksOpenWin">LAUNCH DIALER ↗</button><span id="nooksNote">Nooks' security header forbids in-page embedding. Tip: their Chrome extension floats over any tab — this game included.</span></div>
  <div id="nooksResize"></div>
+</div>
 </div>
 <div id="hearts"></div>
 <div id="hunger"></div>
@@ -2410,13 +2420,8 @@ function openNooks(){
  var el=nooksEl();
  if(!el)return;
  el.style.display='flex';
- if(!nooksLoaded){
-  nooksLoaded=true;
-  var frame=document.getElementById('nooksFrame');
-  if(frame)frame.src=NOOKS_URL;
-  var note=document.getElementById('nooksNote');
-  if(note)note.textContent='Nooks blocks in-page embedding (their frame-ancestors security header) — if the frame above is blank, that is Nooks, not the game. The floating window has the full dialer: mic, calls, everything.';
- }
+ // NOTE: no iframe load — app.nooks.in CSP frame-ancestors refuses embedding; the dead frame looked broken.
+ // The popup window (openNooksPopup) is the working path.
  if(typeof suppressNextUnlockPause==='function')suppressNextUnlockPause();
  try{document.exitPointerLock();}catch(e){}
  if(typeof addChatMsg==='function')addChatMsg('Nooks dock open','sys');
