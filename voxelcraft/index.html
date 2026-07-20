@@ -59,14 +59,17 @@
   #nooksHead .sp{flex:1}
   #nooksHead button{background:transparent;border:1px solid rgba(255,255,255,.22);color:#aab6d8;border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:monospace}
   #nooksHead button:hover{border-color:#fff;color:#fff}
-  #nooksFrame{display:none}
-  #nooksBody{padding:12px 14px 4px;font-family:monospace;font-size:12px;color:#8fa0c8;line-height:1.65}
-  #nooksBody .big{color:#e8ecf7;font-size:12.5px;letter-spacing:1.5px;margin-bottom:6px}
-  .ndot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#8fd15c;margin-right:7px;box-shadow:0 0 9px #8fd15c;animation:npulse 2.2s ease-in-out infinite}
-  @keyframes npulse{0%,100%{opacity:.5}50%{opacity:1}}
-  #nooksBar{padding:10px 14px 12px;font-size:10.5px;color:#5f6f96;line-height:1.55;font-family:monospace}
-  #nooksBar button{width:100%;margin-bottom:8px;background:rgba(143,209,92,.14);border:1px solid rgba(143,209,92,.6);color:#c8f09a;font-weight:700;border-radius:8px;padding:10px;letter-spacing:2px;cursor:pointer;font-size:11px;font-family:monospace;text-shadow:0 0 8px rgba(143,209,92,.45)}
-  #nooksBar button:hover{background:rgba(143,209,92,.26);border-color:#c8f09a}
+  #nooksStage{position:relative;flex:1;min-height:360px;background:rgba(6,8,14,.55)}
+  #nooksFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b0e18}
+  #nooksOverlay{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;gap:11px;padding:22px;box-sizing:border-box;font-family:monospace;background:rgba(8,10,18,.92);text-align:left}
+  #nooksOverlay.on{display:flex}
+  #nooksConnecting{color:#9fb2dd;font-size:12px;letter-spacing:1.5px}
+  #nooksOverlay .big{color:#e8ecf7;font-size:13px;letter-spacing:1px;margin-bottom:2px}
+  #nooksOverlay .note{color:#8fa0c8;font-size:11px;line-height:1.65}
+  #nooksOverlay .note b{color:#c8d3ee}
+  #nooksOverlay button.go{width:100%;background:rgba(143,209,92,.16);border:1px solid rgba(143,209,92,.65);color:#c8f09a;font-weight:700;border-radius:8px;padding:12px;letter-spacing:2px;cursor:pointer;font-size:11px;font-family:monospace;text-shadow:0 0 8px rgba(143,209,92,.45)}
+  #nooksOverlay button.go:hover{background:rgba(143,209,92,.28);border-color:#c8f09a}
+  #nooksOverlay button.mini{background:transparent;border:0;color:#6b7ba3;text-decoration:underline;padding:2px;font-size:10.5px;letter-spacing:1px;cursor:pointer;font-family:monospace}
   #nooksResize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.3) 55%)}
   #invBtn{position:fixed;bottom:16px;left:calc(50% + 242px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:22px;cursor:pointer}
   #invBtn:hover{border-color:#fff}
@@ -100,14 +103,21 @@
 <div id="chatlog"></div>
 <div id="chatwrap"><input id="chatline" autocomplete="off" spellcheck="false" placeholder="chat or /command — try /help"></div>
 <div id="nooksPanel">
- <div id="nooksHead"><span>☎ NOOKS</span><span class="sp"></span><button id="nooksPop" title="Open floating dialer window">↗</button><button id="nooksClose">✕</button></div>
- <iframe id="nooksFrame" allow="microphone; camera; autoplay; clipboard-read; clipboard-write" allowfullscreen></iframe>
- <div id="nooksBody">
-  <div class="big"><span class="ndot"></span>DIALER BRIDGE READY</div>
-  <div>Launches the full Nooks dialer in a slim window docked to the left edge of your screen — mic, calls, dialing — while the world keeps running.</div>
+ <div id="nooksHead"><span>☎ NOOKS</span><span class="sp"></span><button id="nooksPop" title="Launch dialer in docked window">↗</button><button id="nooksClose">✕</button></div>
+ <div id="nooksStage">
+  <iframe id="nooksFrame" allow="microphone; camera; autoplay; clipboard-read; clipboard-write; display-capture" referrerpolicy="origin" allowfullscreen></iframe>
+  <div id="nooksOverlay" class="on">
+   <div id="nooksConnecting"><span class="ndot"></span> Trying to embed Nooks in-page…</div>
+   <div id="nooksExplain" style="display:none">
+    <div class="big"><span class="ndot"></span>Nooks blocks in-page embedding</div>
+    <div class="note">Nooks sends a <b>frame-ancestors</b> security header that stops its app loading inside any other site — the same shield that keeps your live calls from being hijacked. It only runs in its own window, so the dialer opens docked to the left edge of your screen while the world keeps running.</div>
+    <button id="nooksOpenWin" class="go">▶ LAUNCH DIALER</button>
+    <button id="nooksRaw" class="mini">⟳ show me the raw frame (see the block)</button>
+   </div>
+  </div>
  </div>
- <div id="nooksBar"><button id="nooksOpenWin">LAUNCH DIALER ↗</button><span id="nooksNote">Nooks' security header forbids in-page embedding. Tip: their Chrome extension floats over any tab — this game included.</span></div>
  <div id="nooksResize"></div>
+</div>
 </div>
 </div>
 <div id="hearts"></div>
@@ -2416,12 +2426,30 @@ function nooksVisible(){
  return !!(el&&el.style.display==='flex');
 }
 
+var nooksAttemptTimer=null;
+function nooksAttemptEmbed(){
+ var frame=document.getElementById('nooksFrame');
+ var ov=document.getElementById('nooksOverlay');
+ var conn=document.getElementById('nooksConnecting');
+ var exp=document.getElementById('nooksExplain');
+ // Genuine in-page attempt: point the iframe at the real Nooks URL. The browser will
+ // refuse it (frame-ancestors). We keep an opaque overlay on top the whole time so the
+ // block never shows as a broken-file icon — 'show raw frame' lets you peek at the block.
+ if(frame){try{frame.src=NOOKS_URL;}catch(e){}}
+ if(ov)ov.classList.add('on');
+ if(conn)conn.style.display='block';
+ if(exp)exp.style.display='none';
+ clearTimeout(nooksAttemptTimer);
+ nooksAttemptTimer=setTimeout(function(){
+  if(conn)conn.style.display='none';
+  if(exp)exp.style.display='block';
+ },1700);
+}
 function openNooks(){
  var el=nooksEl();
  if(!el)return;
  el.style.display='flex';
- // NOTE: no iframe load — app.nooks.in CSP frame-ancestors refuses embedding; the dead frame looked broken.
- // The popup window (openNooksPopup) is the working path.
+ nooksAttemptEmbed();
  if(typeof suppressNextUnlockPause==='function')suppressNextUnlockPause();
  try{document.exitPointerLock();}catch(e){}
  if(typeof addChatMsg==='function')addChatMsg('Nooks dock open','sys');
@@ -2510,6 +2538,10 @@ function nooksOnMouseUp(){
  if(popBtn)popBtn.addEventListener('click',function(e){e.stopPropagation();openNooksPopup();});
  var openWinBtn=document.getElementById('nooksOpenWin');
  if(openWinBtn)openWinBtn.addEventListener('click',function(e){e.stopPropagation();openNooksPopup();});
+ var rawBtn=document.getElementById('nooksRaw');
+ if(rawBtn)rawBtn.addEventListener('click',function(e){e.stopPropagation();
+  var ov=document.getElementById('nooksOverlay');if(ov)ov.classList.remove('on');
+  if(typeof addChatMsg==='function')addChatMsg('Raw frame revealed — that blank/error area is Nooks refusing to embed. /nooks again to reset.','sys');});
  var head=document.getElementById('nooksHead');
  if(head){
   head.addEventListener('mousedown',function(e){
