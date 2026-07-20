@@ -85,6 +85,7 @@
 <div class="overlay" id="title">
   <div class="in">
     <h1>VOXELCRAFT</h1>
+    <div style="font-size:10px;letter-spacing:3px;color:#5f6f96">V3 — SURVIVAL UPDATE</div>
     <div class="sub">An infinite blocky world, carved by noise and lit by a moving sun.<br>
     Mine it. Build on it. It saves itself as you go.</div>
     <button class="go" id="play" disabled>FORGING TERRAIN…</button>
@@ -481,6 +482,9 @@ function iconAny(g2,id,size){
 }
 
 // ---------- 20_engine.js ----------
+var VC_VERSION='3.0';
+console.log('VOXELCRAFT v'+VC_VERSION);
+window.addEventListener('error',function(ev){try{if(typeof toast==='function')toast('Error: '+(ev.message||'').slice(0,90));}catch(x){}});
 // MODULE 20: renderer/sky/audio/particles (OWNER: core)
 // ===== THREE SETUP =====
 
@@ -2132,7 +2136,6 @@ function setSlotCounts(counts){
  slotEls.forEach(function(el,i){var c=el.querySelector('.cnt');var id=HOTBAR[i];
   if(counts&&counts[id]!==undefined)c.textContent=counts[id];else c.textContent='';});
 }
-buildHotbar();
 function selSlot(i){sel=i;slotEls.forEach(function(e,j){e.classList.toggle('sel',j===i);});}
 function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;
  document.getElementById('toasts').appendChild(d);requestAnimationFrame(function(){d.classList.add('on');});
@@ -2142,6 +2145,7 @@ function toast(msg){var d=document.createElement('div');d.className='toast';d.te
 
 var titleEl=document.getElementById('title'),pauseEl=document.getElementById('pause'),playBtn=document.getElementById('play'),playCBtn=document.getElementById('playC');
 var gamemode='survival',dead=false;
+buildHotbar();
 function setGamemode(m){gamemode=m;
  var g=document.getElementById('gm');if(g)g.textContent=m.toUpperCase();
  if(typeof survivalOnGamemode==='function')survivalOnGamemode(m);}
