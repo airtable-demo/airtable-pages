@@ -47,6 +47,8 @@
   #gm{top:56px;left:14px;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.55);font-family:monospace}
   #mineprog{position:fixed;top:calc(50% + 26px);left:calc(50% - 34px);width:68px;height:5px;background:rgba(0,0,0,.45);border-radius:3px;z-index:6;display:none;pointer-events:none}
   #mineprogF{height:100%;width:0%;background:#ffd75e;border-radius:3px}
+  #invBtn{position:fixed;bottom:16px;left:calc(50% + 242px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:22px;cursor:pointer}
+  #invBtn:hover{border-color:#fff}
   #death .in h1{color:#ff6b5e;text-shadow:0 4px 30px rgba(255,60,40,.4)}
   #inv{background:rgba(8,10,18,.82)}
   .invwrap{display:flex;gap:22px;max-width:860px;width:92vw;align-items:flex-start}
@@ -72,6 +74,7 @@
 <div id="coords" class="hud"></div>
 <div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory &amp; crafting · 1-9 / wheel slots · G gamemode<br>R respawn · ESC pause</div>
 <div id="hotbar"></div>
+<button id="invBtn" title="Inventory & crafting (E)">🎒</button>
 <div id="hearts"></div>
 <div id="hunger"></div>
 <div id="bubbles"></div>
@@ -2175,6 +2178,8 @@ function respawn(){
 playBtn.addEventListener('click',function(){startGame('survival');});
 if(playCBtn)playCBtn.addEventListener('click',function(){startGame('creative');});
 document.getElementById('resume').addEventListener('click',resumeGame);
+var invBtnEl=document.getElementById('invBtn');
+if(invBtnEl)invBtnEl.addEventListener('click',function(){if(state==='play')openInventory();else if(state==='inv')closeInventory();});
 var respawnBtn=document.getElementById('respawn');
 if(respawnBtn)respawnBtn.addEventListener('click',respawn);
 function openInventory(){
