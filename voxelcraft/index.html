@@ -41,11 +41,28 @@
   .slot .cnt{position:absolute;top:1px;left:4px;font-size:10px;font-weight:700;color:#ffe9a8;text-shadow:0 1px 2px #000}
   #hearts{position:fixed;bottom:74px;left:calc(50% - 236px);z-index:6;font-size:17px;letter-spacing:2.5px;pointer-events:none;text-shadow:0 1px 3px #000}
   #hearts .hp{color:#ff4b4b}#hearts .hd{color:#57241f}
-  #bubbles{position:fixed;bottom:74px;right:calc(50% - 236px);z-index:6;font-size:15px;letter-spacing:3px;color:#7fd0ff;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
+  #hunger{position:fixed;bottom:74px;right:calc(50% - 236px);z-index:6;font-size:15px;letter-spacing:2.5px;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
+  #hunger .hf{color:#d98e2b}#hunger .he{color:#4d3413}
+  #bubbles{position:fixed;bottom:96px;right:calc(50% - 236px);z-index:6;font-size:15px;letter-spacing:3px;color:#7fd0ff;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
   #gm{top:56px;left:14px;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.55);font-family:monospace}
   #mineprog{position:fixed;top:calc(50% + 26px);left:calc(50% - 34px);width:68px;height:5px;background:rgba(0,0,0,.45);border-radius:3px;z-index:6;display:none;pointer-events:none}
   #mineprogF{height:100%;width:0%;background:#ffd75e;border-radius:3px}
   #death .in h1{color:#ff6b5e;text-shadow:0 4px 30px rgba(255,60,40,.4)}
+  #inv{background:rgba(8,10,18,.82)}
+  .invwrap{display:flex;gap:22px;max-width:860px;width:92vw;align-items:flex-start}
+  .invpane{flex:1;background:rgba(14,18,32,.92);border:1px solid rgba(140,160,220,.28);border-radius:14px;padding:18px 20px;max-height:64vh;overflow-y:auto;text-align:left}
+  .invpane h3{margin:0 0 12px;font-size:12px;letter-spacing:3px;color:#9fb2dd}
+  #invGrid{display:grid;grid-template-columns:repeat(auto-fill,48px);gap:6px}
+  .icell{width:48px;height:48px;border-radius:7px;border:2px solid rgba(255,255,255,.16);background:#151a26;position:relative;cursor:pointer}
+  .icell:hover{border-color:#fff}
+  .icell canvas{width:100%;height:100%;border-radius:5px;image-rendering:pixelated}
+  .icell .icnt{position:absolute;bottom:1px;right:4px;font-size:11px;font-weight:700;color:#ffe9a8;text-shadow:0 1px 2px #000}
+  .crow{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .crow canvas{width:34px;height:34px;image-rendering:pixelated;border-radius:5px;background:#151a26}
+  .crow .cing{font-size:12px;color:#aab6d4;flex:1;line-height:1.4}
+  .crow button{background:#8fd15c;color:#0c1a06;font-weight:800;border:none;border-radius:7px;padding:8px 14px;font-size:12px;letter-spacing:1px;cursor:pointer}
+  .crow button:disabled{background:#3a4356;color:#8a93a8;cursor:default}
+  .invhint{margin-top:14px;font-size:11px;letter-spacing:1.5px;color:#5f6f96;text-transform:uppercase;text-align:center}
 </style>
 </head>
 <body>
@@ -53,9 +70,10 @@
 <div id="vign"></div><div id="wet"></div>
 <div id="xh" class="hud">+</div>
 <div id="coords" class="hud"></div>
-<div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build<br>1-9 / wheel blocks · X more blocks · G gamemode<br>R respawn · ESC pause</div>
+<div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory &amp; crafting · 1-9 / wheel slots · G gamemode<br>R respawn · ESC pause</div>
 <div id="hotbar"></div>
 <div id="hearts"></div>
+<div id="hunger"></div>
 <div id="bubbles"></div>
 <div id="gm" class="hud">SURVIVAL</div>
 <div id="mineprog"><div id="mineprogF"></div></div>
@@ -92,6 +110,16 @@
     <h1 style="font-size:44px;letter-spacing:10px">YOU DIED</h1>
     <div class="sub" id="deathCause"></div>
     <button class="go" id="respawn">RESPAWN ▸</button>
+  </div>
+</div>
+
+<div class="overlay" id="inv" style="display:none">
+  <div style="width:100%">
+    <div class="invwrap" style="margin:0 auto">
+      <div class="invpane"><h3>INVENTORY</h3><div id="invGrid"></div></div>
+      <div class="invpane"><h3>CRAFTING</h3><div id="craftList"></div></div>
+    </div>
+    <div class="invhint">E / ESC close · click an item to put it in the selected hotbar slot · 1-9 pick slot</div>
   </div>
 </div>
 <script>
@@ -290,6 +318,167 @@ speck(21,'#28503f',['#1e3f30','#325f4a','#194635'],300);        // 21 spruce lea
  ag.fillStyle='#d9922f';ag.beginPath();ag.moveTo(p[0]+16,p[1]+4);ag.lineTo(p[0]+21,p[1]+13);ag.lineTo(p[0]+11,p[1]+13);ag.closePath();ag.fill();
  ag.fillStyle='#ffe9a0';ag.beginPath();ag.moveTo(p[0]+16,p[1]+7);ag.lineTo(p[0]+19,p[1]+13);ag.lineTo(p[0]+13,p[1]+13);ag.closePath();ag.fill();
  ag.fillStyle='#fff6d8';ag.beginPath();ag.arc(p[0]+16,p[1]+11,1.6,0,7);ag.fill();})();
+
+// ---------- 14_items.js ----------
+// MODULE 14: item registry + item icon atlas painters (OWNER: Pigment)
+// ===== ITEM ATLAS =====
+// 4x4 grid of 32px tiles => 128x128 canvas, transparent background, chunky pixel-art icons.
+
+var ITS=32, ICOLS=4, itemAtlasC=document.createElement('canvas');itemAtlasC.width=ITS*ICOLS;itemAtlasC.height=ITS*ICOLS;
+var ig=itemAtlasC.getContext('2d');
+var irand=mulberry32(777);
+function itileXY(t){return [ (t%ICOLS)*ITS, Math.floor(t/ICOLS)*ITS ];}
+
+// clear whole atlas first so untouched tiles stay fully transparent
+ig.clearRect(0,0,itemAtlasC.width,itemAtlasC.height);
+
+// ----- tile0: STICK (diagonal brown stick) -----
+(function(){var p=itileXY(0);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#8a6a3d';
+ ig.fillRect(p[0]+6,p[1]+22,4,4);ig.fillRect(p[0]+10,p[1]+18,4,4);ig.fillRect(p[0]+14,p[1]+14,4,4);
+ ig.fillRect(p[0]+18,p[1]+10,4,4);ig.fillRect(p[0]+22,p[1]+6,4,4);
+ ig.fillStyle='#6e5230';
+ ig.fillRect(p[0]+6,p[1]+24,4,2);ig.fillRect(p[0]+10,p[1]+20,4,2);ig.fillRect(p[0]+14,p[1]+16,4,2);
+ ig.fillRect(p[0]+18,p[1]+12,4,2);ig.fillRect(p[0]+22,p[1]+8,4,2);
+ ig.fillStyle='#a9865a';
+ ig.fillRect(p[0]+7,p[1]+22,2,2);ig.fillRect(p[0]+19,p[1]+10,2,2);})();
+
+// ----- tile1: PORKCHOP (meat lobe pink/brown + bone-white end) -----
+(function(){var p=itileXY(1);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#c96b6b';
+ ig.fillRect(p[0]+8,p[1]+8,14,4);ig.fillRect(p[0]+6,p[1]+12,16,4);ig.fillRect(p[0]+6,p[1]+16,14,4);
+ ig.fillRect(p[0]+8,p[1]+20,10,4);
+ ig.fillStyle='#8f4a42';
+ ig.fillRect(p[0]+8,p[1]+8,14,2);ig.fillRect(p[0]+6,p[1]+16,14,2);ig.fillRect(p[0]+10,p[1]+22,6,2);
+ ig.fillStyle='#e2938a';
+ ig.fillRect(p[0]+10,p[1]+10,4,2);ig.fillRect(p[0]+14,p[1]+14,4,2);
+ ig.fillStyle='#f4ecd8';
+ ig.fillRect(p[0]+20,p[1]+18,6,4);ig.fillRect(p[0]+24,p[1]+16,4,4);
+ ig.fillStyle='#d8cba8';
+ ig.fillRect(p[0]+22,p[1]+20,4,2);})();
+
+// ----- tile2: APPLE (red round + tiny green leaf + stem) -----
+(function(){var p=itileXY(2);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#cc3327';
+ ig.fillRect(p[0]+10,p[1]+10,12,4);ig.fillRect(p[0]+8,p[1]+14,16,4);ig.fillRect(p[0]+8,p[1]+18,16,4);
+ ig.fillRect(p[0]+10,p[1]+22,12,3);
+ ig.fillStyle='#a3251c';
+ ig.fillRect(p[0]+8,p[1]+18,16,2);ig.fillRect(p[0]+10,p[1]+22,12,2);
+ ig.fillStyle='#e8695c';
+ ig.fillRect(p[0]+11,p[1]+11,4,3);ig.fillRect(p[0]+9,p[1]+15,3,3);
+ ig.fillStyle='#5a3a22';
+ ig.fillRect(p[0]+15,p[1]+7,2,4);
+ ig.fillStyle='#3f8a35';
+ ig.fillRect(p[0]+17,p[1]+7,5,3);})();
+
+// ----- tile3-6: PICKAXES (shared silhouette, head color per tier) -----
+function drawPickTile(t,headCol,headHi){
+ var p=itileXY(t);ig.clearRect(p[0],p[1],ITS,ITS);
+ // handle: diagonal brown stick
+ ig.fillStyle='#8a6a3d';
+ ig.fillRect(p[0]+7,p[1]+23,4,4);ig.fillRect(p[0]+11,p[1]+19,4,4);ig.fillRect(p[0]+15,p[1]+15,4,4);
+ ig.fillRect(p[0]+19,p[1]+11,4,4);
+ ig.fillStyle='#6e5230';
+ ig.fillRect(p[0]+7,p[1]+25,4,2);ig.fillRect(p[0]+11,p[1]+21,4,2);ig.fillRect(p[0]+15,p[1]+17,4,2);
+ // curved head across the top, centered near handle top
+ ig.fillStyle=headCol;
+ ig.fillRect(p[0]+9,p[1]+9,6,4);ig.fillRect(p[0]+15,p[1]+7,4,4);ig.fillRect(p[0]+19,p[1]+7,6,4);
+ ig.fillRect(p[0]+13,p[1]+11,4,4);ig.fillRect(p[0]+21,p[1]+9,4,4);
+ ig.fillStyle=headHi;
+ ig.fillRect(p[0]+15,p[1]+7,4,2);ig.fillRect(p[0]+19,p[1]+7,4,2);
+ ig.fillStyle='#000000';
+ ig.globalAlpha=0.25;
+ ig.fillRect(p[0]+9,p[1]+11,6,2);ig.fillRect(p[0]+21,p[1]+11,4,2);
+ ig.globalAlpha=1;
+}
+drawPickTile(3,'#8a6a3d','#a9865a'); // wood
+drawPickTile(4,'#9a9a9a','#c3c3c3'); // stone
+drawPickTile(5,'#d8d8d8','#f4f4f4'); // iron
+drawPickTile(6,'#4fd8d2','#9df3ef'); // diamond
+
+// ----- tile7: AXE (handle + single-side blade) -----
+(function(){var p=itileXY(7);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#8a6a3d';
+ ig.fillRect(p[0]+7,p[1]+23,4,4);ig.fillRect(p[0]+11,p[1]+19,4,4);ig.fillRect(p[0]+15,p[1]+15,4,4);
+ ig.fillRect(p[0]+19,p[1]+11,4,4);
+ ig.fillStyle='#6e5230';
+ ig.fillRect(p[0]+7,p[1]+25,4,2);ig.fillRect(p[0]+11,p[1]+21,4,2);ig.fillRect(p[0]+15,p[1]+17,4,2);
+ // blade: single-sided wedge on one side of the handle top
+ ig.fillStyle='#c8c8c8';
+ ig.fillRect(p[0]+19,p[1]+5,8,4);ig.fillRect(p[0]+23,p[1]+9,6,4);ig.fillRect(p[0]+21,p[1]+13,4,4);
+ ig.fillStyle='#eaeaea';
+ ig.fillRect(p[0]+19,p[1]+5,8,2);
+ ig.fillStyle='#8f8f8f';
+ ig.fillRect(p[0]+23,p[1]+11,6,2);ig.fillRect(p[0]+21,p[1]+15,4,2);})();
+
+// ----- tile8: SHOVEL (handle + rounded scoop) -----
+(function(){var p=itileXY(8);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#8a6a3d';
+ ig.fillRect(p[0]+7,p[1]+23,4,4);ig.fillRect(p[0]+11,p[1]+19,4,4);ig.fillRect(p[0]+15,p[1]+15,4,4);
+ ig.fillRect(p[0]+18,p[1]+11,4,4);
+ ig.fillStyle='#6e5230';
+ ig.fillRect(p[0]+7,p[1]+25,4,2);ig.fillRect(p[0]+11,p[1]+21,4,2);
+ // rounded scoop head
+ ig.fillStyle='#b7b7b7';
+ ig.fillRect(p[0]+18,p[1]+6,8,4);ig.fillRect(p[0]+16,p[1]+9,4,4);ig.fillRect(p[0]+26,p[1]+9,4,4);
+ ig.fillRect(p[0]+17,p[1]+12,10,3);
+ ig.fillStyle='#dadada';
+ ig.fillRect(p[0]+18,p[1]+6,8,2);
+ ig.fillStyle='#8f8f8f';
+ ig.fillRect(p[0]+17,p[1]+13,10,2);})();
+
+// ----- tile9: SWORD (diagonal light-gray blade + brown hilt + guard) -----
+(function(){var p=itileXY(9);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#d8d8d8';
+ ig.fillRect(p[0]+21,p[1]+5,4,4);ig.fillRect(p[0]+17,p[1]+9,4,4);ig.fillRect(p[0]+13,p[1]+13,4,4);
+ ig.fillRect(p[0]+9,p[1]+17,4,4);
+ ig.fillStyle='#f4f4f4';
+ ig.fillRect(p[0]+21,p[1]+5,2,4);ig.fillRect(p[0]+17,p[1]+9,2,4);
+ // guard (crosspiece), perpendicular-ish accent near hilt
+ ig.fillStyle='#8a6a3d';
+ ig.fillRect(p[0]+6,p[1]+19,6,3);ig.fillRect(p[0]+11,p[1]+15,3,6);
+ // hilt handle
+ ig.fillStyle='#6e5230';
+ ig.fillRect(p[0]+5,p[1]+21,6,4);
+ ig.fillStyle='#5a4326';
+ ig.fillRect(p[0]+5,p[1]+24,6,1);})();
+
+// ===== ITEM REGISTRY (EXACT harness ids) =====
+var ITEMS={};
+ITEMS[100]={n:'Stick',icon:0};
+ITEMS[101]={n:'Porkchop',icon:1,food:8};
+ITEMS[102]={n:'Apple',icon:2,food:4};
+ITEMS[110]={n:'Wooden Pickaxe',icon:3,tool:'pick',tier:1};
+ITEMS[111]={n:'Stone Pickaxe',icon:4,tool:'pick',tier:2};
+ITEMS[112]={n:'Iron Pickaxe',icon:5,tool:'pick',tier:3};
+ITEMS[113]={n:'Diamond Pickaxe',icon:6,tool:'pick',tier:4};
+ITEMS[114]={n:'Wooden Axe',icon:7,tool:'axe',tier:1};
+ITEMS[115]={n:'Wooden Shovel',icon:8,tool:'shovel',tier:1};
+ITEMS[116]={n:'Stone Sword',icon:9,tool:'sword',tier:2};
+
+// ===== HELPERS =====
+function isBlockId(id){return typeof id==='number'&&id>0&&id<100;}
+
+function drawItemIcon(g2,id,dx,dy,size){
+ var it=ITEMS[id];if(!it)return;
+ var c=it.icon%4,r=Math.floor(it.icon/4);
+ g2.imageSmoothingEnabled=false;
+ g2.drawImage(itemAtlasC,c*32,r*32,32,32,dx,dy,size,size);
+}
+
+// optional: draw either a block tile (via atlasC) or an item icon (via itemAtlasC) at (dx,dy,size)
+function iconAny(g2,id,size){
+ g2.imageSmoothingEnabled=false;
+ if(isBlockId(id)){
+  if(typeof BLOCKS!=='undefined'&&typeof atlasC!=='undefined'&&typeof tileXY==='function'&&typeof TS!=='undefined'){
+   var B=BLOCKS[id];if(!B)return;
+   var t=B.t[2];var xy=tileXY(t);
+   g2.drawImage(atlasC,xy[0],xy[1],TS,TS,0,0,size,size);
+  }
+ }else{
+  drawItemIcon(g2,id,0,0,size);
+ }
+}
 
 // ---------- 20_engine.js ----------
 // MODULE 20: renderer/sky/audio/particles (OWNER: core)
@@ -1083,17 +1272,25 @@ function hitMob(){
  }
  if(!best)return false;
 
- best.hp-=HIT_DMG;
+ var isSword=(typeof getSelectedItemId==='function'&&getSelectedItemId()===116);
+ var dmg=isSword?8:HIT_DMG;
+ var knockMul=isSword?1.3:1;
+
+ best.hp-=dmg;
  best.hurtT=0.28;
  var kdx=best.pos.x-P.x,kdz=best.pos.z-P.z;
  var kd=Math.sqrt(kdx*kdx+kdz*kdz);
  if(kd<0.001){kdx=Math.sin(best.yaw);kdz=Math.cos(best.yaw);kd=1;}
- best.vel.x+=(kdx/kd)*HIT_KNOCK;
- best.vel.z+=(kdz/kd)*HIT_KNOCK;
+ best.vel.x+=(kdx/kd)*HIT_KNOCK*knockMul;
+ best.vel.z+=(kdz/kd)*HIT_KNOCK*knockMul;
  best.vel.y=HIT_KNOCK_VY;
  if(typeof blip==='function')blip(200,120,0.08,0.1);
 
  if(best.hp<=0){
+  if(best.type===MOB_PIG&&typeof gamemode!=='undefined'&&gamemode==='survival'&&typeof invAdd==='function'){
+   invAdd(101,1+(Math.random()<0.5?1:0));
+   if(typeof toast==='function')toast('+ Porkchop');
+  }
   mobDie(best);
  }
  return true;
@@ -1188,10 +1385,15 @@ document.addEventListener('keydown',function(e){
    if(e.code==='KeyF'){P.fly=!P.fly;toast(P.fly?'Flight ON':'Flight OFF');}
    if(e.code==='KeyR'){P.x=8.5;P.z=8.5;P.y=spawnY;P.vx=P.vy=P.vz=0;toast('Respawned');}
    if(e.code==='KeyG'&&typeof toggleGamemode==='function')toggleGamemode();
+   if(e.code==='KeyE'&&typeof openInventory==='function')openInventory();
    if(e.code==='KeyX'&&typeof swapHotbarSet==='function')swapHotbarSet();
-   if(e.code.indexOf('Digit')===0){var n=+e.code.slice(5);if(n>=1&&n<=9&&n<=HOTBAR.length)selSlot(n-1);}
+   if(e.code.indexOf('Digit')===0){var n=+e.code.slice(5);if(n>=1&&n<=9)selSlot(n-1);}
    if(e.code==='Escape'&&!plocked())pauseGame();
  }else if(state==='pause'&&e.code==='Escape'){resumeGame();}
+ else if(state==='inv'){
+   if(e.code==='KeyE'||e.code==='Escape'){if(typeof closeInventory==='function')closeInventory();}
+   if(e.code.indexOf('Digit')===0){var n2=+e.code.slice(5);if(n2>=1&&n2<=9)selSlot(n2-1);}
+ }
 });
 document.addEventListener('keyup',function(e){keys[e.code]=false;});
 // LOOK: pointer-lock deltas when locked; bare mouse-move deltas when lock is unavailable.
@@ -1263,11 +1465,14 @@ function act(kind){
    if(typeof hitMob==='function'&&hitMob())return;
    doBreak(r);
  }else{
+   var pid=(typeof getSelectedItemId==='function')?getSelectedItemId():HOTBAR[sel];
+   if(pid===null||pid===undefined)return;
+   if(typeof tryEat==='function'&&tryEat(pid))return;
+   if(typeof isBlockId==='function'&&!isBlockId(pid))return;
    var tgt=getBlock(r.px,r.py,r.pz,AIR);
    if(tgt!==AIR&&tgt!==WATER)return;
    var b={x:r.px,y:r.py,z:r.pz};
    if(b.x+1>P.x-HW&&b.x<P.x+HW&&b.y+1>P.y&&b.y<P.y+HH&&b.z+1>P.z-HW&&b.z<P.z+HW)return;
-   var pid=HOTBAR[sel];
    if(typeof tryConsume==='function'&&!tryConsume(pid))return;
    setBlock(r.px,r.py,r.pz,pid);
    blip(520,340,0.06,0.1);
@@ -1275,18 +1480,21 @@ function act(kind){
 }
 
 // ---------- 45_survival.js ----------
-// MODULE 45: survival systems — health, air, fall damage, mining hardness, drops, inventory (OWNER: Pulse)
+// MODULE 45: survival systems — health, hunger, air, fall damage, tool-gated mining, drops (OWNER: Pulse2)
 // ===== SURVIVAL STATE =====
 // NOTE: top-level = declarations + plain data literals only. No DOM touches, no side effects here.
+// v3: local inventory object + refreshCounts REMOVED — module 47 (Satchel) owns invAdd/invTake/invCount.
+// All calls into that API are typeof-guarded below with graceful (no-op / best-effort) degradation.
 
-var hp=20, air=10, inventory={};
+var hp=20, air=10, hunger=20;
 var lastDamageT=-999, regenAcc=0, drownAcc=0;
-var dmgFlashEl=null, heartsEl=null, bubblesEl=null, mineprogEl=null, mineprogFEl=null;
-var lastHeartsHTML=null, lastBubblesHTML=null;
+var dmgFlashEl=null, heartsEl=null, bubblesEl=null, mineprogEl=null, mineprogFEl=null, hungerEl=null;
+var lastHeartsHTML=null, lastBubblesHTML=null, lastHungerHTML=null;
 var mineProg=0, mineKey=null;
+var starveAcc=0, prevVy=0;
 
-// hardness table (seconds to mine) — looked up by block id at call time so it
-// tolerates new block ids being registered by other modules before this runs.
+// hardness table (seconds to mine, base — before tool speed/penalty scaling) — looked up by
+// block id at call time so it tolerates new block ids being registered by other modules before this runs.
 function survivalHardness(id){
  if(typeof LEAF!=='undefined'&&id===LEAF)return 0.05;
  if(typeof TALLGRASS!=='undefined'&&id===TALLGRASS)return 0.05;
@@ -1311,8 +1519,8 @@ function survivalHardness(id){
  return 0.6;
 }
 
-// drops table — what you receive when a block id is mined (survival only).
-// returns the block id to grant, or null/undefined for no drop.
+// drops table — what block id you receive when mining id (survival only, harvest-gated by canHarvest
+// upstream in onBlockMined). returns the block id to grant, or null/undefined for no drop.
 function survivalDrop(id){
  if(id===GRASS)return DIRT;
  if(id===STONE)return COBBLE;
@@ -1320,9 +1528,59 @@ function survivalDrop(id){
  if(typeof TALLGRASS!=='undefined'&&id===TALLGRASS)return null;
  if(typeof FLOWER_R!=='undefined'&&id===FLOWER_R)return FLOWER_R;
  if(typeof FLOWER_Y!=='undefined'&&id===FLOWER_Y)return FLOWER_Y;
- if(id===LEAF)return (Math.random()<0.85)?null:null; // 85% nothing, else still nothing per spec
+ if(id===LEAF)return null; // leaves: block itself never drops — APPLE handled separately in onBlockMined
  if(typeof ICE!=='undefined'&&id===ICE)return null;
  return id;
+}
+
+// ===== TOOL GATING (v3) =====
+// Pick tiers: WOOD_PICK=1 STONE_PICK=2 IRON_PICK=3 DIAMOND_PICK=4. axe/shovel are tier1 (wood-class only per brief).
+function toolInfo(){
+ var id=(typeof getSelectedItemId==='function')?getSelectedItemId():null;
+ if(id===null||id===undefined)return null;
+ if(typeof ITEMS==='undefined'||!ITEMS)return null;
+ var it=ITEMS[id];
+ if(!it)return null;
+ return it;
+}
+
+// which pick-tier (1..3) a needsPick block requires; 0 = no pick needed.
+function survivalPickTierReq(id){
+ if(typeof COAL_ORE!=='undefined'&&id===COAL_ORE)return 1;
+ if(typeof GOLD_ORE!=='undefined'&&id===GOLD_ORE)return 3;
+ if(typeof DIAMOND_ORE!=='undefined'&&id===DIAMOND_ORE)return 3;
+ if(typeof IRON_ORE!=='undefined'&&id===IRON_ORE)return 2;
+ if(id===STONE||id===COBBLE||id===BRICK)return 1;
+ if(typeof SANDSTONE!=='undefined'&&id===SANDSTONE)return 1;
+ if(typeof ICE!=='undefined'&&id===ICE)return 1;
+ return 0;
+}
+
+function canHarvest(blockId){
+ var req=survivalPickTierReq(blockId);
+ if(req<=0)return true;
+ var it=toolInfo();
+ if(!it||it.tool!=='pick')return false;
+ return (it.tier||0)>=req;
+}
+
+// speed multiplier for correct-CLASS tool on this block (1 = no bonus).
+// pick on pick-class(needsPick>0) blocks; axe on LOG/PLANK; shovel on dirt-family blocks.
+function survivalToolSpeedMult(blockId){
+ var it=toolInfo();
+ if(!it)return 1;
+ var tier=it.tier||1;
+ var isPickClass=survivalPickTierReq(blockId)>0;
+ var isAxeClass=(blockId===LOG||blockId===PLANK);
+ var isShovelClass=(blockId===DIRT||blockId===GRASS||blockId===SAND||
+   (typeof SNOWGRASS!=='undefined'&&blockId===SNOWGRASS)||
+   (typeof SNOWBLK!=='undefined'&&blockId===SNOWBLK));
+ var mult=1;
+ if(it.tool==='pick'&&isPickClass)mult=2+2*(tier-1);
+ else if(it.tool==='axe'&&isAxeClass)mult=2;
+ else if(it.tool==='shovel'&&isShovelClass)mult=2;
+ else return 1;
+ return Math.min(8,mult);
 }
 
 // ===== DOM (lazy init — elements exist by the time these run) =====
@@ -1355,6 +1613,7 @@ function survivalHeartsEl(){if(!heartsEl)heartsEl=document.getElementById('heart
 function survivalBubblesEl(){if(!bubblesEl)bubblesEl=document.getElementById('bubbles');return bubblesEl;}
 function survivalMineprogEl(){if(!mineprogEl)mineprogEl=document.getElementById('mineprog');return mineprogEl;}
 function survivalMineprogFEl(){if(!mineprogFEl)mineprogFEl=document.getElementById('mineprogF');return mineprogFEl;}
+function survivalHungerEl(){if(!hungerEl)hungerEl=document.getElementById('hunger');return hungerEl;}
 
 // ===== RENDER (cheap DOM writes, only when content actually changes) =====
 
@@ -1377,6 +1636,22 @@ function survivalRenderBubbles(){
   for(var i=0;i<10;i++)html+=(i<n?'<span>●</span>':'<span style="opacity:.25">●</span>');
  }
  if(html!==lastBubblesHTML){el.innerHTML=html;el.style.display=html?'block':'none';lastBubblesHTML=html;}
+}
+function survivalRenderHunger(){
+ var el=survivalHungerEl();if(!el)return;
+ if(gamemode==='creative'){
+  if(el.style.display!=='none'){el.style.display='none';}
+  return;
+ }
+ var full=Math.floor(hunger/2),half=hunger%2===1;
+ var html='';
+ for(var i=9;i>=0;i--){
+  // right-aligned: fill from the right-most glyph inward, matching hearts convention mirrored
+  if((9-i)<full)html+='<span class="hf">🍗</span>';
+  else if((9-i)===full&&half)html+='<span class="hf">🍗</span>';
+  else html+='<span class="he">🍗</span>';
+ }
+ if(html!==lastHungerHTML){el.innerHTML=html;el.style.display='block';lastHungerHTML=html;}
 }
 
 // ===== DAMAGE / DEATH =====
@@ -1405,20 +1680,48 @@ function onFallImpact(speed){
  if(dmg>0)damagePlayer(dmg,'Fell from a high place');
 }
 
-// ===== PER-FRAME TICK (regen, drowning, air, hud) =====
+// ===== PER-FRAME TICK (regen, hunger, drowning, air, hud) =====
 
 function survivalTick(dt){
  if(dead)return;
  lastDamageT+=dt;
  if(gamemode!=='creative'){
-  // regen: +1 hp every 4s once 5s have passed since last damage, while hp<20
-  if(hp<20&&lastDamageT>=5){
+  // ---- hunger drain ----
+  var hsp=Math.sqrt(P.vx*P.vx+P.vz*P.vz);
+  var drain=0.014*dt;
+  if(hsp>5.6)drain+=0.10*dt;
+  if(typeof mining!=='undefined'&&mining)drain+=0.03*dt;
+  // jump detection: rising edge of P.vy crossing above 7
+  if(P.vy>7&&prevVy<=7)drain+=0.05;
+  prevVy=P.vy;
+  if(drain>0){
+   hunger=Math.max(0,hunger-drain);
+   survivalRenderHunger();
+  }
+  // ---- regen: +1 hp every 4s once 5s have passed since last damage, while hp<20, hunger-gated ----
+  if(hp<20&&lastDamageT>=5&&hunger>=18){
    regenAcc+=dt;
-   if(regenAcc>=4){regenAcc=0;hp=Math.min(20,hp+1);survivalRenderHearts();}
+   if(regenAcc>=4){
+    regenAcc=0;
+    hp=Math.min(20,hp+1);
+    hunger=Math.max(0,hunger-0.4);
+    survivalRenderHearts();
+    survivalRenderHunger();
+   }
   }else{
    regenAcc=0;
   }
-  // drowning / air
+  // ---- starvation: 1 dmg every 3s while hunger<=0, never below hp=2 ----
+  if(hunger<=0){
+   starveAcc+=dt;
+   if(starveAcc>=3){
+    starveAcc=0;
+    if(hp>2)damagePlayer(1,'Starved to death');
+   }
+  }else{
+   starveAcc=0;
+  }
+  // ---- drowning / air ----
   if(eyeInWater()){
    if(air>0){
     air=Math.max(0,air-dt);
@@ -1440,9 +1743,10 @@ function survivalTick(dt){
  }
  survivalRenderHearts();
  survivalRenderBubbles();
+ survivalRenderHunger();
 }
 
-// ===== MINING PROGRESS =====
+// ===== MINING PROGRESS (tool-gated speed) =====
 
 function survivalMineTick(dt,ray){
  if(!ray)return false;
@@ -1453,7 +1757,17 @@ function survivalMineTick(dt,ray){
   var el=survivalMineprogEl();if(el)el.style.display='none';
   return false;
  }
- mineProg+=dt/hard;
+ // tool scaling: wrong/no tool on a needsPick block -> 3.5x slower.
+ // correct-class tool held -> divide time by the class speed multiplier (capped at 8x, done inside the helper).
+ var req=survivalPickTierReq(ray.id);
+ var effDt=dt;
+ if(req>0&&!canHarvest(ray.id)){
+  effDt=dt/3.5;
+ }else{
+  var mult=survivalToolSpeedMult(ray.id);
+  if(mult>1)effDt=dt*mult;
+ }
+ mineProg+=effDt/hard;
  var pel=survivalMineprogEl(),fel=survivalMineprogFEl();
  if(pel)pel.style.display='block';
  if(fel)fel.style.width=(Math.min(1,mineProg)*100)+'%';
@@ -1470,45 +1784,303 @@ function survivalMineReset(){
  var fel=survivalMineprogFEl();if(fel)fel.style.width='0%';
 }
 
-// ===== INVENTORY =====
+// ===== INVENTORY HOOKS (v3: delegate to module 47's invAdd/invTake/invCount; typeof-guarded) =====
+
+function survivalRefreshCounts(){
+ // module 47 (Satchel) owns refreshCounts(); no-op here if it isn't loaded.
+ if(typeof refreshCounts==='function')refreshCounts();
+}
 
 function onBlockMined(id){
  if(gamemode!=='survival')return;
+ if(!canHarvest(id))return; // wrong/no tool on a needsPick block: breaks, but drops nothing
+ if(id===LEAF){
+  if(Math.random()<0.08){
+   if(typeof invAdd==='function'&&typeof APPLE!=='undefined')invAdd(APPLE,1);
+  }
+  survivalRefreshCounts();
+  return;
+ }
  var drop=survivalDrop(id);
  if(drop===null||drop===undefined)return;
- inventory[drop]=(inventory[drop]||0)+1;
- refreshCounts();
+ if(typeof invAdd==='function')invAdd(drop,1);
+ survivalRefreshCounts();
+}
+
+// tryEat(id): consumes a food item from inventory and restores hunger. Survival only.
+function tryEat(id){
+ if(gamemode==='creative')return false;
+ if(typeof ITEMS==='undefined'||!ITEMS)return false;
+ var it=ITEMS[id];
+ if(!it||!it.food)return false;
+ if(hunger>=19.5){
+  toast('Not hungry');
+  return true; // consumed the click, not the item
+ }
+ if(typeof invTake==='function'&&invTake(id,1)){
+  hunger=Math.min(20,hunger+it.food);
+  blip(150,90,0.2,0.09);
+  survivalRenderHunger();
+  survivalRefreshCounts();
+  return true;
+ }
+ return false;
 }
 
 function tryConsume(id){
  if(gamemode==='creative')return true;
- if(inventory[id]>0){
-  inventory[id]--;
-  refreshCounts();
-  return true;
+ if(typeof invTake==='function'){
+  if(invTake(id,1)){
+   survivalRefreshCounts();
+   return true;
+  }
+  var nm=(BLOCKS[id]&&BLOCKS[id].n)||'that';
+  toast('Out of '+nm);
+  return false;
  }
- var nm=(BLOCKS[id]&&BLOCKS[id].n)||'that';
- toast('Out of '+nm);
- return false;
-}
-
-function refreshCounts(){
- if(gamemode==='survival')setSlotCounts(inventory);
- else setSlotCounts(null);
+ // graceful degradation: module 47 not loaded — can't verify stock, allow (matches "degrade" instruction).
+ return true;
 }
 
 // ===== GAMEMODE / RESPAWN HOOKS =====
 
 function survivalOnGamemode(m){
- if(m==='creative')setSlotCounts(null);
- else refreshCounts();
+ if(m==='creative'){
+  if(typeof setSlotCounts==='function')setSlotCounts(null);
+ }else{
+  survivalRefreshCounts();
+ }
+ lastHungerHTML=null;
+ survivalRenderHunger();
+ if(typeof buildHotbar==='function')buildHotbar();
 }
 
 function survivalOnRespawn(){
- hp=20;air=10;regenAcc=0;drownAcc=0;lastDamageT=999;
- lastHeartsHTML=null;lastBubblesHTML=null;
- survivalRenderHearts();survivalRenderBubbles();
+ hp=20;air=10;hunger=20;regenAcc=0;drownAcc=0;starveAcc=0;lastDamageT=999;
+ lastHeartsHTML=null;lastBubblesHTML=null;lastHungerHTML=null;
+ survivalRenderHearts();survivalRenderBubbles();survivalRenderHunger();
  survivalMineReset();
+}
+
+// ---------- 47_inventory.js ----------
+// MODULE 47: inventory store, hotbar slot assignment, E-screen render, crafting (OWNER: Satchel)
+// NOTE: top-level = declarations + plain data + one load-from-storage call. No other side effects here.
+
+var INV_KEY='voxelcraft_inv_v1';
+var inventory={};
+var hotbarSlots=[null,null,null,null,null,null,null,null,null];
+var invSaveT=null;
+
+// ----- item id constants (module 14 owns the real globals; we fall back to the
+// fixed numeric ids from HARNESS.md so this module works standalone at load time) -----
+var INV_STICK=(typeof STICK!=='undefined')?STICK:100;
+var INV_PORKCHOP=(typeof PORKCHOP!=='undefined')?PORKCHOP:101;
+var INV_APPLE=(typeof APPLE!=='undefined')?APPLE:102;
+var INV_WOOD_PICK=(typeof WOOD_PICK!=='undefined')?WOOD_PICK:110;
+var INV_STONE_PICK=(typeof STONE_PICK!=='undefined')?STONE_PICK:111;
+var INV_IRON_PICK=(typeof IRON_PICK!=='undefined')?IRON_PICK:112;
+var INV_DIAMOND_PICK=(typeof DIAMOND_PICK!=='undefined')?DIAMOND_PICK:113;
+var INV_WOOD_AXE=(typeof WOOD_AXE!=='undefined')?WOOD_AXE:114;
+var INV_WOOD_SHOVEL=(typeof WOOD_SHOVEL!=='undefined')?WOOD_SHOVEL:115;
+var INV_STONE_SWORD=(typeof STONE_SWORD!=='undefined')?STONE_SWORD:116;
+var INV_LOG=(typeof LOG!=='undefined')?LOG:5;
+var INV_PLANK=(typeof PLANK!=='undefined')?PLANK:7;
+var INV_COBBLE=(typeof COBBLE!=='undefined')?COBBLE:10;
+var INV_IRON_ORE=(typeof IRON_ORE!=='undefined')?IRON_ORE:23;
+var INV_DIAMOND_ORE=(typeof DIAMOND_ORE!=='undefined')?DIAMOND_ORE:25;
+
+// ----- persistence -----
+function invLoad(){
+ try{
+  var raw=localStorage.getItem(INV_KEY);
+  if(!raw)return;
+  var data=JSON.parse(raw);
+  if(!data||typeof data!=='object')return;
+  var inv={};
+  if(data.inv&&typeof data.inv==='object'){
+   for(var k in data.inv){
+    if(!data.inv.hasOwnProperty(k))continue;
+    var n=data.inv[k];
+    if(typeof n==='number'&&n>0)inv[k]=Math.floor(n);
+   }
+  }
+  inventory=inv;
+  var hb=[null,null,null,null,null,null,null,null,null];
+  if(Array.isArray(data.hotbar)){
+   for(var i=0;i<9;i++){
+    var v=data.hotbar[i];
+    hb[i]=(typeof v==='number')?v:null;
+   }
+  }
+  hotbarSlots=hb;
+ }catch(e){
+  inventory={};
+  hotbarSlots=[null,null,null,null,null,null,null,null,null];
+ }
+}
+function invSaveNow(){
+ try{
+  localStorage.setItem(INV_KEY,JSON.stringify({inv:inventory,hotbar:hotbarSlots}));
+ }catch(e){}
+}
+function invSave(){
+ if(invSaveT)clearTimeout(invSaveT);
+ invSaveT=setTimeout(function(){invSaveT=null;invSaveNow();},500);
+}
+invLoad();
+
+// ----- core data ops -----
+function invAdd(id,n){
+ if(id===null||id===undefined||!n||n<=0)return;
+ inventory[id]=(inventory[id]||0)+n;
+ invSave();
+ var autoAssigned=false;
+ if(gamemode==='survival'){
+  var already=false;
+  for(var i=0;i<9;i++){if(hotbarSlots[i]===id){already=true;break;}}
+  if(!already){
+   for(var j=0;j<9;j++){
+    if(hotbarSlots[j]===null||hotbarSlots[j]===undefined){
+     hotbarSlots[j]=id;
+     invSave();
+     if(typeof buildHotbar==='function')buildHotbar();
+     autoAssigned=true;
+     break;
+    }
+   }
+  }
+ }
+ if(!autoAssigned)refreshCounts();
+}
+function invTake(id,n){
+ if(id===null||id===undefined||!n||n<=0)return false;
+ var have=inventory[id]||0;
+ if(have<n)return false;
+ have-=n;
+ if(have<=0)delete inventory[id];
+ else inventory[id]=have;
+ invSave();
+ refreshCounts();
+ return true;
+}
+function invCount(id){
+ return inventory[id]||0;
+}
+function invAll(){
+ return inventory;
+}
+
+// ----- hotbar slot assignment -----
+function getHotbarSlots(){
+ return hotbarSlots;
+}
+function setHotbarSlot(i,id){
+ if(i<0||i>8)return;
+ if(id!==null&&id!==undefined){
+  for(var j=0;j<9;j++){
+   if(j!==i&&hotbarSlots[j]===id){
+    hotbarSlots[j]=hotbarSlots[i];
+    break;
+   }
+  }
+ }
+ hotbarSlots[i]=id;
+ invSave();
+ if(typeof buildHotbar==='function')buildHotbar();
+}
+function getSelectedItemId(){
+ if(gamemode==='survival')return hotbarSlots[sel];
+ return HOTBAR[sel];
+}
+
+// ----- hotbar count badges -----
+function refreshCounts(){
+ if(gamemode==='survival')setSlotCounts(inventory);
+ else setSlotCounts(null);
+}
+
+// ----- canonical recipes (HARNESS.md V3 ADDENDUM) -----
+function invRecipes(){
+ return [
+  {out:INV_PLANK,outN:4,label:'1 Log -> 4 Planks',ing:[{id:INV_LOG,n:1}]},
+  {out:INV_STICK,outN:4,label:'2 Planks -> 4 Sticks',ing:[{id:INV_PLANK,n:2}]},
+  {out:INV_WOOD_PICK,outN:1,label:'3 Planks + 2 Sticks -> Wooden Pickaxe',ing:[{id:INV_PLANK,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_STONE_PICK,outN:1,label:'3 Cobble + 2 Sticks -> Stone Pickaxe',ing:[{id:INV_COBBLE,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_IRON_PICK,outN:1,label:'3 Iron Ore + 2 Sticks -> Iron Pickaxe',ing:[{id:INV_IRON_ORE,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_DIAMOND_PICK,outN:1,label:'3 Diamond Ore + 2 Sticks -> Diamond Pickaxe',ing:[{id:INV_DIAMOND_ORE,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_WOOD_AXE,outN:1,label:'3 Planks + 2 Sticks -> Wooden Axe',ing:[{id:INV_PLANK,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_WOOD_SHOVEL,outN:1,label:'1 Plank + 2 Sticks -> Wooden Shovel',ing:[{id:INV_PLANK,n:1},{id:INV_STICK,n:2}]},
+  {out:INV_STONE_SWORD,outN:1,label:'2 Cobble + 1 Stick -> Stone Sword',ing:[{id:INV_COBBLE,n:2},{id:INV_STICK,n:1}]}
+ ];
+}
+function invCanAfford(recipe){
+ for(var i=0;i<recipe.ing.length;i++){
+  if(invCount(recipe.ing[i].id)<recipe.ing[i].n)return false;
+ }
+ return true;
+}
+function invCraft(recipe){
+ if(!invCanAfford(recipe))return false;
+ for(var i=0;i<recipe.ing.length;i++){
+  invTake(recipe.ing[i].id,recipe.ing[i].n);
+ }
+ invAdd(recipe.out,recipe.outN);
+ return true;
+}
+
+// ----- E-screen rendering -----
+function invMakeIconCanvas(id,px){
+ var cc=document.createElement('canvas');cc.width=cc.height=(typeof TS!=='undefined')?TS:32;
+ var g2=cc.getContext('2d');g2.imageSmoothingEnabled=false;
+ if(typeof drawSlotIcon==='function')drawSlotIcon(g2,id);
+ return cc;
+}
+function renderInventory(){
+ var grid=document.getElementById('invGrid');
+ if(grid){
+  grid.innerHTML='';
+  for(var id in inventory){
+   if(!inventory.hasOwnProperty(id))continue;
+   var cnt=inventory[id];
+   if(!cnt||cnt<=0)continue;
+   (function(idNum,cnt){
+    var cell=document.createElement('div');cell.className='icell';
+    cell.title=(typeof slotName==='function')?slotName(idNum):'';
+    cell.appendChild(invMakeIconCanvas(idNum));
+    var cntEl=document.createElement('div');cntEl.className='icnt';cntEl.textContent=cnt;
+    cell.appendChild(cntEl);
+    cell.addEventListener('click',function(){
+     setHotbarSlot(sel,idNum);
+     renderInventory();
+     var nm=(typeof slotName==='function')?slotName(idNum):'';
+     toast(nm+' -> slot '+(sel+1));
+    });
+    grid.appendChild(cell);
+   })(Number(id),cnt);
+  }
+ }
+ var list=document.getElementById('craftList');
+ if(list){
+  list.innerHTML='';
+  var recipes=invRecipes();
+  for(var r=0;r<recipes.length;r++){
+   (function(recipe){
+    var row=document.createElement('div');row.className='crow';
+    row.appendChild(invMakeIconCanvas(recipe.out));
+    var ing=document.createElement('div');ing.className='cing';ing.textContent=recipe.label;
+    row.appendChild(ing);
+    var btn=document.createElement('button');btn.textContent='CRAFT';
+    btn.disabled=!invCanAfford(recipe);
+    btn.addEventListener('click',function(){
+     if(!invCraft(recipe))return;
+     renderInventory();
+     if(typeof blip==='function')blip(600,400,0.08,0.08);
+    });
+    row.appendChild(btn);
+    list.appendChild(row);
+   })(recipes[r]);
+  }
+ }
 }
 
 // ---------- 50_game.js ----------
@@ -1516,22 +2088,38 @@ function survivalOnRespawn(){
 // ===== HOTBAR UI =====
 
 var hb=document.getElementById('hotbar'),slotEls=[],hbSet=0;
+function drawSlotIcon(g2,id){
+ g2.fillStyle='#20283a';g2.fillRect(0,0,TS,TS);
+ if(id===null||id===undefined)return;
+ if(typeof isBlockId!=='function'||isBlockId(id)){
+  var B=BLOCKS[id];if(!B)return;
+  var p=tileXY(B.t[2]);
+  g2.drawImage(atlasC,p[0],p[1],TS,TS,0,0,TS,TS);
+ }else if(typeof drawItemIcon==='function'){drawItemIcon(g2,id,0,0,TS);}
+}
+function slotName(id){
+ if(id===null||id===undefined)return '';
+ if(typeof isBlockId!=='function'||isBlockId(id))return BLOCKS[id]?BLOCKS[id].n:'';
+ return (typeof ITEMS!=='undefined'&&ITEMS[id])?ITEMS[id].n:'';
+}
 function buildHotbar(){
  hb.innerHTML='';slotEls=[];
- HOTBAR.forEach(function(id,i){
-  var d=document.createElement('div');d.className='slot'+(i===sel?' sel':'');
-  var cc=document.createElement('canvas');cc.width=cc.height=TS;
-  var t=BLOCKS[id].t[2],p=tileXY(t);
-  var g2=cc.getContext('2d');g2.imageSmoothingEnabled=false;
-  g2.fillStyle='#20283a';g2.fillRect(0,0,TS,TS);
-  g2.drawImage(atlasC,p[0],p[1],TS,TS,0,0,TS,TS);
-  d.appendChild(cc);
-  var s2=document.createElement('span');s2.textContent=(i+1);d.appendChild(s2);
-  var cn=document.createElement('span');cn.className='cnt';d.appendChild(cn);
-  d.title=BLOCKS[id].n;
-  d.addEventListener('click',function(){selSlot(i);});
-  hb.appendChild(d);slotEls.push(d);
- });
+ var slots=(gamemode==='survival'&&typeof getHotbarSlots==='function')?getHotbarSlots():HOTBAR;
+ for(var i=0;i<9;i++){
+  (function(i){
+   var id=(i<slots.length)?slots[i]:null;
+   var d=document.createElement('div');d.className='slot'+(i===sel?' sel':'');
+   var cc=document.createElement('canvas');cc.width=cc.height=TS;
+   var g2=cc.getContext('2d');g2.imageSmoothingEnabled=false;
+   drawSlotIcon(g2,id);
+   d.appendChild(cc);
+   var s2=document.createElement('span');s2.textContent=(i+1);d.appendChild(s2);
+   var cn=document.createElement('span');cn.className='cnt';d.appendChild(cn);
+   d.title=slotName(id);
+   d.addEventListener('click',function(){selSlot(i);});
+   hb.appendChild(d);slotEls.push(d);
+  })(i);
+ }
  if(typeof refreshCounts==='function')refreshCounts();
 }
 function swapHotbarSet(){
@@ -1585,8 +2173,21 @@ if(playCBtn)playCBtn.addEventListener('click',function(){startGame('creative');}
 document.getElementById('resume').addEventListener('click',resumeGame);
 var respawnBtn=document.getElementById('respawn');
 if(respawnBtn)respawnBtn.addEventListener('click',respawn);
+function openInventory(){
+ if(state!=='play')return;
+ if(gamemode!=='survival'){toast('Creative uses hotbar pages - press X');return;}
+ state='inv';
+ var el=document.getElementById('inv');if(el)el.style.display='flex';
+ try{document.exitPointerLock();}catch(e){}
+ if(typeof renderInventory==='function')renderInventory();
+}
+function closeInventory(){
+ if(state!=='inv')return;
+ var el=document.getElementById('inv');if(el)el.style.display='none';
+ state='play';tryLock();
+}
 document.getElementById('reset').addEventListener('click',function(){
- if(confirm('Reset the whole world? This clears your saved edits.')){localStorage.removeItem(EDIT_KEY);location.reload();}});
+ if(confirm('Reset the whole world? This clears your saved edits and inventory.')){localStorage.removeItem(EDIT_KEY);localStorage.removeItem('voxelcraft_inv_v1');location.reload();}});
 
 // ===== MAIN LOOP =====
 function initWorld(){for(var idx=-1;idx<=1;idx++)for(var jdx=-1;jdx<=1;jdx++)genChunk(idx,jdx);chunks.forEach(function(c){buildChunk(c);});}
