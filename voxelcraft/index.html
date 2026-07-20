@@ -1364,11 +1364,12 @@ hl.visible=false;scene.add(hl);
 // ===== INPUT =====
 
 var keys={},state='title',plBlocked=false,plFails=0,hadLock=false,mining=false,mineCd=0,placeTimer=null,relockT=null;
+var plForceOff=(typeof location!=='undefined'&&location.search.indexOf('nolock')>=0); // ?nolock=1: never grab the cursor, pure mouse-move look
 var bobPhase=0,bobOff=0,stepT=1;
 function lookDelta(dx,dy){yaw-=dx*0.0024;pitch-=dy*0.0024;pitch=Math.max(-1.45,Math.min(1.45,pitch));}
 function plocked(){return document.pointerLockElement===canvas;}
 function tryLock(){
- if(plocked()||state!=='play')return;
+ if(plForceOff||plocked()||state!=='play')return;
  try{var pr=canvas.requestPointerLock();
    if(pr&&pr.catch)pr.catch(function(){onLockFail();});
  }catch(e){onLockFail();}
@@ -1412,7 +1413,7 @@ document.addEventListener('mousemove',function(e){
 });
 canvas.addEventListener('mousedown',function(e){
  if(state!=='play')return;
- if(!plocked()&&!plBlocked){tryLock();return;}
+ if(!plocked()&&!plBlocked&&!plForceOff){tryLock();return;}
  if(e.button===0){mining=true;mineCd=0;}
  if(e.button===2){act('place');clearInterval(placeTimer);placeTimer=setInterval(function(){act('place');},260);}
 });
