@@ -47,6 +47,22 @@
   #gm{top:56px;left:14px;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.55);font-family:monospace}
   #mineprog{position:fixed;top:calc(50% + 26px);left:calc(50% - 34px);width:68px;height:5px;background:rgba(0,0,0,.45);border-radius:3px;z-index:6;display:none;pointer-events:none}
   #mineprogF{height:100%;width:0%;background:#ffd75e;border-radius:3px}
+  #chatlog{position:fixed;left:14px;bottom:136px;z-index:7;display:flex;flex-direction:column;gap:3px;max-width:470px;pointer-events:none}
+  .cmsg{background:rgba(8,10,18,.62);padding:4px 10px;border-radius:6px;font-size:13px;color:#e6ecfb;font-family:monospace;transition:opacity .7s}
+  .cmsg.sys{color:#9fe6ff}.cmsg.err{color:#ff9d8f}
+  #chatwrap{position:fixed;left:14px;bottom:98px;z-index:9;width:470px;display:none}
+  #chatline{width:100%;box-sizing:border-box;background:rgba(8,10,18,.88);border:1px solid rgba(140,160,220,.45);border-radius:8px;color:#fff;font-size:14px;padding:10px 12px;font-family:monospace;outline:none}
+  #chatBtn{position:fixed;bottom:16px;left:calc(50% + 300px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:20px;cursor:pointer}
+  #chatBtn:hover{border-color:#fff}
+  #nooksPanel{position:fixed;left:12px;top:62px;width:432px;height:min(74vh,780px);z-index:8;display:none;flex-direction:column;background:rgba(10,13,22,.93);border:1px solid rgba(140,160,220,.35);border-radius:12px;overflow:hidden;box-shadow:0 12px 44px rgba(0,0,0,.55)}
+  #nooksHead{display:flex;align-items:center;gap:8px;padding:8px 10px;background:rgba(20,26,44,.92);cursor:move;user-select:none;-webkit-user-select:none;font-size:11px;letter-spacing:2px;color:#9fb2dd}
+  #nooksHead .sp{flex:1}
+  #nooksHead button{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:#dfe7fb;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;letter-spacing:1px}
+  #nooksHead button:hover{border-color:#fff}
+  #nooksFrame{flex:1;border:0;background:#0b0e18;width:100%}
+  #nooksBar{padding:9px 10px;background:rgba(20,26,44,.92);font-size:11px;color:#8fa0c8;line-height:1.5}
+  #nooksBar button{width:100%;margin-bottom:7px;background:#8fd15c;color:#0c1a06;font-weight:800;border:none;border-radius:8px;padding:11px;letter-spacing:1px;cursor:pointer;font-size:12px}
+  #nooksResize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.4) 55%)}
   #invBtn{position:fixed;bottom:16px;left:calc(50% + 242px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:22px;cursor:pointer}
   #invBtn:hover{border-color:#fff}
   #death .in h1{color:#ff6b5e;text-shadow:0 4px 30px rgba(255,60,40,.4)}
@@ -72,9 +88,18 @@
 <div id="vign"></div><div id="wet"></div>
 <div id="xh" class="hud">+</div>
 <div id="coords" class="hud"></div>
-<div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory &amp; crafting · 1-9 / wheel slots · G gamemode<br>R respawn · ESC pause</div>
+<div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory · T chat &amp; /commands · 1-9 slots · G gamemode<br>R respawn · ESC pause</div>
 <div id="hotbar"></div>
 <button id="invBtn" title="Inventory & crafting (E)">🎒</button>
+<button id="chatBtn" title="Chat & commands (T)">💬</button>
+<div id="chatlog"></div>
+<div id="chatwrap"><input id="chatline" autocomplete="off" spellcheck="false" placeholder="chat or /command — try /help"></div>
+<div id="nooksPanel">
+ <div id="nooksHead"><span>NOOKS DIALER</span><span class="sp"></span><button id="nooksPop">POP OUT ↗</button><button id="nooksClose">✕</button></div>
+ <iframe id="nooksFrame" allow="microphone; camera; autoplay; clipboard-read; clipboard-write" allowfullscreen></iframe>
+ <div id="nooksBar"><button id="nooksOpenWin">OPEN FLOATING DIALER WINDOW ↗</button><span id="nooksNote"></span></div>
+ <div id="nooksResize"></div>
+</div>
 <div id="hearts"></div>
 <div id="hunger"></div>
 <div id="bubbles"></div>
@@ -593,6 +618,8 @@ function updateTorchLights(dt){
   if(i<arr.length&&arr[i][0]<2500){L.intensity=1.2;L.position.set(arr[i][1]+0.5,arr[i][2]+0.8,arr[i][3]+0.5);}
   else L.intensity=0;}
 }
+
+function setTimeOfDay(v){tod=Math.max(0,Math.min(0.999,v));}
 
 // ---------- 30_world.js ----------
 // MODULE 30: chunk store + mesher + manager (OWNER: core)
@@ -1364,12 +1391,17 @@ hl.visible=false;scene.add(hl);
 // ===== INPUT =====
 
 var keys={},state='title',plBlocked=false,plFails=0,hadLock=false,mining=false,mineCd=0,placeTimer=null,relockT=null;
-var plForceOff=(typeof location!=='undefined'&&location.search.indexOf('nolock')>=0); // ?nolock=1: never grab the cursor, pure mouse-move look
+var plForceOff=(typeof location!=='undefined'&&location.search.indexOf('nolock')>=0);
+var expectUnlock=false;
+function suppressNextUnlockPause(){expectUnlock=true;}
+function clearKeys(){for(var k in keys)keys[k]=false;} // ?nolock=1: never grab the cursor, pure mouse-move look
 var bobPhase=0,bobOff=0,stepT=1;
 function lookDelta(dx,dy){yaw-=dx*0.0024;pitch-=dy*0.0024;pitch=Math.max(-1.45,Math.min(1.45,pitch));}
 function plocked(){return document.pointerLockElement===canvas;}
 function tryLock(){
  if(plForceOff||plocked()||state!=='play')return;
+ if(typeof isChatOpen==='function'&&isChatOpen())return;
+ if(typeof nooksVisible==='function'&&nooksVisible())return;
  try{var pr=canvas.requestPointerLock();
    if(pr&&pr.catch)pr.catch(function(){onLockFail();});
  }catch(e){onLockFail();}
@@ -1383,9 +1415,10 @@ function onLockFail(){
 document.addEventListener('pointerlockerror',function(){onLockFail();});
 document.addEventListener('pointerlockchange',function(){
  if(plocked()){hadLock=true;plFails=0;plBlocked=false;}
- else if(hadLock&&state==='play'){pauseGame();}
+ else if(hadLock&&state==='play'){if(expectUnlock){expectUnlock=false;}else pauseGame();}
 });
 document.addEventListener('keydown',function(e){
+ if(typeof chatKeydown==='function'&&chatKeydown(e))return;
  keys[e.code]=true;
  if(e.code==='Space')e.preventDefault();
  if(state==='title'&&e.code==='Enter')startGame('survival');
@@ -1408,11 +1441,14 @@ document.addEventListener('keyup',function(e){keys[e.code]=false;});
 // No click-drag requirement anywhere.
 document.addEventListener('mousemove',function(e){
  if(state!=='play')return;
+ if(typeof nooksDragging!=='undefined'&&nooksDragging)return;
  var mx=e.movementX||0,my=e.movementY||0;
- if(plocked()||plBlocked||!hadLock)lookDelta(mx,my);
+ if(plocked()){lookDelta(mx,my);return;}
+ if((plBlocked||!hadLock||plForceOff||(typeof nooksVisible==='function'&&nooksVisible()))&&e.target===canvas)lookDelta(mx,my);
 });
 canvas.addEventListener('mousedown',function(e){
  if(state!=='play')return;
+ if(typeof isChatOpen==='function'&&isChatOpen()){if(typeof closeChat==='function')closeChat();return;}
  if(!plocked()&&!plBlocked&&!plForceOff){tryLock();return;}
  if(e.button===0){mining=true;mineCd=0;}
  if(e.button===2){act('place');clearInterval(placeTimer);placeTimer=setInterval(function(){act('place');},260);}
@@ -2091,6 +2127,423 @@ function renderInventory(){
  }
 }
 
+// ---------- 48_chat.js ----------
+// ===== 48_chat.js — Herald: Minecraft-style chat console + command set =====
+// Top-level: declarations + lazy DOM refs only. No side effects beyond wiring.
+
+var chatWrapEl=null,chatLineEl=null,chatLogEl=null;
+var chatOpen=false;
+var chatMsgs=[]; // {el, t} — timers for fade/removal
+var CHAT_MAX=10;
+var CHAT_FADE_MS=7000,CHAT_REMOVE_MS=8000;
+
+function chatEls(){
+ if(!chatWrapEl)chatWrapEl=document.getElementById('chatwrap');
+ if(!chatLineEl)chatLineEl=document.getElementById('chatline');
+ if(!chatLogEl)chatLogEl=document.getElementById('chatlog');
+}
+
+function isChatOpen(){return chatOpen;}
+
+function openChat(prefill){
+ if(state!=='play')return;
+ chatEls();
+ if(typeof clearKeys==='function')clearKeys();
+ mining=false;
+ chatOpen=true;
+ // keep all current messages fully visible while chat is open
+ for(var i=0;i<chatMsgs.length;i++){
+  if(chatMsgs[i].el)chatMsgs[i].el.style.opacity='1';
+ }
+ if(chatWrapEl)chatWrapEl.style.display='block';
+ if(chatLineEl){
+  chatLineEl.value=(typeof prefill==='string')?prefill:'';
+  chatLineEl.focus();
+  var vlen=chatLineEl.value.length;
+  try{chatLineEl.setSelectionRange(vlen,vlen);}catch(e){}
+ }
+ if(typeof suppressNextUnlockPause==='function')suppressNextUnlockPause();
+ try{document.exitPointerLock();}catch(e){}
+}
+
+function closeChat(){
+ chatEls();
+ chatOpen=false;
+ if(chatWrapEl)chatWrapEl.style.display='none';
+ if(chatLineEl)chatLineEl.blur();
+ if(typeof tryLock==='function')tryLock();
+ chatRestartFades();
+}
+
+function chatKeydown(e){
+ if(!chatOpen){
+  if(state!=='play')return false;
+  if(e.code==='KeyT'){openChat('');e.preventDefault();return true;}
+  if(e.code==='Slash'){openChat('/');e.preventDefault();return true;}
+  if(e.code==='Enter'||e.code==='NumpadEnter'){openChat('');e.preventDefault();return true;}
+  return false;
+ }
+ // chat is open — game must see NONE of these keys
+ if(e.code==='Escape'){closeChat();e.preventDefault();return true;}
+ if(e.code==='Enter'||e.code==='NumpadEnter'){chatSubmit();e.preventDefault();return true;}
+ return true;
+}
+
+function chatSubmit(){
+ chatEls();
+ var raw=chatLineEl?chatLineEl.value:'';
+ var text=raw.replace(/^\s+|\s+$/g,'');
+ closeChat();
+ if(!text)return;
+ if(text.charAt(0)==='/'){chatRunCommand(text.slice(1));}
+ else{addChatMsg('<you> '+text,'');}
+}
+
+function chatPruneNow(){
+ while(chatMsgs.length>CHAT_MAX){
+  var old=chatMsgs.shift();
+  if(old&&old.el&&old.el.parentNode)old.el.parentNode.removeChild(old.el);
+  if(old){clearTimeout(old.fadeT);clearTimeout(old.remT);}
+ }
+}
+
+function chatRestartFades(){
+ for(var i=0;i<chatMsgs.length;i++)chatScheduleFade(chatMsgs[i]);
+}
+
+function chatScheduleFade(entry){
+ if(!entry||!entry.el)return;
+ clearTimeout(entry.fadeT);clearTimeout(entry.remT);
+ entry.el.style.opacity='1';
+ entry.fadeT=setTimeout(function(){
+  if(chatOpen)return;
+  entry.el.style.opacity='0';
+ },CHAT_FADE_MS);
+ entry.remT=setTimeout(function(){
+  if(chatOpen)return;
+  if(entry.el&&entry.el.parentNode)entry.el.parentNode.removeChild(entry.el);
+  var idx=chatMsgs.indexOf(entry);
+  if(idx>=0)chatMsgs.splice(idx,1);
+ },CHAT_REMOVE_MS);
+}
+
+function addChatMsg(text,cls){
+ chatEls();
+ if(!chatLogEl)return;
+ var div=document.createElement('div');
+ div.className='cmsg'+(cls?(' '+cls):'');
+ div.textContent=(typeof text==='string')?text:String(text);
+ chatLogEl.appendChild(div);
+ var entry={el:div,fadeT:null,remT:null};
+ chatMsgs.push(entry);
+ chatPruneNow();
+ if(chatOpen){
+  div.style.opacity='1';
+ }else{
+  chatScheduleFade(entry);
+ }
+}
+
+// ===== commands =====
+
+function chatHelpLines(){
+ return [
+  '/help — list all commands',
+  '/nooks — toggle the Nooks dialer dock',
+  '/time day|noon|night — set time of day',
+  '/gamemode s|survival|c|creative — change gamemode',
+  '/fly — toggle flight',
+  '/tp <x> <y> <z> — teleport',
+  '/give <name|id> [count] — give yourself an item/block',
+  '/clear — clear your inventory',
+  '/kill — end it all (survival)',
+  '/pos — show your position',
+  '/seed — show world seed'
+ ];
+}
+
+function chatResolveItemId(nameOrId){
+ var n=Number(nameOrId);
+ if(!isNaN(n)&&nameOrId!==''&&nameOrId!==null&&nameOrId!==undefined)return Math.floor(n);
+ var q=String(nameOrId).toLowerCase();
+ if(typeof BLOCKS!=='undefined'&&BLOCKS){
+  for(var bid in BLOCKS){
+   if(BLOCKS[bid]&&typeof BLOCKS[bid].n==='string'&&BLOCKS[bid].n.toLowerCase()===q)return Number(bid);
+  }
+ }
+ if(typeof ITEMS!=='undefined'&&ITEMS){
+  for(var iid in ITEMS){
+   if(ITEMS[iid]&&typeof ITEMS[iid].n==='string'&&ITEMS[iid].n.toLowerCase()===q)return Number(iid);
+  }
+ }
+ return null;
+}
+
+function chatRunCommand(body){
+ var parts=body.replace(/^\s+|\s+$/g,'').split(/\s+/);
+ if(parts.length===1&&parts[0]==='')parts=[''];
+ var cmd=parts[0].toLowerCase();
+ var args=parts.slice(1);
+ switch(cmd){
+  case 'help':{
+   var lines=chatHelpLines();
+   for(var i=0;i<lines.length;i++)addChatMsg(lines[i],'sys');
+   break;
+  }
+  case 'nooks':{
+   if(typeof nooksVisible!=='function'||typeof openNooks!=='function'||typeof closeNooks!=='function'){
+    addChatMsg('Nooks dock unavailable','sys');
+    break;
+   }
+   if(nooksVisible()){closeNooks();addChatMsg('Nooks dock closed','sys');}
+   else{openNooks();addChatMsg('Nooks dock opened — /nooks again to close','sys');}
+   break;
+  }
+  case 'time':{
+   var w=(args[0]||'').toLowerCase();
+   var v=(w==='day')?0.28:(w==='noon')?0.25:(w==='night')?0.78:null;
+   if(v===null){addChatMsg('Usage: /time day|noon|night','err');break;}
+   if(typeof setTimeOfDay==='function'){setTimeOfDay(v);addChatMsg('Time set to '+w,'sys');}
+   else addChatMsg('Time control unavailable','err');
+   break;
+  }
+  case 'gamemode':{
+   var g=(args[0]||'').toLowerCase();
+   var gm=(g==='s'||g==='survival')?'survival':(g==='c'||g==='creative')?'creative':null;
+   if(gm===null){addChatMsg('Usage: /gamemode s|survival|c|creative','err');break;}
+   if(typeof setGamemode==='function'){setGamemode(gm);addChatMsg('Gamemode set to '+gm,'sys');}
+   else addChatMsg('Gamemode control unavailable','err');
+   break;
+  }
+  case 'fly':{
+   P.fly=!P.fly;
+   addChatMsg('Flight '+(P.fly?'enabled':'disabled'),'sys');
+   break;
+  }
+  case 'tp':{
+   if(args.length<3){addChatMsg('Usage: /tp <x> <y> <z>','err');break;}
+   var tx=Number(args[0]),ty=Number(args[1]),tz=Number(args[2]);
+   if(isNaN(tx)||isNaN(ty)||isNaN(tz)){addChatMsg('Usage: /tp <x> <y> <z>','err');break;}
+   ty=Math.max(1,Math.min(63,ty));
+   P.x=tx;P.y=ty;P.z=tz;P.vx=0;P.vy=0;P.vz=0;
+   addChatMsg('Teleported to '+tx+' '+ty+' '+tz,'sys');
+   break;
+  }
+  case 'give':{
+   if(args.length<1){addChatMsg('Usage: /give <name|id> [count]','err');break;}
+   var id=chatResolveItemId(args[0]);
+   if(id===null){addChatMsg('Unknown item/block: '+args[0],'err');break;}
+   var count=args[1]!==undefined?Math.max(1,Math.floor(Number(args[1])||1)):1;
+   if(gamemode==='creative'){
+    addChatMsg('Creative has infinite blocks','sys');
+   }else if(typeof invAdd==='function'){
+    invAdd(id,count);
+    addChatMsg('Gave you '+count+'x '+args[0],'sys');
+   }else{
+    addChatMsg('Inventory unavailable','err');
+   }
+   break;
+  }
+  case 'clear':{
+   if(typeof invAll==='function'){
+    var all=invAll();
+    if(all&&typeof invTake==='function'){
+     for(var kid in all){
+      var have=all[kid]||0;
+      if(have>0)invTake(Number(kid),have);
+     }
+    }
+    if(typeof refreshCounts==='function')refreshCounts();
+    if(typeof buildHotbar==='function')buildHotbar();
+    addChatMsg('Inventory cleared','sys');
+   }else{
+    addChatMsg('Inventory unavailable','sys');
+   }
+   break;
+  }
+  case 'kill':{
+   if(gamemode==='creative'){
+    addChatMsg('Nothing can kill you in creative','sys');
+   }else if(typeof damagePlayer==='function'){
+    damagePlayer(999,'Ended it all');
+    addChatMsg('Ended it all','sys');
+   }else{
+    addChatMsg('Kill command unavailable','err');
+   }
+   break;
+  }
+  case 'pos':{
+   addChatMsg('XYZ '+P.x.toFixed(2)+' '+P.y.toFixed(2)+' '+P.z.toFixed(2),'sys');
+   break;
+  }
+  case 'seed':{
+   addChatMsg('World seed: 1337','sys');
+   break;
+  }
+  default:{
+   addChatMsg('Unknown command — /help','err');
+  }
+ }
+}
+
+// ---------- 49_nooks.js ----------
+
+// ---------- 49_nooks.js (Porter: Dock Builder) ----------
+// /nooks floating dock: left-side in-game panel + guaranteed-working popup dialer window.
+
+var NOOKS_URL='https://app.nooks.in/workspaces/BgmZYqqdgcXM6pMS/settings/notifications?floorId=SUAIckPmRXjiji53';
+var nooksDragging=false;
+var nooksLoaded=false;
+var nooksPopupRef=null;
+var nooksResizing=false;
+var nooksDragDX=0,nooksDragDY=0;
+var nooksResizeStartX=0,nooksResizeStartY=0,nooksResizeStartW=0,nooksResizeStartH=0;
+
+function nooksEl(){return document.getElementById('nooksPanel');}
+
+function nooksVisible(){
+ var el=nooksEl();
+ return !!(el&&el.style.display==='flex');
+}
+
+function openNooks(){
+ var el=nooksEl();
+ if(!el)return;
+ el.style.display='flex';
+ if(!nooksLoaded){
+  nooksLoaded=true;
+  var frame=document.getElementById('nooksFrame');
+  if(frame)frame.src=NOOKS_URL;
+  var note=document.getElementById('nooksNote');
+  if(note)note.textContent='Nooks blocks in-page embedding (their frame-ancestors security header) — if the frame above is blank, that is Nooks, not the game. The floating window has the full dialer: mic, calls, everything.';
+ }
+ if(typeof suppressNextUnlockPause==='function')suppressNextUnlockPause();
+ try{document.exitPointerLock();}catch(e){}
+ if(typeof addChatMsg==='function')addChatMsg('Nooks dock open','sys');
+}
+
+function closeNooks(){
+ var el=nooksEl();
+ if(!el)return;
+ el.style.display='none';
+ if(typeof tryLock==='function')tryLock();
+}
+
+function openNooksPopup(){
+ if(nooksPopupRef&&!nooksPopupRef.closed){
+  nooksPopupRef.focus();
+  return;
+ }
+ var h=Math.min(920,(screen.availHeight||900)-70);
+ nooksPopupRef=window.open(NOOKS_URL,'nooksDialer','popup=yes,width=430,height='+h+',left=8,top=56');
+ if(typeof addChatMsg==='function')addChatMsg('Floating Nooks window opened on the left — log in there and dial while you play','sys');
+}
+
+function nooksClamp(){
+ var el=nooksEl();
+ if(!el)return;
+ var w=el.offsetWidth,h=el.offsetHeight;
+ var maxL=Math.max(0,window.innerWidth-w);
+ var maxT=Math.max(0,window.innerHeight-h);
+ var l=parseFloat(el.style.left)||0;
+ var t=parseFloat(el.style.top)||0;
+ l=Math.max(0,Math.min(maxL,l));
+ t=Math.max(0,Math.min(maxT,t));
+ el.style.left=l+'px';
+ el.style.top=t+'px';
+}
+
+function nooksOnMouseMove(e){
+ if(nooksDragging){
+  var el=nooksEl();
+  if(!el)return;
+  var l=e.clientX-nooksDragDX;
+  var t=e.clientY-nooksDragDY;
+  var w=el.offsetWidth,h=el.offsetHeight;
+  var maxL=Math.max(0,window.innerWidth-w);
+  var maxT=Math.max(0,window.innerHeight-h);
+  l=Math.max(0,Math.min(maxL,l));
+  t=Math.max(0,Math.min(maxT,t));
+  el.style.left=l+'px';
+  el.style.top=t+'px';
+  return;
+ }
+ if(nooksResizing){
+  var el2=nooksEl();
+  if(!el2)return;
+  var dw=e.clientX-nooksResizeStartX;
+  var dh=e.clientY-nooksResizeStartY;
+  var nw=nooksResizeStartW+dw;
+  var nh=nooksResizeStartH+dh;
+  var maxW=window.innerWidth*0.92;
+  var maxH=window.innerHeight*0.92;
+  nw=Math.max(320,Math.min(maxW,nw));
+  nh=Math.max(300,Math.min(maxH,nh));
+  el2.style.width=nw+'px';
+  el2.style.height=nh+'px';
+  nooksClamp();
+ }
+}
+
+function nooksOnMouseUp(){
+ if(nooksDragging){
+  nooksDragging=false;
+  var frame=document.getElementById('nooksFrame');
+  if(frame)frame.style.pointerEvents='';
+ }
+ if(nooksResizing){
+  nooksResizing=false;
+  var frame2=document.getElementById('nooksFrame');
+  if(frame2)frame2.style.pointerEvents='';
+ }
+}
+
+(function nooksInit(){
+ var closeBtn=document.getElementById('nooksClose');
+ if(closeBtn)closeBtn.addEventListener('click',function(e){e.stopPropagation();closeNooks();});
+ var popBtn=document.getElementById('nooksPop');
+ if(popBtn)popBtn.addEventListener('click',function(e){e.stopPropagation();openNooksPopup();});
+ var openWinBtn=document.getElementById('nooksOpenWin');
+ if(openWinBtn)openWinBtn.addEventListener('click',function(e){e.stopPropagation();openNooksPopup();});
+ var head=document.getElementById('nooksHead');
+ if(head){
+  head.addEventListener('mousedown',function(e){
+   if(e.target&&e.target.tagName==='BUTTON')return;
+   var el=nooksEl();
+   if(!el)return;
+   nooksDragging=true;
+   var rect=el.getBoundingClientRect();
+   el.style.left=rect.left+'px';
+   el.style.top=rect.top+'px';
+   el.style.right='auto';
+   el.style.bottom='auto';
+   nooksDragDX=e.clientX-rect.left;
+   nooksDragDY=e.clientY-rect.top;
+   var frame=document.getElementById('nooksFrame');
+   if(frame)frame.style.pointerEvents='none';
+   e.preventDefault();
+  });
+ }
+ var resize=document.getElementById('nooksResize');
+ if(resize){
+  resize.addEventListener('mousedown',function(e){
+   var el=nooksEl();
+   if(!el)return;
+   nooksResizing=true;
+   nooksResizeStartX=e.clientX;
+   nooksResizeStartY=e.clientY;
+   nooksResizeStartW=el.offsetWidth;
+   nooksResizeStartH=el.offsetHeight;
+   var frame=document.getElementById('nooksFrame');
+   if(frame)frame.style.pointerEvents='none';
+   e.preventDefault();
+   e.stopPropagation();
+  });
+ }
+ document.addEventListener('mousemove',nooksOnMouseMove);
+ document.addEventListener('mouseup',nooksOnMouseUp);
+})();
+
 // ---------- 50_game.js ----------
 // MODULE 50: hotbar/overlays/main loop (OWNER: core)
 // ===== HOTBAR UI =====
@@ -2179,6 +2632,8 @@ function respawn(){
 playBtn.addEventListener('click',function(){startGame('survival');});
 if(playCBtn)playCBtn.addEventListener('click',function(){startGame('creative');});
 document.getElementById('resume').addEventListener('click',resumeGame);
+var chatBtnEl=document.getElementById('chatBtn');
+if(chatBtnEl)chatBtnEl.addEventListener('click',function(){if(state==='play'&&typeof openChat==='function')openChat('');});
 var invBtnEl=document.getElementById('invBtn');
 if(invBtnEl)invBtnEl.addEventListener('click',function(){if(state==='play')openInventory();else if(state==='inv')closeInventory();});
 var respawnBtn=document.getElementById('respawn');
