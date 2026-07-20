@@ -38,6 +38,14 @@
   #joy{position:fixed;left:26px;bottom:44px;width:120px;height:120px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);background:rgba(10,14,26,.35);z-index:8;display:none}
   #joyK{position:absolute;left:38px;top:38px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.35)}
   @media(pointer:coarse){.tbtn,#joy{display:flex}#joy{display:block}#hint{display:none}}
+  .slot .cnt{position:absolute;top:1px;left:4px;font-size:10px;font-weight:700;color:#ffe9a8;text-shadow:0 1px 2px #000}
+  #hearts{position:fixed;bottom:74px;left:calc(50% - 236px);z-index:6;font-size:17px;letter-spacing:2.5px;pointer-events:none;text-shadow:0 1px 3px #000}
+  #hearts .hp{color:#ff4b4b}#hearts .hd{color:#57241f}
+  #bubbles{position:fixed;bottom:74px;right:calc(50% - 236px);z-index:6;font-size:15px;letter-spacing:3px;color:#7fd0ff;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
+  #gm{top:56px;left:14px;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.55);font-family:monospace}
+  #mineprog{position:fixed;top:calc(50% + 26px);left:calc(50% - 34px);width:68px;height:5px;background:rgba(0,0,0,.45);border-radius:3px;z-index:6;display:none;pointer-events:none}
+  #mineprogF{height:100%;width:0%;background:#ffd75e;border-radius:3px}
+  #death .in h1{color:#ff6b5e;text-shadow:0 4px 30px rgba(255,60,40,.4)}
 </style>
 </head>
 <body>
@@ -47,6 +55,10 @@
 <div id="coords" class="hud"></div>
 <div id="hint" class="hud">WASD move · SPACE jump · F fly<br>LEFT click mine · RIGHT click build<br>1-9 / wheel blocks · R respawn · ESC pause</div>
 <div id="hotbar"></div>
+<div id="hearts"></div>
+<div id="bubbles"></div>
+<div id="gm" class="hud">SURVIVAL</div>
+<div id="mineprog"><div id="mineprogF"></div></div>
 <div id="toasts"></div>
 <div id="joy"><div id="joyK"></div></div>
 <button class="tbtn" id="btnJump">JUMP</button>
@@ -58,8 +70,9 @@
     <div class="sub">An infinite blocky world, carved by noise and lit by a moving sun.<br>
     Mine it. Build on it. It saves itself as you go.</div>
     <button class="go" id="play" disabled>FORGING TERRAIN…</button>
+    <button class="go alt" id="playC" disabled>CREATIVE ▸</button>
     <div id="bar"><div id="barF"></div></div>
-    <div class="keys">WASD move · space jump · left click mine · right click build<br>1-9 or scroll to pick blocks · F to fly · esc to pause</div>
+    <div class="keys">WASD move · space jump · hold left click to mine · right click build<br>1-9 / scroll blocks · X more blocks · G gamemode · F fly · esc pause</div>
   </div>
 </div>
 
@@ -73,6 +86,14 @@
   </div>
 </div>
 
+
+<div class="overlay" id="death" style="display:none;background:radial-gradient(ellipse at 50% 40%,rgba(80,16,10,.92),rgba(12,4,3,.97))">
+  <div class="in">
+    <h1 style="font-size:44px;letter-spacing:10px">YOU DIED</h1>
+    <div class="sub" id="deathCause"></div>
+    <button class="go" id="respawn">RESPAWN ▸</button>
+  </div>
+</div>
 <script>
 /**
  * @license
@@ -85,7 +106,11 @@
 <script>
 (function(){
 "use strict";
-// ===================== RNG / NOISE =====================
+
+// ---------- 10_noise.js ----------
+// MODULE 10: rng + noise (FROZEN - do not edit)
+// ===== RNG / NOISE =====
+
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 var SEED=1337;
 function h2(x,z){var n=Math.imul(x,374761393)+Math.imul(z,668265263)+SEED*69069;n=Math.imul(n^(n>>>13),1274126177);n^=n>>>16;return (n>>>0)/4294967296;}
@@ -101,22 +126,62 @@ function noise3(x,y,z){var xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf
      c001=h3(xi,yi,zi+1),c101=h3(xi+1,yi,zi+1),c011=h3(xi,yi+1,zi+1),c111=h3(xi+1,yi+1,zi+1);
  return lerp(lerp(lerp(c000,c100,xf),lerp(c010,c110,xf),yf),lerp(lerp(c001,c101,xf),lerp(c011,c111,xf),yf),zf);}
 
-// ===================== CONSTANTS =====================
+
+// ---------- 12_blocks.js ----------
+// MODULE 12: block registry + atlas painters (OWNER: Terra)
+// ===== CONSTANTS =====
+
 var CH=16, WH=64, SEA=24, R=3;
 var AIR=0,GRASS=1,DIRT=2,STONE=3,SAND=4,LOG=5,LEAF=6,PLANK=7,GLASS=8,BRICK=9,COBBLE=10,WATER=11,BEDROCK=12;
+var SNOWGRASS=13,SNOWBLK=14,ICE=15,CACTUS=16,SANDSTONE=17,SPRUCELEAF=18,FLOWER_R=19,FLOWER_Y=20,
+    TALLGRASS=21,COAL_ORE=22,IRON_ORE=23,GOLD_ORE=24,DIAMOND_ORE=25,TORCH=26;
 // tiles: [top,bottom,side]
 var BLOCKS={};
 BLOCKS[GRASS]={n:'Grass',t:[0,2,1]};BLOCKS[DIRT]={n:'Dirt',t:[2,2,2]};BLOCKS[STONE]={n:'Stone',t:[3,3,3]};
 BLOCKS[SAND]={n:'Sand',t:[4,4,4]};BLOCKS[LOG]={n:'Log',t:[6,6,5]};BLOCKS[LEAF]={n:'Leaves',t:[7,7,7]};
 BLOCKS[PLANK]={n:'Planks',t:[8,8,8]};BLOCKS[GLASS]={n:'Glass',t:[9,9,9]};BLOCKS[BRICK]={n:'Brick',t:[10,10,10]};
 BLOCKS[COBBLE]={n:'Cobble',t:[12,12,12]};BLOCKS[WATER]={n:'Water',t:[11,11,11]};BLOCKS[BEDROCK]={n:'Bedrock',t:[13,13,13]};
-function isOpaque(id){return id!==AIR&&id!==GLASS&&id!==WATER;}
-function isSolid(id){return id!==AIR&&id!==WATER;}
-var HOTBAR=[GRASS,DIRT,STONE,SAND,LOG,LEAF,PLANK,GLASS,BRICK];
-var PCOL={};PCOL[GRASS]=0x79b04a;PCOL[DIRT]=0x8a6244;PCOL[STONE]=0x8b8b8b;PCOL[SAND]=0xdcd0a2;PCOL[LOG]=0x6d5433;PCOL[LEAF]=0x4e8f35;PCOL[PLANK]=0xa8834f;PCOL[GLASS]=0xcfe6ee;PCOL[BRICK]=0x9c5a50;PCOL[COBBLE]=0x7f7f7f;
+// ----- patch existing translucent/see-through defs so mesher treats them right -----
+BLOCKS[WATER].opaque=false;BLOCKS[WATER].solid=false;BLOCKS[WATER].trans=true;
+BLOCKS[GLASS].opaque=false;BLOCKS[GLASS].trans=true;
 
-// ===================== ATLAS =====================
-var TS=32, ACOLS=4, atlasC=document.createElement('canvas');atlasC.width=TS*ACOLS;atlasC.height=TS*ACOLS;
+// ----- new block registrations (tile indices assigned in atlas section below) -----
+// atlas tile map for indices 14+ (see painters below):
+//  14 snow top          15 snowy-grass side     16 snow block          17 ice
+//  18 cactus side        19 cactus top           20 sandstone           21 spruce leaves
+//  22 flower red         23 flower yellow        24 tall grass          25 coal ore
+//  26 iron ore           27 gold ore             28 diamond ore         29 torch
+BLOCKS[SNOWGRASS]={n:'Snowy Grass',t:[14,2,15]};
+BLOCKS[SNOWBLK]={n:'Snow Block',t:[16,16,16]};
+BLOCKS[ICE]={n:'Ice',t:[17,17,17],opaque:false,trans:true};
+BLOCKS[CACTUS]={n:'Cactus',t:[19,19,18]};
+BLOCKS[SANDSTONE]={n:'Sandstone',t:[20,20,20]};
+BLOCKS[SPRUCELEAF]={n:'Spruce Leaves',t:[21,21,21]};
+BLOCKS[FLOWER_R]={n:'Red Flower',t:[22,22,22],opaque:false,solid:false,trans:true,shape:'cross'};
+BLOCKS[FLOWER_Y]={n:'Yellow Flower',t:[23,23,23],opaque:false,solid:false,trans:true,shape:'cross'};
+BLOCKS[TALLGRASS]={n:'Tall Grass',t:[24,24,24],opaque:false,solid:false,trans:true,shape:'cross'};
+BLOCKS[COAL_ORE]={n:'Coal Ore',t:[25,25,25]};
+BLOCKS[IRON_ORE]={n:'Iron Ore',t:[26,26,26]};
+BLOCKS[GOLD_ORE]={n:'Gold Ore',t:[27,27,27]};
+BLOCKS[DIAMOND_ORE]={n:'Diamond Ore',t:[28,28,28]};
+BLOCKS[TORCH]={n:'Torch',t:[29,29,29],opaque:false,solid:false,trans:true,shape:'torch'};
+
+// ----- registry-driven solidity/opacity -----
+function isOpaque(id){var B=BLOCKS[id];return !!B&&B.opaque!==false;}
+function isSolid(id){var B=BLOCKS[id];return !!B&&B.solid!==false;}
+
+var HOTBAR_SETS=[[GRASS,DIRT,STONE,SAND,LOG,LEAF,PLANK,GLASS,BRICK],
+                 [COBBLE,SANDSTONE,SNOWBLK,CACTUS,TORCH,COAL_ORE,IRON_ORE,GOLD_ORE,DIAMOND_ORE]];
+var HOTBAR=HOTBAR_SETS[0];
+var PCOL={};PCOL[GRASS]=0x79b04a;PCOL[DIRT]=0x8a6244;PCOL[STONE]=0x8b8b8b;PCOL[SAND]=0xdcd0a2;PCOL[LOG]=0x6d5433;PCOL[LEAF]=0x4e8f35;PCOL[PLANK]=0xa8834f;PCOL[GLASS]=0xcfe6ee;PCOL[BRICK]=0x9c5a50;PCOL[COBBLE]=0x7f7f7f;
+PCOL[BEDROCK]=0x2e2e2e;PCOL[WATER]=0x3f7fd6;
+PCOL[SNOWGRASS]=0xeef4f8;PCOL[SNOWBLK]=0xf3f7fb;PCOL[ICE]=0xbfe3f0;PCOL[CACTUS]=0x2f7d3a;PCOL[SANDSTONE]=0xe0d3a0;
+PCOL[SPRUCELEAF]=0x2f5b46;PCOL[FLOWER_R]=0xd23c3c;PCOL[FLOWER_Y]=0xe0c93a;PCOL[TALLGRASS]=0x5c9a3d;
+PCOL[COAL_ORE]=0x3a3a3a;PCOL[IRON_ORE]=0xcaa87c;PCOL[GOLD_ORE]=0xe8cd4a;PCOL[DIAMOND_ORE]=0x6fe0e0;PCOL[TORCH]=0xd99a3f;
+
+// ===== ATLAS =====
+
+var TS=32, ACOLS=8, atlasC=document.createElement('canvas');atlasC.width=TS*ACOLS;atlasC.height=TS*ACOLS;
 var ag=atlasC.getContext('2d');
 var arand=mulberry32(99);
 function tileXY(t){return [ (t%ACOLS)*TS, Math.floor(t/ACOLS)*TS ];}
@@ -150,7 +215,86 @@ speck(12,'#7f7f7f',['#6b6b6b','#909090','#5f5f5f'],160);          // cobble
  for(var i=0;i<7;i++){ag.beginPath();ag.arc(p[0]+4+arand()*24,p[1]+4+arand()*24,3+arand()*4,0,7);ag.stroke();}})();
 speck(13,'#3c3c3c',['#2e2e2e','#4a4a4a','#232323'],220);          // bedrock
 
-// ===================== THREE SETUP =====================
+// ----- NEW TILES (14-29) -----
+
+speck(14,'#f4f8fc',['#e7eef6','#ffffff','#dfe9f2'],220);         // 14 snow top
+(function(){var p=tileXY(15);ag.drawImage(atlasC,tileXY(2)[0],tileXY(2)[1],TS,TS,p[0],p[1],TS,TS); // 15 snowy-grass side = dirt + snow cap band
+ ag.fillStyle='#f2f7fb';ag.fillRect(p[0],p[1],TS,9);
+ ag.fillStyle='#e3edf6';ag.fillRect(p[0],p[1]+7,TS,3);
+ for(var i=0;i<14;i++){ag.fillStyle=(arand()<0.5)?'#ffffff':'#dbe6f0';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+6+Math.floor(arand()*5),2,3);} })();
+speck(16,'#eef4f9',['#ffffff','#e2ecf4','#d8e4ee'],240);         // 16 snow block
+(function(){var p=tileXY(17);ag.clearRect(p[0],p[1],TS,TS);ag.fillStyle='rgba(180,225,240,0.55)';ag.fillRect(p[0],p[1],TS,TS); // 17 ice (translucent)
+ ag.fillStyle='rgba(225,248,255,0.55)';ag.fillRect(p[0]+2,p[1]+2,TS-4,TS-4);
+ ag.strokeStyle='rgba(255,255,255,0.6)';ag.lineWidth=1;
+ ag.beginPath();ag.moveTo(p[0]+4,p[1]+26);ag.lineTo(p[0]+16,p[1]+10);ag.moveTo(p[0]+10,p[1]+30);ag.lineTo(p[0]+26,p[1]+6);ag.moveTo(p[0]+20,p[1]+28);ag.lineTo(p[0]+28,p[1]+18);ag.stroke();})();
+(function(){var p=tileXY(18);ag.fillStyle='#347a3d';ag.fillRect(p[0],p[1],TS,TS);   // 18 cactus side: green + darker vertical ribs
+ for(var i=0;i<70;i++){ag.fillStyle=(arand()<0.5)?'#3c8945':'#2c6c34';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);}
+ ag.fillStyle='#245a2b';for(var x=4;x<TS;x+=9){ag.fillRect(p[0]+x,p[1],2,TS);}
+ ag.fillStyle='#63a967';for(var y2=3;y2<TS;y2+=7){ag.fillRect(p[0]+2,p[1]+y2,3,1);ag.fillRect(p[0]+TS-6,p[1]+y2+3,3,1);}})();
+speck(19,'#3a8a44',['#347a3d','#4a9a54','#2c6c34'],160);         // 19 cactus top
+(function(){var p=tileXY(20);ag.fillStyle='#dccb96';ag.fillRect(p[0],p[1],TS,TS);   // 20 sandstone: pale banded
+ for(var y3=0;y3<TS;y3+=6){ag.fillStyle=(y3/6)%2?'#d3c088':'#e5d5a4';ag.fillRect(p[0],p[1]+y3,TS,6);}
+ ag.fillStyle='#c8b378';for(var i2=0;i2<14;i2++){ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),3,1);}})();
+speck(21,'#28503f',['#1e3f30','#325f4a','#194635'],300);        // 21 spruce leaves (darker blue-green)
+(function(){var p=tileXY(22);ag.clearRect(p[0],p[1],TS,TS);   // 22 flower red: transparent bg + stem + bloom
+ ag.strokeStyle='#2f6d2f';ag.lineWidth=2;ag.beginPath();ag.moveTo(p[0]+16,p[1]+30);ag.lineTo(p[0]+16,p[1]+18);ag.stroke();
+ ag.fillStyle='#3a7a35';ag.fillRect(p[0]+13,p[1]+22,4,3);
+ ag.fillStyle='#d23c3c';
+ ag.beginPath();ag.arc(p[0]+16,p[1]+12,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+11,p[1]+14,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+21,p[1]+14,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+13,p[1]+9,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+19,p[1]+9,3,0,7);ag.fill();
+ ag.fillStyle='#f0d33c';ag.beginPath();ag.arc(p[0]+16,p[1]+12,2,0,7);ag.fill();})();
+(function(){var p=tileXY(23);ag.clearRect(p[0],p[1],TS,TS);   // 23 flower yellow
+ ag.strokeStyle='#2f6d2f';ag.lineWidth=2;ag.beginPath();ag.moveTo(p[0]+16,p[1]+30);ag.lineTo(p[0]+16,p[1]+18);ag.stroke();
+ ag.fillStyle='#3a7a35';ag.fillRect(p[0]+13,p[1]+22,4,3);
+ ag.fillStyle='#e8cd3a';
+ ag.beginPath();ag.arc(p[0]+16,p[1]+12,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+11,p[1]+14,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+21,p[1]+14,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+13,p[1]+9,3,0,7);ag.fill();
+ ag.beginPath();ag.arc(p[0]+19,p[1]+9,3,0,7);ag.fill();
+ ag.fillStyle='#a5642a';ag.beginPath();ag.arc(p[0]+16,p[1]+12,2,0,7);ag.fill();})();
+(function(){var p=tileXY(24);ag.clearRect(p[0],p[1],TS,TS);   // 24 tall grass: transparent bg, thin green blades
+ ag.strokeStyle='#4f8c34';ag.lineWidth=2;
+ var bx=[6,11,16,21,26];
+ for(var i3=0;i3<bx.length;i3++){var sway=(i3%2?3:-3);
+   ag.beginPath();ag.moveTo(p[0]+bx[i3],p[1]+30);ag.quadraticCurveTo(p[0]+bx[i3]+sway,p[1]+18,p[0]+bx[i3]+sway*1.4,p[1]+6);ag.stroke();}
+ ag.strokeStyle='#5c9a3d';ag.lineWidth=1.4;
+ for(var i4=0;i4<bx.length;i4++){var sway2=(i4%2?-2:2);
+   ag.beginPath();ag.moveTo(p[0]+bx[i4]+2,p[1]+30);ag.quadraticCurveTo(p[0]+bx[i4]+2+sway2,p[1]+20,p[0]+bx[i4]+2+sway2,p[1]+10);ag.stroke();}})();
+(function(){var p=tileXY(25);ag.fillStyle='#8f8f8f';ag.fillRect(p[0],p[1],TS,TS);   // 25 coal ore: stone + dark specks clusters
+ for(var i5=0;i5<220;i5++){ag.fillStyle=(arand()<0.55)?'#7d7d7d':'#9c9c9c';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);}
+ var clusters1=[[9,9],[21,12],[13,22],[23,24]];
+ for(var c1=0;c1<clusters1.length;c1++){var cx1=p[0]+clusters1[c1][0],cy1=p[1]+clusters1[c1][1];
+   for(var d1=0;d1<6;d1++){ag.fillStyle='#1b1b1b';ag.fillRect(cx1+Math.floor((arand()-0.5)*7),cy1+Math.floor((arand()-0.5)*7),3,3);}}})();
+(function(){var p=tileXY(26);ag.fillStyle='#8f8f8f';ag.fillRect(p[0],p[1],TS,TS);   // 26 iron ore: stone + tan/cream specks
+ for(var i6=0;i6<220;i6++){ag.fillStyle=(arand()<0.55)?'#7d7d7d':'#9c9c9c';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);}
+ var clusters2=[[10,10],[22,13],[14,23],[24,25]];
+ for(var c2=0;c2<clusters2.length;c2++){var cx2=p[0]+clusters2[c2][0],cy2=p[1]+clusters2[c2][1];
+   for(var d2=0;d2<6;d2++){ag.fillStyle=(arand()<0.5)?'#d9bd8e':'#e9d9b0';ag.fillRect(cx2+Math.floor((arand()-0.5)*7),cy2+Math.floor((arand()-0.5)*7),3,3);}}})();
+(function(){var p=tileXY(27);ag.fillStyle='#8f8f8f';ag.fillRect(p[0],p[1],TS,TS);   // 27 gold ore: stone + yellow specks
+ for(var i7=0;i7<220;i7++){ag.fillStyle=(arand()<0.55)?'#7d7d7d':'#9c9c9c';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);}
+ var clusters3=[[9,11],[21,10],[12,23],[23,23]];
+ for(var c3=0;c3<clusters3.length;c3++){var cx3=p[0]+clusters3[c3][0],cy3=p[1]+clusters3[c3][1];
+   for(var d3=0;d3<6;d3++){ag.fillStyle=(arand()<0.5)?'#e8cd4a':'#f5e37a';ag.fillRect(cx3+Math.floor((arand()-0.5)*7),cy3+Math.floor((arand()-0.5)*7),3,3);}}})();
+(function(){var p=tileXY(28);ag.fillStyle='#8f8f8f';ag.fillRect(p[0],p[1],TS,TS);   // 28 diamond ore: stone + cyan specks
+ for(var i8=0;i8<220;i8++){ag.fillStyle=(arand()<0.55)?'#7d7d7d':'#9c9c9c';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);}
+ var clusters4=[[10,9],[22,12],[13,21],[22,25]];
+ for(var c4=0;c4<clusters4.length;c4++){var cx4=p[0]+clusters4[c4][0],cy4=p[1]+clusters4[c4][1];
+   for(var d4=0;d4<6;d4++){ag.fillStyle=(arand()<0.5)?'#6fe0e0':'#b6f5f0';ag.fillRect(cx4+Math.floor((arand()-0.5)*6),cy4+Math.floor((arand()-0.5)*6),3,3);}}})();
+(function(){var p=tileXY(29);ag.clearRect(p[0],p[1],TS,TS);   // 29 torch: transparent bg, brown stick + flame tip
+ ag.fillStyle='#6b4a2c';ag.fillRect(p[0]+14,p[1]+13,4,18);
+ ag.fillStyle='#5a3c22';ag.fillRect(p[0]+14,p[1]+13,1,18);ag.fillRect(p[0]+17,p[1]+13,1,18);
+ ag.fillStyle='#d9922f';ag.beginPath();ag.moveTo(p[0]+16,p[1]+4);ag.lineTo(p[0]+21,p[1]+13);ag.lineTo(p[0]+11,p[1]+13);ag.closePath();ag.fill();
+ ag.fillStyle='#ffe9a0';ag.beginPath();ag.moveTo(p[0]+16,p[1]+7);ag.lineTo(p[0]+19,p[1]+13);ag.lineTo(p[0]+13,p[1]+13);ag.closePath();ag.fill();
+ ag.fillStyle='#fff6d8';ag.beginPath();ag.arc(p[0]+16,p[1]+11,1.6,0,7);ag.fill();})();
+
+// ---------- 20_engine.js ----------
+// MODULE 20: renderer/sky/audio/particles (OWNER: core)
+// ===== THREE SETUP =====
+
 var canvas=document.getElementById('c');
 var renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -185,53 +329,85 @@ var clouds=[];(function(){var m=new THREE.MeshLambertMaterial({color:0xffffff,tr
  var c=new THREE.Mesh(new THREE.BoxGeometry(w,1.6,d),m);
  c.position.set((Math.random()-0.5)*280,68+Math.random()*7,(Math.random()-0.5)*280);scene.add(c);clouds.push(c);}})();
 
-// ===================== WORLD =====================
+// ===== PARTICLES / AUDIO =====
+
+var partGeo=new THREE.BoxGeometry(.13,.13,.13),parts=[],pmats={};
+function burst(x,y,z,colHex){
+ var m=pmats[colHex]||(pmats[colHex]=new THREE.MeshBasicMaterial({color:colHex}));
+ for(var i=0;i<12;i++){
+   var p=new THREE.Mesh(partGeo,m);
+   p.position.set(x+.5,y+.5,z+.5);
+   parts.push({m:p,vx:(Math.random()-.5)*5,vy:Math.random()*5+1,vz:(Math.random()-.5)*5,life:.6+Math.random()*.3});
+   scene.add(p);}
+}
+function updParts(dt){for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.life-=dt;
+ if(p.life<=0){scene.remove(p.m);parts.splice(i,1);continue;}
+ p.vy-=16*dt;p.m.position.x+=p.vx*dt;p.m.position.y+=p.vy*dt;p.m.position.z+=p.vz*dt;
+ var s=Math.max(.2,p.life*1.6);p.m.scale.set(s,s,s);}}
+var actx=null;
+function blip(f0,f1,dur,vol){try{
+ if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
+ var o=actx.createOscillator(),g=actx.createGain();
+ o.type='square';o.frequency.setValueAtTime(f0,actx.currentTime);
+ o.frequency.exponentialRampToValueAtTime(f1,actx.currentTime+dur);
+ g.gain.setValueAtTime(vol,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+ o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur);}catch(e){}}
+
+// ===== DAY / NIGHT =====
+
+var DAYLEN=240,tod=0.28;
+function colLerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
+var NIGHT=[0.015,0.03,0.08],DAY=[0.545,0.71,0.94],DUSK=[0.98,0.55,0.32];
+var skyColor=new THREE.Color();
+function updateSky(dt){
+ tod=(tod+dt/DAYLEN)%1;
+ var th=tod*Math.PI*2,sh=Math.sin(th);
+ var k=Math.max(0,Math.min(1,(sh+0.15)*2.4));skyK=k;
+ var w=Math.max(0,1-Math.abs(sh)*4)*0.55;
+ var c=colLerp(NIGHT,DAY,k);c=colLerp(c,DUSK,w*k);
+ skyColor.setRGB(c[0],c[1],c[2]);
+ scene.background=skyColor;scene.fog.color.copy(skyColor);
+ amb.intensity=0.28+0.45*k;sun.intensity=0.15+0.9*k;
+ stars.material.opacity=Math.max(0,0.9-k*1.4);
+ var sd=new THREE.Vector3(Math.cos(th),sh,0.35).normalize();
+ sun.position.set(P.x+sd.x*80,Math.max(6,P.y+sd.y*80),P.z+sd.z*80);
+ sun.target.position.set(P.x,P.y,P.z);
+ sunS.position.set(P.x+sd.x*300,P.y+sd.y*300,P.z+sd.z*300);
+ moonS.position.set(P.x-sd.x*300,P.y-sd.y*300,P.z-sd.z*300);
+ stars.position.set(P.x,0,P.z);
+ // underwater
+ var uw=eyeInWater();
+ document.getElementById('wet').style.display=uw?'block':'none';
+ if(uw){scene.fog.near=2;scene.fog.far=22;scene.fog.color.setRGB(0.08,0.2,0.45);scene.background=scene.fog.color;}
+ else{scene.fog.near=52;scene.fog.far=96;}
+}
+
+
+// day/night probe + torch light pool (6 lights assigned to nearest torches)
+var skyK=1;
+function isNight(){return skyK<0.28;}
+var torchLights=[],torchLT=0;
+(function(){for(var ti=0;ti<6;ti++){var tl=new THREE.PointLight(0xffb066,0,9);scene.add(tl);torchLights.push(tl);}})();
+function updateTorchLights(dt){
+ torchLT-=dt;if(torchLT>0)return;torchLT=0.4;
+ if(typeof TORCHES==='undefined')return;
+ var arr=[];TORCHES.forEach(function(k2){var p=k2.split(',');var dx=p[0]-P.x,dy=p[1]-P.y,dz=p[2]-P.z;arr.push([dx*dx+dy*dy+dz*dz,+p[0],+p[1],+p[2]]);});
+ arr.sort(function(a,b){return a[0]-b[0];});
+ for(var i=0;i<torchLights.length;i++){var L=torchLights[i];
+  if(i<arr.length&&arr[i][0]<2500){L.intensity=1.2;L.position.set(arr[i][1]+0.5,arr[i][2]+0.8,arr[i][3]+0.5);}
+  else L.intensity=0;}
+}
+
+// ---------- 30_world.js ----------
+// MODULE 30: chunk store + mesher + manager (OWNER: core)
+// ===== WORLD =====
+
 var chunks=new Map();
+var TORCHES=new Set();
 function ck(cx,cz){return cx+','+cz;}
 var EDIT_KEY='voxelcraft_world_v1';
 var edits={};try{edits=JSON.parse(localStorage.getItem(EDIT_KEY)||'{}');}catch(e){edits={};}
 var saveT=null;function saveEdits(){clearTimeout(saveT);saveT=setTimeout(function(){try{localStorage.setItem(EDIT_KEY,JSON.stringify(edits));}catch(e){}},700);}
-function terrainH(wx,wz){
- var cont=fbm2(wx*0.0045,wz*0.0045,3);
- var hills=fbm2(wx*0.02+137,wz*0.02+91,4);
- var h=14+cont*22+(hills-0.5)*15;
- if(cont>0.72)h+=(cont-0.72)*80;      // mountains
- return Math.max(3,Math.min(WH-6,Math.floor(h)));
-}
-function bi(x,y,z){return x|(z<<4)|(y<<8);}   // local index
-function genChunk(cx,cz){
- var data=new Uint8Array(CH*CH*WH);
- for(var x=0;x<CH;x++)for(var z=0;z<CH;z++){
-   var wx=cx*CH+x,wz=cz*CH+z,h=terrainH(wx,wz);
-   for(var y=0;y<=h;y++){
-     var id;
-     if(y===0)id=BEDROCK;
-     else if(y<h-3)id=STONE;
-     else if(y<h)id=DIRT;
-     else id=(h<=SEA+1)?SAND:GRASS;
-     if(id===STONE&&y>5&&y<h-3&&noise3(wx*0.09,y*0.09,wz*0.09)>0.70)id=AIR;  // caves
-     data[bi(x,y,z)]=id;
-   }
-   for(var y2=h+1;y2<=SEA;y2++)data[bi(x,y2,z)]=WATER;
-   // trees
-   if(x>=2&&x<=13&&z>=2&&z<=13&&h>SEA+1&&data[bi(x,h,z)]===GRASS&&h2(wx*3+7,wz*3+13)<0.011){
-     var th=4+Math.floor(h2(wx,wz)*3);
-     for(var ty=1;ty<=th&&h+ty<WH;ty++)data[bi(x,h+ty,z)]=LOG;
-     for(var dy=th-2;dy<=th+1;dy++){var rr=(dy>=th)?1:2;
-       for(var dx=-rr;dx<=rr;dx++)for(var dz=-rr;dz<=rr;dz++){
-         if(Math.abs(dx)===rr&&Math.abs(dz)===rr&&h3(wx+dx,dy,wz+dz)<0.5)continue;
-         var lx=x+dx,lz=z+dz,ly=h+dy;
-         if(lx<0||lx>15||lz<0||lz>15||ly<1||ly>=WH)continue;
-         if(data[bi(lx,ly,lz)]===AIR)data[bi(lx,ly,lz)]=LEAF;}}
-   }
- }
- var em=edits[ck(cx,cz)];
- if(em)for(var k in em){var p=k.split(',');data[bi(+p[0],+p[1],+p[2])]=em[k];}
- var ch={cx:cx,cz:cz,data:data,meshO:null,meshT:null,dirty:true};
- chunks.set(ck(cx,cz),ch);
- [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){var n=chunks.get(ck(cx+d[0],cz+d[1]));if(n)n.dirty=true;});
- return ch;
-}
 function getBlock(wx,wy,wz,fallback){
  if(wy<0)return BEDROCK; if(wy>=WH)return AIR;
  var cx=Math.floor(wx/CH),cz=Math.floor(wz/CH);
@@ -245,6 +421,7 @@ function setBlock(wx,wy,wz,id){
  var c=chunks.get(ck(cx,cz));if(!c)return false;
  var lx=wx-cx*CH,lz=wz-cz*CH;
  c.data[bi(lx,wy,lz)]=id;c.dirty=true;
+ if(typeof TORCH!=='undefined'){if(id===TORCH)TORCHES.add(wx+','+wy+','+wz);else TORCHES.delete(wx+','+wy+','+wz);}
  if(lx===0){var n=chunks.get(ck(cx-1,cz));if(n)n.dirty=true;}
  if(lx===15){var n2=chunks.get(ck(cx+1,cz));if(n2)n2.dirty=true;}
  if(lz===0){var n3=chunks.get(ck(cx,cz-1));if(n3)n3.dirty=true;}
@@ -254,7 +431,8 @@ function setBlock(wx,wy,wz,id){
  return true;
 }
 
-// ===================== MESHING =====================
+// ===== MESHING =====
+
 // faces: normal, 4 corners, uv per corner
 var FACES=[
  {n:[1,0,0], c:[[1,0,0],[1,1,0],[1,1,1],[1,0,1]], u:[[0,0],[0,1],[1,1],[1,0]], sh:0.68},
@@ -281,13 +459,15 @@ function buildChunk(chnk){
  for(var y=0;y<WH;y++)for(var z=0;z<CH;z++)for(var x=0;x<CH;x++){
    var id=data[bi(x,y,z)];if(id===AIR)continue;
    var wx=ox+x,wy=y,wz=oz+z;
-   var trans=(id===WATER||id===GLASS);
-   var B=BLOCKS[id];
+   var B=BLOCKS[id];if(!B)continue;
+   var shape=B.shape||'cube';
+   if(shape!=='cube'){pushShape(shape,B,wx,wy,wz,posT,norT,uvT,colT,idxT);continue;}
+   var trans=(B.trans===true);
    for(var f=0;f<6;f++){
      var F=FACES[f],nb=gb(wx+F.n[0],wy+F.n[1],wz+F.n[2]);
      var visible;
      if(id===WATER)visible=(nb===AIR);
-     else if(id===GLASS)visible=(nb===AIR||nb===WATER);
+     else if(trans)visible=(!isOpaque(nb)&&nb!==id);
      else visible=!isOpaque(nb);
      if(!visible)continue;
      var tile=(f===2)?B.t[0]:(f===3)?B.t[1]:B.t[2];
@@ -314,7 +494,8 @@ function buildChunk(chnk){
      }
      for(var ci2=0;ci2<4;ci2++){
        var cc2=F.c[ci2];
-       P.push(wx+cc2[0],wy+cc2[1],wz+cc2[2]);
+       var cy2=cc2[1];if(id===WATER&&cy2===1&&gb(wx,wy+1,wz)!==WATER)cy2=0.875;
+       P.push(wx+cc2[0],wy+cy2,wz+cc2[2]);
        N.push(F.n[0],F.n[1],F.n[2]);
        var uvp=tileUV(tile,F.u[ci2][0],F.u[ci2][1]);U.push(uvp[0],uvp[1]);
        var b=F.sh*aoV[ci2];C.push(b,b,b);
@@ -340,7 +521,588 @@ function buildChunk(chnk){
  chnk.dirty=false;
 }
 
-// ===================== PLAYER =====================
+// ===== CHUNK MANAGER =====
+
+var genQ=[],meshQ=[];
+function ensureChunks(){
+ var pcx=Math.floor(P.x/CH),pcz=Math.floor(P.z/CH);
+ for(var dx=-R;dx<=R;dx++)for(var dz=-R;dz<=R;dz++){
+   var cx=pcx+dx,cz=pcz+dz,key=ck(cx,cz);
+   if(!chunks.has(key)&&genQ.indexOf(key)<0)genQ.push(key);
+ }
+ genQ.sort(function(a,b){var pa=a.split(','),pb=b.split(',');
+   var da=Math.pow(pa[0]-pcx,2)+Math.pow(pa[1]-pcz,2),db=Math.pow(pb[0]-pcx,2)+Math.pow(pb[1]-pcz,2);return da-db;});
+ var gbudget=2;
+ while(gbudget-->0&&genQ.length){var k=genQ.shift();if(chunks.has(k))continue;var p=k.split(',');genChunk(+p[0],+p[1]);}
+ var mbudget=2;
+ var arr=[];chunks.forEach(function(c){if(c.dirty)arr.push(c);});
+ arr.sort(function(a,b){var da=Math.pow(a.cx-pcx,2)+Math.pow(a.cz-pcz,2),db=Math.pow(b.cx-pcx,2)+Math.pow(b.cz-pcz,2);return da-db;});
+ for(var i=0;i<arr.length&&mbudget>0;i++){buildChunk(arr[i]);mbudget--;}
+}
+// (initial spawn burst moved to 50_game.js initWorld)
+
+
+// non-cube shapes: cross (flowers/grass) and torch - rendered into the transparent mesh, no culling/AO
+function pushShape(shape,B,wx,wy,wz,P,N,U,C,I){
+ var tile=B.t[2];
+ function quad(c0,c1,c2,c3){
+  var base=P.length/3,cs=[c0,c1,c2,c3],uvs=[[0,0],[1,0],[1,1],[0,1]];
+  for(var i=0;i<4;i++){P.push(wx+cs[i][0],wy+cs[i][1],wz+cs[i][2]);N.push(0,1,0);
+   var uvp=tileUV(tile,uvs[i][0],uvs[i][1]);U.push(uvp[0],uvp[1]);C.push(1,1,1);}
+  I.push(base,base+1,base+2,base,base+2,base+3);
+ }
+ if(shape==='cross'){
+  quad([0.15,0,0.15],[0.85,0,0.85],[0.85,1,0.85],[0.15,1,0.15]);
+  quad([0.85,0,0.15],[0.15,0,0.85],[0.15,1,0.85],[0.85,1,0.15]);
+ }else if(shape==='torch'){
+  var a=0.44,b=0.56,h=0.62;
+  quad([a,0,a],[b,0,a],[b,h,a],[a,h,a]);
+  quad([b,0,b],[a,0,b],[a,h,b],[b,h,b]);
+  quad([a,0,b],[a,0,a],[a,h,a],[a,h,b]);
+  quad([b,0,a],[b,0,b],[b,h,b],[b,h,a]);
+  quad([a,h,a],[b,h,a],[b,h,b],[a,h,b]);
+ }
+}
+function findGroundY(wx,wz){for(var y=WH-1;y>0;y--){if(isSolid(getBlock(wx,y,wz,AIR)))return y+1;}return SEA+1;}
+
+// ---------- 32_terrain.js ----------
+// MODULE 32: terrain generation - biomes, ores, trees, decorations (OWNER: Terra)
+// CONTRACT: define all config data INSIDE functions (top-level var init order is not guaranteed for callers).
+function terrainH(wx,wz){
+ var cont=fbm2(wx*0.0045,wz*0.0045,3);
+ var hills=fbm2(wx*0.02+137,wz*0.02+91,4);
+ var h=14+cont*22+(hills-0.5)*15;
+ if(cont>0.72)h+=(cont-0.72)*80;      // mountains
+ return Math.max(3,Math.min(WH-6,Math.floor(h)));
+}
+// biomeAt: computed once per column (never per-block) - keeps genChunk fast.
+function biomeAt(wx,wz){
+ var temperature=fbm2(wx*0.0035+500,wz*0.0035+500,2);
+ var moisture=fbm2(wx*0.003-800,wz*0.003-800,2);
+ if(temperature<0.34)return 'snow';
+ if(temperature>0.66&&moisture<0.45)return 'desert';
+ if(moisture>0.55)return 'forest';
+ return 'plains';
+}
+function bi(x,y,z){return x|(z<<4)|(y<<8);}   // local index
+function genChunk(cx,cz){
+ var data=new Uint8Array(CH*CH*WH);
+ for(var x=0;x<CH;x++)for(var z=0;z<CH;z++){
+   var wx=cx*CH+x,wz=cz*CH+z,h=terrainH(wx,wz);
+   var biome=biomeAt(wx,wz);
+   var isBeach=(h<=SEA+1);
+   var mountainCap=(h>=44);
+   for(var y=0;y<=h;y++){
+     var id;
+     if(y===0)id=BEDROCK;
+     else if(y<h-3)id=STONE;
+     else if(y<h){
+       id=(biome==='desert')?SANDSTONE:DIRT;
+     }else{ // surface block
+       if(mountainCap)id=SNOWBLK;
+       else if(isBeach)id=SAND;
+       else if(biome==='desert')id=SAND;
+       else if(biome==='snow')id=SNOWGRASS;
+       else id=GRASS; // plains/forest
+     }
+     if(id===STONE&&y>5&&y<h-3&&noise3(wx*0.09,y*0.09,wz*0.09)>0.70)id=AIR;  // caves
+     // ores: replace remaining STONE with rarer-wins ordering (diamond > gold > iron > coal)
+     if(id===STONE){
+       if(y<12&&h3(wx,y*7,wz+900)<0.0045)id=DIAMOND_ORE;
+       else if(y<18&&h3(wx-900,y*7,wz)<0.007)id=GOLD_ORE;
+       else if(y<30&&h3(wx+900,y*7,wz)<0.014)id=IRON_ORE;
+       else if(y<44&&h3(wx,y*7,wz)<0.022)id=COAL_ORE;
+     }
+     data[bi(x,y,z)]=id;
+   }
+   for(var y2=h+1;y2<=SEA;y2++)data[bi(x,y2,z)]=WATER;
+   if(biome==='snow'&&h<=SEA&&data[bi(x,SEA,z)]===WATER)data[bi(x,SEA,z)]=ICE; // frozen surface in snow biome
+
+   // ----- vegetation (only within the 2..13 interior band to avoid cross-chunk seams) -----
+   var inBand=(x>=2&&x<=13&&z>=2&&z<=13);
+   if(biome==='desert'){
+     // cacti instead of trees - grow on any sand top in the desert biome (h2 rate ~0.004)
+     if(inBand&&h>0&&data[bi(x,h,z)]===SAND&&h2(wx*3+7,wz*3+13)<0.004){
+       var cactH=1+Math.floor(h2(wx,wz)*3);
+       for(var cy=1;cy<=cactH&&h+cy<WH;cy++){
+         if(data[bi(x,h+cy,z)]===AIR)data[bi(x,h+cy,z)]=CACTUS;
+       }
+     }
+   }else if(biome==='snow'){
+     // spruce trees: taller trunk, narrow conical SPRUCELEAF crown
+     if(inBand&&h>SEA+1&&data[bi(x,h,z)]===SNOWGRASS&&h2(wx*3+7,wz*3+13)<0.011){
+       var sth=5+Math.floor(h2(wx,wz)*3); // 5-7
+       for(var sty=1;sty<=sth&&h+sty<WH;sty++)data[bi(x,h+sty,z)]=LOG;
+       for(var sdy=2;sdy<=sth+1;sdy++){
+         var srr=Math.max(0,2-Math.floor((sdy-2)/2)); // narrows toward top: 2,2,1,1,0
+         if(sdy===sth+1)srr=0;
+         for(var sdx=-srr;sdx<=srr;sdx++)for(var sdz=-srr;sdz<=srr;sdz++){
+           if(Math.abs(sdx)===srr&&Math.abs(sdz)===srr&&srr>0&&h3(wx+sdx,sdy,wz+sdz)<0.5)continue;
+           var slx=x+sdx,slz=z+sdz,sly=h+sdy;
+           if(slx<0||slx>15||slz<0||slz>15||sly<1||sly>=WH)continue;
+           if(data[bi(slx,sly,slz)]===AIR)data[bi(slx,sly,slz)]=SPRUCELEAF;}}
+     }
+   }else{
+     // plains/forest: normal oak trees, forest ~3x density
+     var treeRate=(biome==='forest')?0.033:0.011;
+     if(inBand&&h>SEA+1&&data[bi(x,h,z)]===GRASS&&h2(wx*3+7,wz*3+13)<treeRate){
+       var th=4+Math.floor(h2(wx,wz)*3);
+       for(var ty=1;ty<=th&&h+ty<WH;ty++)data[bi(x,h+ty,z)]=LOG;
+       for(var dy=th-2;dy<=th+1;dy++){var rr=(dy>=th)?1:2;
+         for(var dx=-rr;dx<=rr;dx++)for(var dz=-rr;dz<=rr;dz++){
+           if(Math.abs(dx)===rr&&Math.abs(dz)===rr&&h3(wx+dx,dy,wz+dz)<0.5)continue;
+           var lx=x+dx,lz=z+dz,ly=h+dy;
+           if(lx<0||lx>15||lz<0||lz>15||ly<1||ly>=WH)continue;
+           if(data[bi(lx,ly,lz)]===AIR)data[bi(lx,ly,lz)]=LEAF;}}
+     }
+     // ground decorations on grass, after trees, only where the block above the surface is still AIR
+     if(h>SEA+1&&data[bi(x,h,z)]===GRASS&&data[bi(x,h+1,z)]===AIR){
+       if(h2(wx*5+31,wz*5+17)<0.045)data[bi(x,h+1,z)]=TALLGRASS;
+       else if(h2(wx*5-53,wz*5+91)<0.008)data[bi(x,h+1,z)]=FLOWER_R;
+       else if(h2(wx*5+77,wz*5-29)<0.008)data[bi(x,h+1,z)]=FLOWER_Y;
+     }
+   }
+ }
+ var em=edits[ck(cx,cz)];
+ if(em)for(var k in em){
+   var p=k.split(',');var lx2=+p[0],ly2=+p[1],lz2=+p[2],eid=+em[k];
+   data[bi(lx2,ly2,lz2)]=eid;
+   if(typeof TORCH!=='undefined'&&eid===TORCH)TORCHES.add((cx*16+lx2)+','+ly2+','+(cz*16+lz2));
+ }
+ var ch={cx:cx,cz:cz,data:data,meshO:null,meshT:null,dirty:true};
+ chunks.set(ck(cx,cz),ch);
+ [[1,0],[-1,0],[0,1],[0,-1]].forEach(function(d){var n=chunks.get(ck(cx+d[0],cz+d[1]));if(n)n.dirty=true;});
+ return ch;
+}
+
+// ---------- 35_mobs.js ----------
+// MODULE 35: mobs - pigs (day) + zombies (night), physics, melee (OWNER: Fauna)
+// CONTRACT: top-level = function declarations + plain data only. All THREE/scene work happens
+// lazily inside initMobs()/spawn functions, which run at runtime once state==='play' frames start.
+
+// ===== CONSTANTS (plain data only) =====
+var MOB_PIG=1, MOB_ZOMBIE=2;
+var MOB_GRAV=26;
+var PIG_CAP=8, PIG_CAP_RADIUS=60, PIG_RANGE_MIN=18, PIG_RANGE_MAX=45;
+var ZOMBIE_CAP=6, ZOMBIE_CAP_RADIUS=70, ZOMBIE_RANGE_MIN=20, ZOMBIE_RANGE_MAX=40, ZOMBIE_CHASE_DIST=20;
+var PIG_HP=6, ZOMBIE_HP=12;
+var PIG_SPEED=1.6, ZOMBIE_CHASE_SPEED=2.5, ZOMBIE_WANDER_SPEED=1.1;
+var MOB_AI_CULL_DIST=70;
+var HIT_RANGE=3.6, HIT_DOT_MIN=0.94, HIT_DMG=4, HIT_KNOCK=7, HIT_KNOCK_VY=4.5;
+var ZOMBIE_CONTACT_DIST=1.3, ZOMBIE_CONTACT_DY=2, ZOMBIE_CONTACT_DMG=2, ZOMBIE_CONTACT_CD=1.0;
+var ZOMBIE_KNOCK_H=6, ZOMBIE_KNOCK_VY=4;
+var ZOMBIE_DESPAWN_T=2.0;
+
+// ===== STATE (plain data; populated lazily) =====
+var mobsInited=false;
+var MOBS=[];
+var mobGeo=null;     // {pigBody,pigSnout,pigLeg,pigEye,zomBody,zomHead,zomArm,zomLeg,zomEye}
+var mobMat=null;     // {pigBody,pigSnout,zomBody,zomHead,eye}
+var mobClock=0;      // running time for animation phase
+
+// ===== LAZY INIT (all THREE/scene creation happens here, first call only) =====
+function initMobs(){
+ if(mobsInited)return;
+ mobsInited=true;
+ mobGeo={
+  pigBody:new THREE.BoxGeometry(0.9,0.55,0.55),
+  pigHead:new THREE.BoxGeometry(0.42,0.4,0.4),
+  pigSnout:new THREE.BoxGeometry(0.18,0.16,0.12),
+  pigLeg:new THREE.BoxGeometry(0.16,0.4,0.16),
+  pigEye:new THREE.BoxGeometry(0.05,0.05,0.05),
+  zomBody:new THREE.BoxGeometry(0.5,0.75,0.3),
+  zomHead:new THREE.BoxGeometry(0.42,0.42,0.42),
+  zomArm:new THREE.BoxGeometry(0.16,0.62,0.16),
+  zomLeg:new THREE.BoxGeometry(0.18,0.62,0.18),
+  zomEye:new THREE.BoxGeometry(0.05,0.05,0.05)
+ };
+ mobMat={
+  pigBody:new THREE.MeshLambertMaterial({color:0xe89d9d}),
+  pigSnout:new THREE.MeshLambertMaterial({color:0xc47575}),
+  zomBody:new THREE.MeshLambertMaterial({color:0x5d8f57}),
+  zomHead:new THREE.MeshLambertMaterial({color:0x3f6b3a}),
+  eye:new THREE.MeshBasicMaterial({color:0x111111})
+ };
+}
+
+// ===== MOB BODY BUILDERS (shared geo/mat, unique meshes per mob instance) =====
+function buildPigModel(){
+ var g=new THREE.Group();
+ var body=new THREE.Mesh(mobGeo.pigBody,mobMat.pigBody);body.position.y=0.42;body.castShadow=false;body.receiveShadow=false;
+ var head=new THREE.Mesh(mobGeo.pigHead,mobMat.pigBody);head.position.set(0,0.46,-0.48);
+ var snout=new THREE.Mesh(mobGeo.pigSnout,mobMat.pigSnout);snout.position.set(0,0.42,-0.68);
+ var eyeL=new THREE.Mesh(mobGeo.pigEye,mobMat.eye);eyeL.position.set(0.13,0.54,-0.66);
+ var eyeR=new THREE.Mesh(mobGeo.pigEye,mobMat.eye);eyeR.position.set(-0.13,0.54,-0.66);
+ body.frustumCulled=true;head.frustumCulled=true;snout.frustumCulled=true;eyeL.frustumCulled=true;eyeR.frustumCulled=true;
+ g.add(body,head,snout,eyeL,eyeR);
+ var legs=[];
+ var legPos=[[0.28,0,-0.18],[-0.28,0,-0.18],[0.28,0,0.18],[-0.28,0,0.18]];
+ for(var i=0;i<4;i++){
+  var leg=new THREE.Mesh(mobGeo.pigLeg,mobMat.pigBody);
+  leg.position.set(legPos[i][0],0.2,legPos[i][1]);
+  leg.frustumCulled=true;
+  g.add(leg);legs.push(leg);
+ }
+ return {group:g,body:body,head:head,legs:legs,parts:[body,head,snout,eyeL,eyeR].concat(legs)};
+}
+function buildZombieModel(){
+ var g=new THREE.Group();
+ var body=new THREE.Mesh(mobGeo.zomBody,mobMat.zomBody);body.position.y=1.14;
+ var head=new THREE.Mesh(mobGeo.zomHead,mobMat.zomHead);head.position.y=1.72;
+ var eyeL=new THREE.Mesh(mobGeo.zomEye,mobMat.eye);eyeL.position.set(0.11,1.75,-0.2);
+ var eyeR=new THREE.Mesh(mobGeo.zomEye,mobMat.eye);eyeR.position.set(-0.11,1.75,-0.2);
+ body.frustumCulled=true;head.frustumCulled=true;eyeL.frustumCulled=true;eyeR.frustumCulled=true;
+ g.add(body,head,eyeL,eyeR);
+ var armL=new THREE.Mesh(mobGeo.zomArm,mobMat.zomHead);armL.position.set(0.32,1.12,0);
+ var armR=new THREE.Mesh(mobGeo.zomArm,mobMat.zomHead);armR.position.set(-0.32,1.12,0);
+ var legL=new THREE.Mesh(mobGeo.zomLeg,mobMat.zomBody);legL.position.set(0.14,0.31,0);
+ var legR=new THREE.Mesh(mobGeo.zomLeg,mobMat.zomBody);legR.position.set(-0.14,0.31,0);
+ armL.frustumCulled=true;armR.frustumCulled=true;legL.frustumCulled=true;legR.frustumCulled=true;
+ g.add(armL,armR,legL,legR);
+ return {group:g,body:body,head:head,legs:[legL,legR],arms:[armL,armR],parts:[body,head,eyeL,eyeR,armL,armR,legL,legR]};
+}
+
+// ===== HELPERS =====
+function mobRand(m,salt){return h3(Math.floor(m.pos.x*4)+salt,Math.floor(mobClock*37)+salt*7,Math.floor(m.pos.z*4)+salt);}
+function mobDistToPlayer(m){var dx=m.pos.x-P.x,dz=m.pos.z-P.z;return Math.sqrt(dx*dx+dz*dz);}
+function mobFeetSolid(wx,wy,wz){return isSolid(getBlock(Math.floor(wx),Math.floor(wy),Math.floor(wz),AIR));}
+function mobWaterAhead(wx,wy,wz){
+ // deeper-than-1 water check: block at feet is water AND block above feet is also water
+ var b0=getBlock(Math.floor(wx),Math.floor(wy),Math.floor(wz),AIR);
+ var b1=getBlock(Math.floor(wx),Math.floor(wy)+1,Math.floor(wz),AIR);
+ return b0===WATER&&b1===WATER;
+}
+function countMobsNear(type,within){
+ var c=0;
+ for(var i=0;i<MOBS.length;i++){
+  var m=MOBS[i];if(m.type!==type||m.dying)continue;
+  var dx=m.pos.x-P.x,dz=m.pos.z-P.z;
+  if(dx*dx+dz*dz<within*within)c++;
+ }
+ return c;
+}
+
+// ===== SPAWNING =====
+function spawnAttemptPos(minR,maxR){
+ var ang=Math.random()*Math.PI*2;
+ var r=minR+Math.random()*(maxR-minR);
+ var wx=Math.floor(P.x+Math.cos(ang)*r);
+ var wz=Math.floor(P.z+Math.sin(ang)*r);
+ return {wx:wx,wz:wz};
+}
+function spawnPig(){
+ if(typeof P==='undefined')return;
+ if(countMobsNear(MOB_PIG,PIG_CAP_RADIUS)>=PIG_CAP)return;
+ var pos=spawnAttemptPos(PIG_RANGE_MIN,PIG_RANGE_MAX);
+ var gy=findGroundY(pos.wx,pos.wz);
+ var groundId=getBlock(pos.wx,gy-1,pos.wz,AIR);
+ if(groundId!==GRASS)return; // pigs prefer grass
+ if(gy<SEA)return; // avoid underwater ground
+ var model=buildPigModel();
+ model.group.position.set(pos.wx+0.5,gy,pos.wz+0.5);
+ scene.add(model.group);
+ MOBS.push({
+  type:MOB_PIG,group:model.group,parts:model.parts,legs:model.legs,
+  pos:{x:pos.wx+0.5,y:gy,z:pos.wz+0.5},vel:{x:0,y:0,z:0},
+  yaw:Math.random()*Math.PI*2,targetYaw:0,
+  hp:PIG_HP,maxHp:PIG_HP,hurtT:0,dying:false,despawnT:0,
+  aiT:1+Math.random()*2,wanderTx:pos.wx+0.5,wanderTz:pos.wz+0.5,idle:false,idleT:0,
+  soundT:3+Math.random()*8,grounded:false,walkPhase:Math.random()*10
+ });
+}
+function spawnZombie(){
+ if(typeof P==='undefined')return;
+ if(!isNight())return;
+ if(countMobsNear(MOB_ZOMBIE,ZOMBIE_CAP_RADIUS)>=ZOMBIE_CAP)return;
+ var pos=spawnAttemptPos(ZOMBIE_RANGE_MIN,ZOMBIE_RANGE_MAX);
+ var gy=findGroundY(pos.wx,pos.wz);
+ var groundId=getBlock(pos.wx,gy-1,pos.wz,AIR);
+ if(!isSolid(groundId)||groundId===WATER)return;
+ if(gy<SEA)return;
+ var model=buildZombieModel();
+ model.group.position.set(pos.wx+0.5,gy,pos.wz+0.5);
+ scene.add(model.group);
+ MOBS.push({
+  type:MOB_ZOMBIE,group:model.group,parts:model.parts,legs:model.legs,arms:model.arms,
+  pos:{x:pos.wx+0.5,y:gy,z:pos.wz+0.5},vel:{x:0,y:0,z:0},
+  yaw:Math.random()*Math.PI*2,targetYaw:0,
+  hp:ZOMBIE_HP,maxHp:ZOMBIE_HP,hurtT:0,dying:false,despawnT:0,
+  aiT:1+Math.random()*2,wanderTx:pos.wx+0.5,wanderTz:pos.wz+0.5,idle:false,idleT:0,
+  soundT:2+Math.random()*6,grounded:false,walkPhase:Math.random()*10,contactCd:0
+ });
+}
+
+// ===== PHYSICS (local, matches player-style clamp/step) =====
+// Tests whether mob can occupy (tx,tz) at its current feet height, allowing a 1-block
+// auto step-up when the target cell is solid but has air above it.
+function mobTryAxis(m,tx,tz){
+ var testFeet=Math.floor(m.pos.y+0.05);
+ if(!mobFeetSolid(tx,testFeet,tz))return {x:tx,z:tz,dy:0};
+ if(!mobFeetSolid(tx,testFeet+1,tz)&&testFeet+1<WH){
+  return {x:tx,z:tz,dy:1}; // step up one block
+ }
+ return null; // blocked, axis motion cancelled
+}
+function mobPhysicsStep(m,dt,wishX,wishZ,speed){
+ // horizontal desired velocity, smoothed
+ var k=Math.min(1,10*dt);
+ m.vel.x+=(wishX*speed-m.vel.x)*k;
+ m.vel.z+=(wishZ*speed-m.vel.z)*k;
+ // gravity
+ m.vel.y-=MOB_GRAV*dt;
+ if(m.vel.y<-40)m.vel.y=-40;
+
+ var nx=m.pos.x+m.vel.x*dt;
+ var nz=m.pos.z+m.vel.z*dt;
+ var ny=m.pos.y+m.vel.y*dt;
+
+ // water-ahead avoidance: don't walk into water deeper than 1 block (per-axis so mobs can
+ // still slide along a shoreline instead of fully freezing)
+ if(mobWaterAhead(nx,m.pos.y,m.pos.z)){nx=m.pos.x;m.vel.x=0;}
+ if(mobWaterAhead(m.pos.x,m.pos.y,nz)){nz=m.pos.z;m.vel.z=0;}
+
+ m.grounded=false;
+ var stepUp=0;
+
+ // horizontal resolve with 1-block auto step-up (test against CURRENT pos.y, before vertical move)
+ var rx=mobTryAxis(m,nx,m.pos.z);
+ if(rx){m.pos.x=rx.x;if(rx.dy>0)stepUp=Math.max(stepUp,rx.dy);}
+ else{m.vel.x=0;}
+ var rz=mobTryAxis(m,m.pos.x,nz);
+ if(rz){m.pos.z=rz.z;if(rz.dy>0)stepUp=Math.max(stepUp,rz.dy);}
+ else{m.vel.z=0;}
+
+ // vertical resolve: ground clamp (feet block solid -> sit on top)
+ var feetY=Math.floor(ny);
+ if(mobFeetSolid(m.pos.x,feetY,m.pos.z)&&m.vel.y<=0){
+  ny=feetY+1;m.vel.y=0;m.grounded=true;
+ }
+ if(stepUp>0){ny=Math.max(ny,Math.floor(m.pos.y)+1+0.001);m.grounded=true;if(m.vel.y<0)m.vel.y=0;}
+ // ceiling clamp (mild, prevents clipping into overhangs when stepping/jumping up)
+ if(m.vel.y>0&&isSolid(getBlock(Math.floor(m.pos.x),Math.floor(ny+1.6),Math.floor(m.pos.z),AIR))){
+  ny=Math.floor(ny+1.6)-1.6-0.01;m.vel.y=0;
+ }
+
+ m.pos.y=ny;
+}
+
+// ===== AI: PIG =====
+function aiPig(m,dt,farAI){
+ if(m.hurtT>0)m.hurtT-=dt;
+ m.soundT-=dt;
+ if(m.soundT<=0){
+  m.soundT=6+mobRand(m,3)*8;
+  if(typeof blip==='function')blip(340,260,0.08,0.05);
+ }
+ if(farAI)return {wishX:0,wishZ:0,speed:0};
+ m.aiT-=dt;
+ if(m.aiT<=0){
+  if(m.idle){
+   m.idle=false;
+   var ang=Math.random()*Math.PI*2,r=2+Math.random()*5;
+   m.wanderTx=m.pos.x+Math.cos(ang)*r;
+   m.wanderTz=m.pos.z+Math.sin(ang)*r;
+   m.aiT=3+Math.random()*5;
+  } else {
+   m.idle=true;
+   m.aiT=1+Math.random()*2.5;
+  }
+ }
+ if(m.idle)return {wishX:0,wishZ:0,speed:0};
+ var dx=m.wanderTx-m.pos.x,dz=m.wanderTz-m.pos.z;
+ var d=Math.sqrt(dx*dx+dz*dz);
+ if(d<0.4)return {wishX:0,wishZ:0,speed:0};
+ m.targetYaw=Math.atan2(dx,dz);
+ return {wishX:dx/d,wishZ:dz/d,speed:PIG_SPEED};
+}
+
+// ===== AI: ZOMBIE =====
+function aiZombie(m,dt,farAI){
+ if(m.hurtT>0)m.hurtT-=dt;
+ if(m.contactCd>0)m.contactCd-=dt;
+ m.soundT-=dt;
+ if(m.soundT<=0){
+  m.soundT=5+mobRand(m,11)*9;
+  if(typeof blip==='function')blip(120,70,0.25,0.06);
+ }
+ if(farAI)return {wishX:0,wishZ:0,speed:0};
+ var dist=mobDistToPlayer(m);
+ if(dist<ZOMBIE_CHASE_DIST&&typeof P!=='undefined'){
+  var dx=P.x-m.pos.x,dz=P.z-m.pos.z;
+  var d=Math.sqrt(dx*dx+dz*dz);
+  if(d>0.05){
+   m.targetYaw=Math.atan2(dx,dz);
+   // contact damage
+   var dy=Math.abs(P.y-m.pos.y);
+   if(d<ZOMBIE_CONTACT_DIST&&dy<ZOMBIE_CONTACT_DY&&m.contactCd<=0){
+    m.contactCd=ZOMBIE_CONTACT_CD;
+    if(typeof damagePlayer==='function')damagePlayer(ZOMBIE_CONTACT_DMG,'Slain by a zombie');
+    var kdx=dx/d,kdz=dz/d;
+    P.vx+=kdx*ZOMBIE_KNOCK_H;P.vy=Math.max(P.vy,ZOMBIE_KNOCK_VY);P.vz+=kdz*ZOMBIE_KNOCK_H;
+   }
+   return {wishX:dx/d,wishZ:dz/d,speed:ZOMBIE_CHASE_SPEED};
+  }
+  return {wishX:0,wishZ:0,speed:0};
+ }
+ // slow wander when not chasing
+ m.aiT-=dt;
+ if(m.aiT<=0){
+  if(m.idle){m.idle=false;var ang=Math.random()*Math.PI*2,r=2+Math.random()*4;
+   m.wanderTx=m.pos.x+Math.cos(ang)*r;m.wanderTz=m.pos.z+Math.sin(ang)*r;m.aiT=3+Math.random()*4;
+  }else{m.idle=true;m.aiT=1.5+Math.random()*2;}
+ }
+ if(m.idle)return {wishX:0,wishZ:0,speed:0};
+ var wdx=m.wanderTx-m.pos.x,wdz=m.wanderTz-m.pos.z;
+ var wd=Math.sqrt(wdx*wdx+wdz*wdz);
+ if(wd<0.4)return {wishX:0,wishZ:0,speed:0};
+ m.targetYaw=Math.atan2(wdx,wdz);
+ return {wishX:wdx/wd,wishZ:wdz/wd,speed:ZOMBIE_WANDER_SPEED};
+}
+
+// ===== VISUAL SYNC (position, yaw smoothing, leg swing, hurt flash) =====
+function mobSyncVisual(m,dt){
+ // yaw smoothing toward targetYaw (shortest path)
+ var diff=m.targetYaw-m.yaw;
+ while(diff>Math.PI)diff-=Math.PI*2;
+ while(diff<-Math.PI)diff+=Math.PI*2;
+ m.yaw+=diff*Math.min(1,8*dt);
+
+ m.group.position.set(m.pos.x,m.pos.y,m.pos.z);
+ m.group.rotation.y=m.yaw;
+
+ var hsp=Math.sqrt(m.vel.x*m.vel.x+m.vel.z*m.vel.z);
+ if(hsp>0.15){
+  m.walkPhase+=hsp*dt*4.2;
+ } else {
+  m.walkPhase*=Math.pow(0.001,dt);
+ }
+ var swing=Math.sin(m.walkPhase)*0.55;
+ if(m.legs){
+  for(var i=0;i<m.legs.length;i++){
+   var s=(i%2===0)?swing:-swing;
+   m.legs[i].rotation.x=s;
+  }
+ }
+ if(m.arms){
+  for(var j=0;j<m.arms.length;j++){
+   var sa=(j%2===0)?-swing:swing;
+   m.arms[j].rotation.x=sa*0.7;
+  }
+ }
+
+ // hurt flash: scale pulse (perf-friendly, avoids per-mob material clones)
+ if(m.hurtT>0){
+  var s2=1+Math.sin(m.hurtT*40)*0.08;
+  m.group.scale.set(s2,s2,s2);
+ } else {
+  m.group.scale.set(1,1,1);
+ }
+}
+
+// ===== DEATH / DESPAWN =====
+function mobDie(m){
+ if(typeof burst==='function')burst(Math.floor(m.pos.x),Math.floor(m.pos.y),Math.floor(m.pos.z),m.type===MOB_ZOMBIE?0x3f6b3a:0xe89d9d);
+ mobRemove(m);
+}
+function mobRemove(m){
+ // all mob part meshes reference SHARED geometries/materials (mobGeo/mobMat) - never dispose
+ // those here, only detach this mob's own Group from the scene and drop it from MOBS.
+ scene.remove(m.group);
+ var idx=MOBS.indexOf(m);
+ if(idx>=0)MOBS.splice(idx,1);
+}
+
+// ===== MAIN UPDATE (called every frame while state==='play') =====
+var mobSpawnT=0;
+function updateMobs(dt){
+ if(!mobsInited)initMobs();
+ if(typeof P==='undefined'||typeof scene==='undefined')return;
+ mobClock+=dt;
+
+ // periodic spawn attempts
+ mobSpawnT-=dt;
+ if(mobSpawnT<=0){
+  mobSpawnT=1.2+Math.random()*1.0;
+  if(!isNight())spawnPig();
+  else spawnZombie();
+ }
+
+ for(var i=MOBS.length-1;i>=0;i--){
+  var m=MOBS[i];
+
+  // dawn despawn for zombies (poof over ~2s)
+  if(m.type===MOB_ZOMBIE&&!isNight()&&!m.dying){
+   m.dying=true;m.despawnT=ZOMBIE_DESPAWN_T;
+  }
+  if(m.dying){
+   m.despawnT-=dt;
+   var t=Math.max(0,m.despawnT/ZOMBIE_DESPAWN_T);
+   m.group.scale.set(t,t,t);
+   if(m.despawnT<=0){
+    if(typeof burst==='function')burst(Math.floor(m.pos.x),Math.floor(m.pos.y),Math.floor(m.pos.z),0x3f6b3a);
+    mobRemove(m);
+   }
+   continue;
+  }
+
+  // safety despawn far below world
+  if(m.pos.y<-10){mobRemove(m);continue;}
+
+  var dist=mobDistToPlayer(m);
+  var farAI=dist>MOB_AI_CULL_DIST;
+
+  var wish=(m.type===MOB_PIG)?aiPig(m,dt,farAI):aiZombie(m,dt,farAI);
+
+  if(farAI){
+   // gravity-only physics far away (perf)
+   mobPhysicsStep(m,dt,0,0,0);
+  } else {
+   mobPhysicsStep(m,dt,wish.wishX,wish.wishZ,wish.speed);
+  }
+
+  mobSyncVisual(m,dt);
+ }
+}
+
+// ===== MELEE: hitMob() called by player attack (mine action) =====
+function hitMob(){
+ if(!mobsInited||typeof camera==='undefined')return false;
+ var camPos=camera.position;
+ var fwd=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+ var best=null,bestD=HIT_RANGE+1;
+ for(var i=0;i<MOBS.length;i++){
+  var m=MOBS[i];
+  if(m.dying)continue;
+  var mx=m.pos.x,my=m.pos.y+(m.type===MOB_ZOMBIE?0.9:0.42),mz=m.pos.z;
+  var dx=mx-camPos.x,dy=my-camPos.y,dz=mz-camPos.z;
+  var d=Math.sqrt(dx*dx+dy*dy+dz*dz);
+  if(d>HIT_RANGE)continue;
+  var dot=(d>0.0001)?((dx*fwd.x+dy*fwd.y+dz*fwd.z)/d):1;
+  if(dot<HIT_DOT_MIN)continue;
+  if(d<bestD){bestD=d;best=m;}
+ }
+ if(!best)return false;
+
+ best.hp-=HIT_DMG;
+ best.hurtT=0.28;
+ var kdx=best.pos.x-P.x,kdz=best.pos.z-P.z;
+ var kd=Math.sqrt(kdx*kdx+kdz*kdz);
+ if(kd<0.001){kdx=Math.sin(best.yaw);kdz=Math.cos(best.yaw);kd=1;}
+ best.vel.x+=(kdx/kd)*HIT_KNOCK;
+ best.vel.z+=(kdz/kd)*HIT_KNOCK;
+ best.vel.y=HIT_KNOCK_VY;
+ if(typeof blip==='function')blip(200,120,0.08,0.1);
+
+ if(best.hp<=0){
+  mobDie(best);
+ }
+ return true;
+}
+
+// ---------- 40_player.js ----------
+// MODULE 40: player physics + input + look (OWNER: core)
+// ===== PLAYER =====
+
 var P={x:8.5,y:40,z:8.5,vx:0,vy:0,vz:0,grounded:false,fly:false};
 (function(){P.y=terrainH(8,8)+2;})();
 var spawnY=P.y;
@@ -366,7 +1128,8 @@ function moveAxis(axis,amt){
 function inWater(){return getBlock(Math.floor(P.x),Math.floor(P.y+0.4),Math.floor(P.z),AIR)===WATER;}
 function eyeInWater(){return getBlock(Math.floor(P.x),Math.floor(P.y+EYE),Math.floor(P.z),AIR)===WATER;}
 
-// ===================== RAYCAST (DDA) =====================
+// ===== RAYCAST (DDA) =====
+
 function raycast(maxD){
  var dir=new THREE.Vector3(0,0,-1).applyEuler(new THREE.Euler(pitch,yaw,0,'YXZ'));
  var px=P.x,py=P.y+EYE,pz=P.z;
@@ -394,114 +1157,62 @@ var hl=new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(1.00
  new THREE.LineBasicMaterial({color:0x111111,transparent:true,opacity:0.65}));
 hl.visible=false;scene.add(hl);
 
-// ===================== PARTICLES / AUDIO =====================
-var partGeo=new THREE.BoxGeometry(.13,.13,.13),parts=[],pmats={};
-function burst(x,y,z,colHex){
- var m=pmats[colHex]||(pmats[colHex]=new THREE.MeshBasicMaterial({color:colHex}));
- for(var i=0;i<12;i++){
-   var p=new THREE.Mesh(partGeo,m);
-   p.position.set(x+.5,y+.5,z+.5);
-   parts.push({m:p,vx:(Math.random()-.5)*5,vy:Math.random()*5+1,vz:(Math.random()-.5)*5,life:.6+Math.random()*.3});
-   scene.add(p);}
-}
-function updParts(dt){for(var i=parts.length-1;i>=0;i--){var p=parts[i];p.life-=dt;
- if(p.life<=0){scene.remove(p.m);parts.splice(i,1);continue;}
- p.vy-=16*dt;p.m.position.x+=p.vx*dt;p.m.position.y+=p.vy*dt;p.m.position.z+=p.vz*dt;
- var s=Math.max(.2,p.life*1.6);p.m.scale.set(s,s,s);}}
-var actx=null;
-function blip(f0,f1,dur,vol){try{
- if(!actx)actx=new (window.AudioContext||window.webkitAudioContext)();
- var o=actx.createOscillator(),g=actx.createGain();
- o.type='square';o.frequency.setValueAtTime(f0,actx.currentTime);
- o.frequency.exponentialRampToValueAtTime(f1,actx.currentTime+dur);
- g.gain.setValueAtTime(vol,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
- o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+dur);}catch(e){}}
+// ===== INPUT =====
 
-// ===================== HOTBAR UI =====================
-var hb=document.getElementById('hotbar'),slotEls=[];
-HOTBAR.forEach(function(id,i){
- var d=document.createElement('div');d.className='slot'+(i===0?' sel':'');
- var cc=document.createElement('canvas');cc.width=cc.height=TS;
- var t=BLOCKS[id].t[2],p=tileXY(t);
- var g2=cc.getContext('2d');g2.imageSmoothingEnabled=false;
- g2.fillStyle='#20283a';g2.fillRect(0,0,TS,TS);
- g2.drawImage(atlasC,p[0],p[1],TS,TS,0,0,TS,TS);
- d.appendChild(cc);
- var s=document.createElement('span');s.textContent=(i+1);d.appendChild(s);
- d.addEventListener('click',function(){selSlot(i);});
- hb.appendChild(d);slotEls.push(d);
-});
-function selSlot(i){sel=i;slotEls.forEach(function(e,j){e.classList.toggle('sel',j===i);});}
-function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;
- document.getElementById('toasts').appendChild(d);requestAnimationFrame(function(){d.classList.add('on');});
- setTimeout(function(){d.classList.remove('on');setTimeout(function(){d.remove();},400);},2600);}
-
-// ===================== CHUNK MANAGER =====================
-var genQ=[],meshQ=[];
-function ensureChunks(){
- var pcx=Math.floor(P.x/CH),pcz=Math.floor(P.z/CH);
- for(var dx=-R;dx<=R;dx++)for(var dz=-R;dz<=R;dz++){
-   var cx=pcx+dx,cz=pcz+dz,key=ck(cx,cz);
-   if(!chunks.has(key)&&genQ.indexOf(key)<0)genQ.push(key);
- }
- genQ.sort(function(a,b){var pa=a.split(','),pb=b.split(',');
-   var da=Math.pow(pa[0]-pcx,2)+Math.pow(pa[1]-pcz,2),db=Math.pow(pb[0]-pcx,2)+Math.pow(pb[1]-pcz,2);return da-db;});
- var gbudget=2;
- while(gbudget-->0&&genQ.length){var k=genQ.shift();if(chunks.has(k))continue;var p=k.split(',');genChunk(+p[0],+p[1]);}
- var mbudget=2;
- var arr=[];chunks.forEach(function(c){if(c.dirty)arr.push(c);});
- arr.sort(function(a,b){var da=Math.pow(a.cx-pcx,2)+Math.pow(a.cz-pcz,2),db=Math.pow(b.cx-pcx,2)+Math.pow(b.cz-pcz,2);return da-db;});
- for(var i=0;i<arr.length&&mbudget>0;i++){buildChunk(arr[i]);mbudget--;}
-}
-// initial burst around spawn
-for(var idx=-1;idx<=1;idx++)for(var jdx=-1;jdx<=1;jdx++)genChunk(idx,jdx);
-chunks.forEach(function(c){buildChunk(c);});
-
-// ===================== INPUT =====================
-var keys={},state='title',plBlocked=false,dragging=false,lastX=0,lastY=0,breakTimer=null,placeTimer=null;
+var keys={},state='title',plBlocked=false,plFails=0,hadLock=false,mining=false,mineCd=0,placeTimer=null,relockT=null;
+var bobPhase=0,bobOff=0,stepT=1;
 function lookDelta(dx,dy){yaw-=dx*0.0024;pitch-=dy*0.0024;pitch=Math.max(-1.45,Math.min(1.45,pitch));}
+function plocked(){return document.pointerLockElement===canvas;}
+function tryLock(){
+ if(plocked()||state!=='play')return;
+ try{var pr=canvas.requestPointerLock();
+   if(pr&&pr.catch)pr.catch(function(){onLockFail();});
+ }catch(e){onLockFail();}
+}
+function onLockFail(){
+ plFails++;
+ if(plFails===3&&!plBlocked){plBlocked=true;toast('Cursor lock blocked in this view - mouse-move look enabled');}
+ clearTimeout(relockT);
+ if(plFails<9)relockT=setTimeout(function(){if(state==='play'&&!plocked())tryLock();},950);
+}
+document.addEventListener('pointerlockerror',function(){onLockFail();});
+document.addEventListener('pointerlockchange',function(){
+ if(plocked()){hadLock=true;plFails=0;plBlocked=false;}
+ else if(hadLock&&state==='play'){pauseGame();}
+});
 document.addEventListener('keydown',function(e){
  keys[e.code]=true;
  if(e.code==='Space')e.preventDefault();
- if(state==='title'&&e.code==='Enter')startGame();
+ if(state==='title'&&e.code==='Enter')startGame('survival');
  if(state==='play'){
    if(e.code==='KeyF'){P.fly=!P.fly;toast(P.fly?'Flight ON':'Flight OFF');}
    if(e.code==='KeyR'){P.x=8.5;P.z=8.5;P.y=spawnY;P.vx=P.vy=P.vz=0;toast('Respawned');}
-   if(e.code.indexOf('Digit')===0){var n=+e.code.slice(5);if(n>=1&&n<=9)selSlot(n-1);}
-   if(e.code==='Escape'&&document.pointerLockElement!==canvas)pauseGame();
+   if(e.code==='KeyG'&&typeof toggleGamemode==='function')toggleGamemode();
+   if(e.code==='KeyX'&&typeof swapHotbarSet==='function')swapHotbarSet();
+   if(e.code.indexOf('Digit')===0){var n=+e.code.slice(5);if(n>=1&&n<=9&&n<=HOTBAR.length)selSlot(n-1);}
+   if(e.code==='Escape'&&!plocked())pauseGame();
  }else if(state==='pause'&&e.code==='Escape'){resumeGame();}
 });
 document.addEventListener('keyup',function(e){keys[e.code]=false;});
-document.addEventListener('pointerlockerror',function(){plBlocked=true;});
-document.addEventListener('pointerlockchange',function(){
- if(document.pointerLockElement!==canvas&&state==='play'&&!plBlocked)pauseGame();
+// LOOK: pointer-lock deltas when locked; bare mouse-move deltas when lock is unavailable.
+// No click-drag requirement anywhere.
+document.addEventListener('mousemove',function(e){
+ if(state!=='play')return;
+ var mx=e.movementX||0,my=e.movementY||0;
+ if(plocked()||plBlocked||!hadLock)lookDelta(mx,my);
 });
 canvas.addEventListener('mousedown',function(e){
  if(state!=='play')return;
- if(!plBlocked&&document.pointerLockElement!==canvas){
-   try{var pr=canvas.requestPointerLock();if(pr&&pr.catch)pr.catch(function(){plBlocked=true;});}catch(err){plBlocked=true;}
-   if(!plBlocked)return; // first click locks; act on next
- }
- dragging=true;lastX=e.clientX;lastY=e.clientY;
- if(document.pointerLockElement===canvas){
-   if(e.button===0){act('mine');clearInterval(breakTimer);breakTimer=setInterval(function(){act('mine');},240);}
-   if(e.button===2){act('place');clearInterval(placeTimer);placeTimer=setInterval(function(){act('place');},260);}
- }
+ if(!plocked()&&!plBlocked){tryLock();return;}
+ if(e.button===0){mining=true;mineCd=0;}
+ if(e.button===2){act('place');clearInterval(placeTimer);placeTimer=setInterval(function(){act('place');},260);}
 });
-document.addEventListener('mouseup',function(e){
- dragging=false;clearInterval(breakTimer);clearInterval(placeTimer);
- if(state==='play'&&plBlocked&&document.pointerLockElement!==canvas){
-   var dx=Math.abs(e.clientX-lastX),dy=Math.abs(e.clientY-lastY);
-   if(dx<6&&dy<6){if(e.button===2)act('place');else act('mine');}
- }
-});
-document.addEventListener('mousemove',function(e){
- if(state!=='play')return;
- if(document.pointerLockElement===canvas)lookDelta(e.movementX,e.movementY);
- else if(dragging){lookDelta(e.clientX-lastX,e.clientY-lastY);lastX=e.clientX;lastY=e.clientY;}
+document.addEventListener('mouseup',function(){
+ mining=false;clearInterval(placeTimer);
+ if(typeof survivalMineReset==='function')survivalMineReset();
 });
 document.addEventListener('contextmenu',function(e){e.preventDefault();});
-document.addEventListener('wheel',function(e){if(state!=='play')return;selSlot((sel+(e.deltaY>0?1:-1)+9)%9);},{passive:true});
+document.addEventListener('wheel',function(e){if(state!=='play')return;selSlot((sel+(e.deltaY>0?1:-1)+HOTBAR.length)%HOTBAR.length);},{passive:true});
 // touch
 var joyEl=document.getElementById('joy'),joyK=document.getElementById('joyK'),joyVec={x:0,y:0},joyId=null,lookId=null,lookLast={},tapT=0,tapX=0,tapY=0;
 document.getElementById('btnJump').addEventListener('touchstart',function(e){e.preventDefault();keys.Space=true;},{passive:false});
@@ -529,71 +1240,358 @@ canvas.addEventListener('touchend',function(e){
      if(Date.now()-tapT<230&&Math.abs(t.clientX-tapX)<10&&Math.abs(t.clientY-tapY)<10)act(mode);}}
 },{passive:true});
 
+function doBreak(r){
+ if(r.id===BEDROCK){toast('Bedrock is unbreakable');return;}
+ setBlock(r.x,r.y,r.z,AIR);
+ burst(r.x,r.y,r.z,PCOL[r.id]||0x999999);
+ blip(300,90,0.09,0.12);
+ if(typeof onBlockMined==='function')onBlockMined(r.id);
+}
+function mineFrame(dt){
+ mineCd-=dt;
+ if(typeof hitMob==='function'&&mineCd<=0&&hitMob()){mineCd=0.32;if(typeof survivalMineReset==='function')survivalMineReset();return;}
+ var r=raycast(7);
+ if(!r){if(typeof survivalMineReset==='function')survivalMineReset();return;}
+ if(gamemode==='creative'){if(mineCd<=0){mineCd=0.22;doBreak(r);}return;}
+ if(typeof survivalMineTick==='function'){if(survivalMineTick(dt,r))doBreak(r);}
+ else if(mineCd<=0){mineCd=0.3;doBreak(r);}
+}
 function act(kind){
  var r=raycast(7);
  if(!r)return;
  if(kind==='mine'){
-   if(r.id===BEDROCK){toast('Bedrock is unbreakable');return;}
-   setBlock(r.x,r.y,r.z,AIR);
-   burst(r.x,r.y,r.z,PCOL[r.id]||0x999999);
-   blip(300,90,0.09,0.12);
+   if(typeof hitMob==='function'&&hitMob())return;
+   doBreak(r);
  }else{
    var tgt=getBlock(r.px,r.py,r.pz,AIR);
    if(tgt!==AIR&&tgt!==WATER)return;
-   // don't place inside player
    var b={x:r.px,y:r.py,z:r.pz};
    if(b.x+1>P.x-HW&&b.x<P.x+HW&&b.y+1>P.y&&b.y<P.y+HH&&b.z+1>P.z-HW&&b.z<P.z+HW)return;
-   setBlock(r.px,r.py,r.pz,HOTBAR[sel]);
+   var pid=HOTBAR[sel];
+   if(typeof tryConsume==='function'&&!tryConsume(pid))return;
+   setBlock(r.px,r.py,r.pz,pid);
    blip(520,340,0.06,0.1);
  }
 }
 
-// ===================== GAME STATE =====================
-var titleEl=document.getElementById('title'),pauseEl=document.getElementById('pause'),playBtn=document.getElementById('play');
-function startGame(){
+// ---------- 45_survival.js ----------
+// MODULE 45: survival systems — health, air, fall damage, mining hardness, drops, inventory (OWNER: Pulse)
+// ===== SURVIVAL STATE =====
+// NOTE: top-level = declarations + plain data literals only. No DOM touches, no side effects here.
+
+var hp=20, air=10, inventory={};
+var lastDamageT=-999, regenAcc=0, drownAcc=0;
+var dmgFlashEl=null, heartsEl=null, bubblesEl=null, mineprogEl=null, mineprogFEl=null;
+var lastHeartsHTML=null, lastBubblesHTML=null;
+var mineProg=0, mineKey=null;
+
+// hardness table (seconds to mine) — looked up by block id at call time so it
+// tolerates new block ids being registered by other modules before this runs.
+function survivalHardness(id){
+ if(typeof LEAF!=='undefined'&&id===LEAF)return 0.05;
+ if(typeof TALLGRASS!=='undefined'&&id===TALLGRASS)return 0.05;
+ if(typeof FLOWER_R!=='undefined'&&id===FLOWER_R)return 0.05;
+ if(typeof FLOWER_Y!=='undefined'&&id===FLOWER_Y)return 0.05;
+ if(typeof TORCH!=='undefined'&&id===TORCH)return 0.05;
+ if(id===GRASS||id===DIRT||id===SAND)return 0.45;
+ if(typeof SNOWGRASS!=='undefined'&&id===SNOWGRASS)return 0.45;
+ if(typeof SNOWBLK!=='undefined'&&id===SNOWBLK)return 0.45;
+ if(id===LOG||id===PLANK)return 0.7;
+ if(typeof CACTUS!=='undefined'&&id===CACTUS)return 0.7;
+ if(id===GLASS)return 0.25;
+ if(typeof ICE!=='undefined'&&id===ICE)return 0.25;
+ if(id===STONE||id===COBBLE||id===BRICK)return 1.1;
+ if(typeof SANDSTONE!=='undefined'&&id===SANDSTONE)return 1.1;
+ if(typeof COAL_ORE!=='undefined'&&id===COAL_ORE)return 1.3;
+ if(typeof IRON_ORE!=='undefined'&&id===IRON_ORE)return 1.6;
+ if(typeof GOLD_ORE!=='undefined'&&id===GOLD_ORE)return 1.4;
+ if(typeof DIAMOND_ORE!=='undefined'&&id===DIAMOND_ORE)return 2.2;
+ if(id===WATER)return Infinity;
+ if(id===BEDROCK)return Infinity;
+ return 0.6;
+}
+
+// drops table — what you receive when a block id is mined (survival only).
+// returns the block id to grant, or null/undefined for no drop.
+function survivalDrop(id){
+ if(id===GRASS)return DIRT;
+ if(id===STONE)return COBBLE;
+ if(typeof SNOWGRASS!=='undefined'&&id===SNOWGRASS)return DIRT;
+ if(typeof TALLGRASS!=='undefined'&&id===TALLGRASS)return null;
+ if(typeof FLOWER_R!=='undefined'&&id===FLOWER_R)return FLOWER_R;
+ if(typeof FLOWER_Y!=='undefined'&&id===FLOWER_Y)return FLOWER_Y;
+ if(id===LEAF)return (Math.random()<0.85)?null:null; // 85% nothing, else still nothing per spec
+ if(typeof ICE!=='undefined'&&id===ICE)return null;
+ return id;
+}
+
+// ===== DOM (lazy init — elements exist by the time these run) =====
+
+function survivalDmgFlashEl(){
+ if(!dmgFlashEl){
+  dmgFlashEl=document.createElement('div');
+  dmgFlashEl.id='dmgflash';
+  dmgFlashEl.style.position='fixed';
+  dmgFlashEl.style.inset='0';
+  dmgFlashEl.style.zIndex='9';
+  dmgFlashEl.style.pointerEvents='none';
+  dmgFlashEl.style.background='radial-gradient(ellipse at 50% 50%, rgba(200,0,0,0) 55%, rgba(180,0,0,0.55) 100%)';
+  dmgFlashEl.style.opacity='0';
+  dmgFlashEl.style.transition='opacity 0.09s ease-out';
+  document.body.appendChild(dmgFlashEl);
+ }
+ return dmgFlashEl;
+}
+function survivalFlash(){
+ var el=survivalDmgFlashEl();
+ el.style.transition='opacity 0.02s';
+ el.style.opacity='1';
+ setTimeout(function(){
+  el.style.transition='opacity 0.4s ease-out';
+  el.style.opacity='0';
+ },70);
+}
+function survivalHeartsEl(){if(!heartsEl)heartsEl=document.getElementById('hearts');return heartsEl;}
+function survivalBubblesEl(){if(!bubblesEl)bubblesEl=document.getElementById('bubbles');return bubblesEl;}
+function survivalMineprogEl(){if(!mineprogEl)mineprogEl=document.getElementById('mineprog');return mineprogEl;}
+function survivalMineprogFEl(){if(!mineprogFEl)mineprogFEl=document.getElementById('mineprogF');return mineprogFEl;}
+
+// ===== RENDER (cheap DOM writes, only when content actually changes) =====
+
+function survivalRenderHearts(){
+ var el=survivalHeartsEl();if(!el)return;
+ var full=Math.floor(hp/2),half=hp%2===1;
+ var html='';
+ for(var i=0;i<10;i++){
+  if(i<full)html+='<span class="hp">♥</span>';
+  else if(i===full&&half)html+='<span class="hp">♥</span>';
+  else html+='<span class="hd">♥</span>';
+ }
+ if(html!==lastHeartsHTML){el.innerHTML=html;lastHeartsHTML=html;}
+}
+function survivalRenderBubbles(){
+ var el=survivalBubblesEl();if(!el)return;
+ var html='';
+ if(air<10){
+  var n=Math.max(0,Math.ceil(air));
+  for(var i=0;i<10;i++)html+=(i<n?'<span>●</span>':'<span style="opacity:.25">●</span>');
+ }
+ if(html!==lastBubblesHTML){el.innerHTML=html;el.style.display=html?'block':'none';lastBubblesHTML=html;}
+}
+
+// ===== DAMAGE / DEATH =====
+
+function damagePlayer(n,cause){
+ if(gamemode==='creative')return;
+ if(dead)return;
+ if(n<=0)return;
+ hp-=n;
+ lastDamageT=0; // reset "time since last damage" clock — survivalTick advances it
+ regenAcc=0;
+ survivalFlash();
+ blip(90,50,0.2,0.12);
+ survivalRenderHearts();
+ if(hp<=0){
+  hp=0;
+  survivalRenderHearts();
+  if(typeof playerDied==='function')playerDied(cause||'You died');
+ }
+}
+
+function onFallImpact(speed){
+ if(gamemode==='creative')return;
+ if(dead)return;
+ var dmg=Math.ceil((speed-11)*0.55);
+ if(dmg>0)damagePlayer(dmg,'Fell from a high place');
+}
+
+// ===== PER-FRAME TICK (regen, drowning, air, hud) =====
+
+function survivalTick(dt){
+ if(dead)return;
+ lastDamageT+=dt;
+ if(gamemode!=='creative'){
+  // regen: +1 hp every 4s once 5s have passed since last damage, while hp<20
+  if(hp<20&&lastDamageT>=5){
+   regenAcc+=dt;
+   if(regenAcc>=4){regenAcc=0;hp=Math.min(20,hp+1);survivalRenderHearts();}
+  }else{
+   regenAcc=0;
+  }
+  // drowning / air
+  if(eyeInWater()){
+   if(air>0){
+    air=Math.max(0,air-dt);
+    survivalRenderBubbles();
+   }
+   if(air<=0){
+    drownAcc+=dt;
+    if(drownAcc>=1.5){drownAcc=0;damagePlayer(2,'Drowned');}
+   }else{
+    drownAcc=0;
+   }
+  }else{
+   if(air<10){
+    air=Math.min(10,air+dt*4); // refill fast when out of water
+    survivalRenderBubbles();
+   }
+   drownAcc=0;
+  }
+ }
+ survivalRenderHearts();
+ survivalRenderBubbles();
+}
+
+// ===== MINING PROGRESS =====
+
+function survivalMineTick(dt,ray){
+ if(!ray)return false;
+ var key=ray.x+','+ray.y+','+ray.z;
+ if(key!==mineKey){mineKey=key;mineProg=0;}
+ var hard=survivalHardness(ray.id);
+ if(hard===Infinity){
+  var el=survivalMineprogEl();if(el)el.style.display='none';
+  return false;
+ }
+ mineProg+=dt/hard;
+ var pel=survivalMineprogEl(),fel=survivalMineprogFEl();
+ if(pel)pel.style.display='block';
+ if(fel)fel.style.width=(Math.min(1,mineProg)*100)+'%';
+ if(mineProg>=1){
+  mineProg=0;mineKey=null;
+  if(pel)pel.style.display='none';
+  return true;
+ }
+ return false;
+}
+function survivalMineReset(){
+ mineProg=0;mineKey=null;
+ var el=survivalMineprogEl();if(el)el.style.display='none';
+ var fel=survivalMineprogFEl();if(fel)fel.style.width='0%';
+}
+
+// ===== INVENTORY =====
+
+function onBlockMined(id){
+ if(gamemode!=='survival')return;
+ var drop=survivalDrop(id);
+ if(drop===null||drop===undefined)return;
+ inventory[drop]=(inventory[drop]||0)+1;
+ refreshCounts();
+}
+
+function tryConsume(id){
+ if(gamemode==='creative')return true;
+ if(inventory[id]>0){
+  inventory[id]--;
+  refreshCounts();
+  return true;
+ }
+ var nm=(BLOCKS[id]&&BLOCKS[id].n)||'that';
+ toast('Out of '+nm);
+ return false;
+}
+
+function refreshCounts(){
+ if(gamemode==='survival')setSlotCounts(inventory);
+ else setSlotCounts(null);
+}
+
+// ===== GAMEMODE / RESPAWN HOOKS =====
+
+function survivalOnGamemode(m){
+ if(m==='creative')setSlotCounts(null);
+ else refreshCounts();
+}
+
+function survivalOnRespawn(){
+ hp=20;air=10;regenAcc=0;drownAcc=0;lastDamageT=999;
+ lastHeartsHTML=null;lastBubblesHTML=null;
+ survivalRenderHearts();survivalRenderBubbles();
+ survivalMineReset();
+}
+
+// ---------- 50_game.js ----------
+// MODULE 50: hotbar/overlays/main loop (OWNER: core)
+// ===== HOTBAR UI =====
+
+var hb=document.getElementById('hotbar'),slotEls=[],hbSet=0;
+function buildHotbar(){
+ hb.innerHTML='';slotEls=[];
+ HOTBAR.forEach(function(id,i){
+  var d=document.createElement('div');d.className='slot'+(i===sel?' sel':'');
+  var cc=document.createElement('canvas');cc.width=cc.height=TS;
+  var t=BLOCKS[id].t[2],p=tileXY(t);
+  var g2=cc.getContext('2d');g2.imageSmoothingEnabled=false;
+  g2.fillStyle='#20283a';g2.fillRect(0,0,TS,TS);
+  g2.drawImage(atlasC,p[0],p[1],TS,TS,0,0,TS,TS);
+  d.appendChild(cc);
+  var s2=document.createElement('span');s2.textContent=(i+1);d.appendChild(s2);
+  var cn=document.createElement('span');cn.className='cnt';d.appendChild(cn);
+  d.title=BLOCKS[id].n;
+  d.addEventListener('click',function(){selSlot(i);});
+  hb.appendChild(d);slotEls.push(d);
+ });
+ if(typeof refreshCounts==='function')refreshCounts();
+}
+function swapHotbarSet(){
+ if(typeof HOTBAR_SETS==='undefined'||HOTBAR_SETS.length<2)return;
+ hbSet=(hbSet+1)%HOTBAR_SETS.length;HOTBAR=HOTBAR_SETS[hbSet];
+ if(sel>=HOTBAR.length)sel=0;
+ buildHotbar();toast('Hotbar '+(hbSet+1)+' / '+HOTBAR_SETS.length+'  (X to swap)');
+}
+function setSlotCounts(counts){
+ slotEls.forEach(function(el,i){var c=el.querySelector('.cnt');var id=HOTBAR[i];
+  if(counts&&counts[id]!==undefined)c.textContent=counts[id];else c.textContent='';});
+}
+buildHotbar();
+function selSlot(i){sel=i;slotEls.forEach(function(e,j){e.classList.toggle('sel',j===i);});}
+function toast(msg){var d=document.createElement('div');d.className='toast';d.textContent=msg;
+ document.getElementById('toasts').appendChild(d);requestAnimationFrame(function(){d.classList.add('on');});
+ setTimeout(function(){d.classList.remove('on');setTimeout(function(){d.remove();},400);},2600);}
+
+// ===== GAME STATE =====
+
+var titleEl=document.getElementById('title'),pauseEl=document.getElementById('pause'),playBtn=document.getElementById('play'),playCBtn=document.getElementById('playC');
+var gamemode='survival',dead=false;
+function setGamemode(m){gamemode=m;
+ var g=document.getElementById('gm');if(g)g.textContent=m.toUpperCase();
+ if(typeof survivalOnGamemode==='function')survivalOnGamemode(m);}
+function toggleGamemode(){setGamemode(gamemode==='survival'?'creative':'survival');toast('Gamemode: '+gamemode+' (G to switch)');}
+function startGame(mode){
  if(playBtn.disabled||state==='play')return;
  titleEl.style.display='none';state='play';
- try{var pr=canvas.requestPointerLock();if(pr&&pr.catch)pr.catch(function(){plBlocked=true;});}catch(err){plBlocked=true;}
- setTimeout(function(){if(plBlocked)toast('Cursor lock unavailable — click & drag to look');},600);
- toast('Left click mines · right click builds');
+ setGamemode(mode||'survival');
+ tryLock();
+ setTimeout(function(){if(plBlocked)toast('Mouse-move look active (no cursor lock in this view)');},700);
+ toast(gamemode==='survival'?'Survival: hold click to mine, blocks drop into your hotbar':'Creative: infinite blocks, instant mining');
 }
 function pauseGame(){if(state!=='play')return;state='pause';pauseEl.style.display='flex';}
-function resumeGame(){state='play';pauseEl.style.display='none';
- try{var pr=canvas.requestPointerLock();if(pr&&pr.catch)pr.catch(function(){});}catch(err){}}
-playBtn.addEventListener('click',startGame);
+function resumeGame(){if(dead)return;state='play';pauseEl.style.display='none';tryLock();}
+function playerDied(cause){
+ dead=true;state='dead';mining=false;
+ try{document.exitPointerLock();}catch(e){}
+ var dc=document.getElementById('deathCause');if(dc)dc.textContent=cause||'You died';
+ document.getElementById('death').style.display='flex';
+}
+function respawn(){
+ dead=false;document.getElementById('death').style.display='none';state='play';
+ P.x=8.5;P.z=8.5;P.y=spawnY;P.vx=P.vy=P.vz=0;
+ if(typeof survivalOnRespawn==='function')survivalOnRespawn();
+ tryLock();
+}
+playBtn.addEventListener('click',function(){startGame('survival');});
+if(playCBtn)playCBtn.addEventListener('click',function(){startGame('creative');});
 document.getElementById('resume').addEventListener('click',resumeGame);
+var respawnBtn=document.getElementById('respawn');
+if(respawnBtn)respawnBtn.addEventListener('click',respawn);
 document.getElementById('reset').addEventListener('click',function(){
  if(confirm('Reset the whole world? This clears your saved edits.')){localStorage.removeItem(EDIT_KEY);location.reload();}});
 
-// ===================== DAY / NIGHT =====================
-var DAYLEN=240,tod=0.28;
-function colLerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t,a[2]+(b[2]-a[2])*t];}
-var NIGHT=[0.015,0.03,0.08],DAY=[0.545,0.71,0.94],DUSK=[0.98,0.55,0.32];
-var skyColor=new THREE.Color();
-function updateSky(dt){
- tod=(tod+dt/DAYLEN)%1;
- var th=tod*Math.PI*2,sh=Math.sin(th);
- var k=Math.max(0,Math.min(1,(sh+0.15)*2.4));
- var w=Math.max(0,1-Math.abs(sh)*4)*0.55;
- var c=colLerp(NIGHT,DAY,k);c=colLerp(c,DUSK,w*k);
- skyColor.setRGB(c[0],c[1],c[2]);
- scene.background=skyColor;scene.fog.color.copy(skyColor);
- amb.intensity=0.28+0.45*k;sun.intensity=0.15+0.9*k;
- stars.material.opacity=Math.max(0,0.9-k*1.4);
- var sd=new THREE.Vector3(Math.cos(th),sh,0.35).normalize();
- sun.position.set(P.x+sd.x*80,Math.max(6,P.y+sd.y*80),P.z+sd.z*80);
- sun.target.position.set(P.x,P.y,P.z);
- sunS.position.set(P.x+sd.x*300,P.y+sd.y*300,P.z+sd.z*300);
- moonS.position.set(P.x-sd.x*300,P.y-sd.y*300,P.z-sd.z*300);
- stars.position.set(P.x,0,P.z);
- // underwater
- var uw=eyeInWater();
- document.getElementById('wet').style.display=uw?'block':'none';
- if(uw){scene.fog.near=2;scene.fog.far=22;scene.fog.color.setRGB(0.08,0.2,0.45);scene.background=scene.fog.color;}
- else{scene.fog.near=52;scene.fog.far=96;}
-}
+// ===== MAIN LOOP =====
+function initWorld(){for(var idx=-1;idx<=1;idx++)for(var jdx=-1;jdx<=1;jdx++)genChunk(idx,jdx);chunks.forEach(function(c){buildChunk(c);});}
+initWorld();
 
-// ===================== MAIN LOOP =====================
 var last=performance.now(),fpsN=0,fpsT=0,fps=0,ready=false,readyTarget=25;
 function frame(now){
  requestAnimationFrame(frame);
@@ -603,7 +1601,7 @@ function frame(now){
    var meshed=0;chunks.forEach(function(c){if(!c.dirty)meshed++;});
    var pct=Math.min(1,meshed/readyTarget);
    document.getElementById('barF').style.width=(pct*100)+'%';
-   if(meshed>=readyTarget){ready=true;playBtn.disabled=false;playBtn.textContent='PLAY ▸';document.getElementById('bar').style.display='none';}
+   if(meshed>=readyTarget){ready=true;playBtn.disabled=false;playBtn.textContent='SURVIVAL ▸';if(playCBtn)playCBtn.disabled=false;document.getElementById('bar').style.display='none';}
  }
  if(state==='play'){
    // movement
@@ -623,12 +1621,21 @@ function frame(now){
    else if(water){P.vy+= (keys.Space? (3.4-P.vy)*Math.min(1,10*dt) : -5*dt);P.vy=Math.max(P.vy,-3.2);}
    else{P.vy-=26*dt;if(P.vy<-42)P.vy=-42;
      if(keys.Space&&P.grounded)P.vy=8.6;}
-   P.grounded=false;
+   P.grounded=false;var preVy=P.vy;
    moveAxis('y',P.vy*dt);
+   if(P.grounded&&preVy<-11&&!P.fly&&typeof onFallImpact==='function')onFallImpact(-preVy);
    moveAxis('x',P.vx*dt);
    moveAxis('z',P.vz*dt);
    if(P.y<-12){P.x=8.5;P.z=8.5;P.y=spawnY;P.vy=0;toast('The void spat you back out');}
-   camera.position.set(P.x,P.y+EYE,P.z);
+   var hsp=Math.sqrt(P.vx*P.vx+P.vz*P.vz);
+   var tf=74+(hsp>5.6?6:0)+(P.fly?4:0);
+   if(Math.abs(camera.fov-tf)>0.05){camera.fov+=(tf-camera.fov)*Math.min(1,8*dt);camera.updateProjectionMatrix();}
+   if(P.grounded&&hsp>0.6){bobPhase+=hsp*dt*1.75;bobOff=Math.sin(bobPhase*2)*0.045;
+     stepT-=hsp*dt;if(stepT<=0){stepT=2.3;var fid=getBlock(Math.floor(P.x),Math.floor(P.y-0.5),Math.floor(P.z),AIR);
+       var fr=(fid===GRASS||fid===LEAF)?[170,120]:((fid===SAND||fid===DIRT)?[150,100]:[230,170]);
+       blip(fr[0],fr[1],0.045,0.035);}}
+   else bobOff*=Math.pow(0.001,dt);
+   camera.position.set(P.x,P.y+EYE+bobOff,P.z);
    camera.quaternion.setFromEuler(new THREE.Euler(pitch,yaw,0,'YXZ'));
    // highlight
    var rr=raycast(7);
@@ -644,6 +1651,12 @@ function frame(now){
    camera.position.set(cx,cy,cz);
    camera.lookAt(8.5,terrainH(8,8)+2,8.5);
  }
+ if(state==='play'){
+   if(mining)mineFrame(dt);
+   if(typeof updateMobs==='function')updateMobs(dt);
+   if(typeof survivalTick==='function')survivalTick(dt);
+ }
+ if(typeof updateTorchLights==='function')updateTorchLights(dt);
  updateSky(dt);updParts(dt);
  for(var i=0;i<clouds.length;i++){var c=clouds[i];c.position.x+=dt*1.4;
    if(c.position.x>P.x+160)c.position.x=P.x-160;
@@ -651,6 +1664,7 @@ function frame(now){
  renderer.render(scene,camera);
 }
 requestAnimationFrame(frame);
+
 })();
 </script>
 </body>
