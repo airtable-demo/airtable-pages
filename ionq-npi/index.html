@@ -1,0 +1,509 @@
+<!-- THEME: dark (brand accent #FF5000 on rgb(25,8,0)) -->
+<!--
+  CANONICAL TEMPLATE - populated by build_landing_page.py via mustache-style {{KEY}}
+  substitution. Do NOT generate this HTML by hand - the build script handles all
+  base64 inlining, palette computation, sub-component rendering, and template fill-in.
+
+  See build_landing_page.py and SKILL.md for the input JSON schema.
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>Run four-site NPI on one stage-gate system | Airtable × IonQ</title>
+  <link rel="icon" type="image/png" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADvklEQVR42u2XQWwbVRCGv2ebpKUxcoNFG5w06xKpRRywFRRACsquhES4pRWp1FMccQOJpj4WgdcFcU1yhBY5XLhEIumBWByo00PViEpJekABlGRdalBTSrWpXOFGlodD7ZJdO4md0lveZaU3OzPfzv/2vXmKXQ7LsjSlfCmlVLZU8ibD4bbsbuKoXSQOeDzehIgacQRSMlYqPTPeKEhDADdv3jojggkEtgiXFSklw+EjE/8rgGXd0pViFIjUGTYrwolwuH3xiQAqOgO629a8do3W60k88+v89f5FNkKvVAdXamKn9aG21tl3RoQRd7l9+RzPX42zb+3ao4n5R498zyDr/XGKre01QDA7OzuSdQFY1u8xpdSoO7Fn4z7+pa95bukino37/xnmnf52f5z1/rN1rw/l0jlRq9wHViZpvW46E5fzlQEcsMXWduz+OA96BrcA8RoVWTyV6amp71L5fF5363zoh1MEr8arkwvjlAgDUeAbh0z3cgS/jRM6/ya+ezmHW6Hwj3bnzp+ZqgqY5ucWiNbV1cVrXUFCK1/RsjJZS7RZIKk+YdbBM4AGZADN7ZLvGeTvtz/irqeFfD4PqKyu94YBfO6Xl5eXCa1c4Ji67DZly4lr/uNqmiwQlgFiQGIzSMtPk9z1+Mm/MVzl56nrtxaSlIiqT9lxg1HTTJRlSdYT2lfHO1mVwGxoe53GBkwZYKiWJI1X4CmOPYA9gD2A7QGagS40SZNoJKhMEZA0CfrQ8O8GwAu8CLxcPucEU2aw5HtiOyZPE6OZBQSTY8BpoLtBgBveKItNUfc+qaFIyQwLkq7e3SSNLjNkEFJVu183HH51hkPFdH0A9sMAl1ZP8uXPH2A/POg2RxAsSZOSNFq53CmETK1eojL2yW2Ob3xBd2GY/aVcLYCiAcrRu91+0Mb4jTiXVk9WgwgxhAzNWIhTmoJq45emc1z47WPb7VdUfvZLbuuWzDTPx8CTAHGUMdBsEwnO0xfKbKlnUfn5w/ceOd8piqqFubk5CoUCkeACr3csYR84wZrvXUc/ULMpNU0zAN6R8rmOG6QvdJlIcMEpmzfKr03nKKjDj+cqAACapqFp2uO2bFuATSAaeE1gyG07fnCJd46k8T77gr3q+zBge6NV/tsALOp6b7Tui4lpfjYAatQtC4Cu11x3syIkr1z5MVv5gE0A0yLFs4ZhZBu+mtVaHy4AW0QlDaN3zP0BHR0dQ0ePvjRuGG/NPtHl1C1LBUCEJBTHDMOwn+rt2A2i63qnSHG4UtJGx7/cCXouQY7xYwAAAABJRU5ErkJggg==" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg:            rgb(25,8,0);
+    --bg-card:       rgba(255,80,0,0.06);
+    --bg-cta-alt:    rgba(255,80,0,0.04);
+    --border:        rgba(255,255,255,0.07);
+    --nav-border:    rgba(255,255,255,0.05);
+    --section-bdr:   rgba(255,255,255,0.055);
+    --text-1:        #f0f0f8;
+    --text-2:        rgba(240,240,248,0.5);
+    --text-3:        rgba(240,240,248,0.48);
+    --accent:        #FF5000;
+    --accent-hover:  rgba(255,80,0,0.82);
+    --accent-glow:   rgba(255,80,0,0.42);
+    --accent-muted:  rgba(255,80,0,0.1);
+    --accent-ring:   rgba(255,80,0,0.28);
+    --card-shadow:   none;
+    --card-shadow-h: 0 0 0 1px rgba(255,80,0,0.38),0 0 20px rgba(255,80,0,0.12);
+    --photo-border:  rgba(255,255,255,0.25);
+    --h1-grad:       linear-gradient(148deg,#ffffff 15%,#FF5000 60%,rgba(255,80,0,0.85) 100%);
+    --hero-glow:     radial-gradient(ellipse 80% 55% at 50% 0%,rgba(255,80,0,0.18) 0%,transparent 65%);
+    --noise-opacity: 0.02;
+    --chip-bdr:      rgba(255,255,255,0.11);
+    --chip-text:     rgba(240,240,248,0.62);
+    --page-bg-image: linear-gradient(135deg,rgba(255,80,0,0.07) 0%,rgba(255,80,0,0.04) 100%);
+    --story-tag:     rgba(255,80,0,0.9);
+    --proof-bg:      rgba(255,80,0,0.08);
+    --proof-bdr:     rgba(255,80,0,0.22);
+    --btn-text:      #1F1F33;
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background-color:var(--bg);
+    background-image:var(--page-bg-image,none);
+    background-attachment:fixed;
+    color:var(--text-1);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{
+    content:'';pointer-events:none;
+    position:fixed;inset:0;z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:var(--noise-opacity);
+    mix-blend-mode:overlay;
+  }
+  nav,section,.cta-sec,footer{position:relative;z-index:1}
+
+  /* Typing animation */
+  .hero h1 .typed-caret {
+    display:inline-block; width:.06em; background:var(--accent);
+    margin-left:.05em; animation:caret-blink 1s steps(2) infinite;
+    vertical-align:baseline; height:0.95em; border-radius:1px;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
+  @keyframes caret-blink { 50% { background:transparent } }
+  .hero h1.typing { min-height:1.3em }
+
+  /* Hero photos */
+  .hero-photos {
+    display:flex; align-items:center; justify-content:center;
+    flex-wrap:nowrap; gap:12px; margin-bottom:28px;
+  }
+  .hero-photo {
+    display:block;
+    width:60px; height:60px; min-width:60px; min-height:60px;
+    border-radius:50%; overflow:hidden; object-fit:cover;
+    border:2.5px solid var(--photo-border);
+    flex-shrink:0; background:var(--border);
+  }
+  .hero-photo-sep {
+    display:block; font-size:18px; font-weight:300;
+    color:var(--text-1); opacity:0.35;
+    user-select:none; flex-shrink:0;
+  }
+
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:100;
+    padding:14px 48px;min-height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--nav-border);
+    background:transparent;
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    gap:16px;
+  }
+  .nav-logos{display:flex;align-items:center;gap:12px}
+  .prospect-logo{
+    height:38px;width:auto;max-width:147px;object-fit:contain;
+    background:rgba(127,127,127,0.10);border-radius:10px;padding:5px 8px;overflow:hidden;
+  }
+  .logo-sep{
+    font-size:14px;font-weight:300;
+    color:var(--text-1);opacity:0.45;
+    line-height:1;flex-shrink:0;user-select:none;
+  }
+  .airtable-logo{height:38px;width:auto;flex-shrink:0;display:block}
+  .nav-tag{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center}
+  .nav-prepared{
+    font-size:10.5px;color:var(--text-2);
+    letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;
+  }
+  .nav-cta{
+    display:inline-block;padding:9px 20px;
+    background:var(--accent);color:var(--btn-text);
+    text-decoration:none;border-radius:7px;
+    font-weight:600;font-size:13px;white-space:nowrap;
+    box-shadow:0 2px 12px var(--accent-glow);
+    transition:background .18s,transform .13s,box-shadow .18s;
+  }
+  .nav-cta:hover{opacity:0.90;transform:translateY(-1px);box-shadow:0 4px 18px var(--accent-glow)}
+
+  /* Hero */
+  .hero{
+    max-width:820px;margin:0 auto;padding:104px 32px 88px;text-align:center;
+    position:relative;
+  }
+  .hero::before{
+    content:'';pointer-events:none;
+    position:absolute;inset:0;
+    background:var(--hero-glow);
+    z-index:0;
+    animation: glow-shimmer 6s ease-in-out infinite;
+    transform-origin: 50% 0%;
+  }
+  @keyframes glow-shimmer {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 1.0;  transform: scale(1.09); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero::before { animation: none; opacity: 1; }
+  }
+  .hero>*{position:relative;z-index:1}
+  .chip{
+    display:inline-block;padding:5px 16px;border-radius:100px;
+    border:1px solid var(--chip-bdr);
+    font-size:12px;color:var(--chip-text);
+    margin-bottom:32px;letter-spacing:.04em;
+    background:transparent;
+  }
+  h1{
+    font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+    font-size:clamp(2rem,5.2vw,3.4rem);
+    font-weight:800;line-height:1.18;letter-spacing:-.03em;
+    margin-bottom:22px;padding-bottom:0.06em;
+    background:var(--h1-grad);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .hero-sub{font-size:1.1rem;color:var(--text-2);max-width:680px;margin:0 auto 42px;line-height:1.68}
+  .logo-text-fallback{font-size:14px;font-weight:700;color:var(--text-1);letter-spacing:.02em;white-space:nowrap}
+  .btn{
+    display:inline-block;padding:15px 38px;
+    background:var(--accent);color:var(--btn-text);text-decoration:none;
+    border-radius:8px;font-weight:600;font-size:.97rem;
+    box-shadow:0 4px 20px var(--accent-glow);
+    transition:background .18s,transform .13s,box-shadow .18s;
+  }
+  .btn:hover{opacity:0.92;transform:translateY(-2px);box-shadow:0 6px 28px var(--accent-glow)}
+
+  /* Section shell */
+  .section{padding:80px 0 88px;border-top:1px solid var(--section-bdr)}
+  .inner{max-width:1040px;margin:0 auto;padding:0 32px}
+  .section-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.11em;
+    color:var(--text-3);margin-bottom:10px;
+  }
+  h2{
+    font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+    font-size:clamp(1.45rem,2.9vw,2rem);
+    font-weight:700;letter-spacing:-.018em;
+    margin-bottom:44px;color:var(--text-1);max-width:700px;line-height:1.25;
+  }
+
+  /* Value cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin-bottom:56px}
+  .card{
+    padding:26px 22px;border-radius:12px;
+    background:rgba(255,80,0,0.06);
+    border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    transition:box-shadow .2s,border-color .2s,transform .2s;
+  }
+  .card:hover{box-shadow:var(--card-shadow-h);border-color:var(--accent-ring);transform:translateY(-1px)}
+  .card-icon{color:var(--accent);margin-bottom:14px;line-height:1}
+  .card-title{font-size:.92rem;font-weight:600;margin-bottom:7px;line-height:1.4}
+  .card-body{font-size:.845rem;color:var(--text-2);line-height:1.6}
+
+  /* Diagram */
+  .diagram-label{font-size:11.5px;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+  .diagram-wrap{overflow-x:auto;padding:4px 0 8px}
+
+  /* Videos - native HTML5 */
+  .videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:28px}
+  .video-wrap{display:flex;flex-direction:column;gap:10px}
+  .video-label{font-size:.875rem;font-weight:600;color:var(--text-2)}
+  .video-card-native{
+    display:block;width:100%;aspect-ratio:16/9;
+    border-radius:10px;overflow:hidden;
+    background:#000;border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .video-card-native:hover{transform:translateY(-1px);box-shadow:0 12px 32px var(--accent-glow),0 0 0 1px var(--accent-ring);border-color:var(--accent-ring)}
+
+  /* Stories */
+  .stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px}
+  .story-card{
+    padding:26px 24px;border-radius:12px;
+    background:rgba(255,80,0,0.06);border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    display:flex;flex-direction:column;gap:9px;
+    transition:box-shadow .2s,border-color .2s,transform .2s;
+  }
+  .story-card:hover{box-shadow:var(--card-shadow-h);border-color:var(--accent-ring);transform:translateY(-1px)}
+  .story-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--story-tag);font-weight:600}
+  .story-title{font-size:.95rem;font-weight:600;line-height:1.4}
+  .story-csr{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;flex:1}
+  .story-csr-line{font-size:.835rem;color:var(--text-2);line-height:1.5}
+  .story-csr-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--story-tag);margin-right:6px;display:inline}
+  .story-btn{
+    display:inline-block;padding:8px 20px;border-radius:7px;
+    background:none;border:1.5px solid var(--accent);color:var(--accent);
+    cursor:pointer;font-size:.845rem;font-weight:600;font-family:inherit;
+    transition:background .18s,color .18s;
+    text-decoration:none;
+  }
+  .story-btn:hover{background:var(--accent);color:var(--btn-text)}
+
+  /* Story modal */
+  .story-modal-bg{
+    display:none;position:fixed;inset:0;z-index:500;
+    background:rgba(8,8,14,0.96);
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .story-modal-bg.open{display:flex}
+  .story-modal-panel{
+    position:relative;max-width:840px;width:80vw;max-height:88vh;overflow-y:auto;
+    background:rgba(255,80,0,0.06);border-radius:16px;
+    border:1px solid var(--border);padding:40px 48px;
+    box-shadow:0 32px 80px rgba(0,0,0,0.5);
+  }
+  .story-modal-close{
+    position:absolute;top:16px;right:20px;background:none;border:none;
+    cursor:pointer;font-size:24px;color:var(--text-2);padding:4px;line-height:1;
+  }
+  .story-modal-close:hover{color:var(--text-1)}
+  .story-modal-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--story-tag);font-weight:600;margin-bottom:10px}
+  .story-modal-headline{font-size:1.35rem;font-weight:700;margin-bottom:20px;color:var(--text-1);line-height:1.3}
+  .story-modal-section{margin-bottom:20px}
+  .story-modal-section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);font-weight:700;margin-bottom:6px}
+  .story-modal-body{font-size:.94rem;color:var(--text-2);line-height:1.72;margin-bottom:28px}
+  .story-modal-cta{margin-top:28px}
+
+  /* Final CTA */
+  .cta-sec{
+    padding:88px 32px 100px;text-align:center;
+    background:var(--bg-cta-alt);border-top:1px solid var(--section-bdr);
+  }
+  .cta-sec h2{max-width:none;margin-bottom:14px}
+  .cta-sec p{color:var(--text-2);margin-bottom:36px;font-size:.97rem;max-width:420px;margin-left:auto;margin-right:auto}
+
+  /* Footer */
+  footer{
+    padding:28px 48px;border-top:1px solid var(--section-bdr);
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .footer-logos{display:flex;align-items:center;gap:10px}
+  .footer-logos .prospect-logo{height:18px;opacity:.55;filter:grayscale(1);background:transparent;padding:0}
+  .footer-logos .logo-sep{opacity:0.30}
+  .footer-logos .airtable-logo{height:14px;opacity:0.55;filter:grayscale(1)}
+  .footer-note{font-size:11.5px;color:var(--text-3)}
+
+  /* Animations */
+  .fade{opacity:0;transform:translateY(18px);transition:opacity .52s ease,transform .52s ease}
+  .fade.in{opacity:1;transform:none}
+
+  /* Proof quote */
+  .proof-quote{
+    margin-top:44px;padding:28px 32px;border-radius:12px;
+    background:var(--proof-bg);border:1px solid var(--proof-bdr);
+    font-size:.97rem;color:var(--text-1);font-style:italic;max-width:680px;
+  }
+
+  /* Responsive */
+  @media(max-width:640px){
+    nav{padding:12px 18px}
+    .nav-tag{display:none}
+    .hero{padding:68px 20px 60px}
+    .inner{padding:0 20px}
+    .videos{grid-template-columns:1fr}
+    footer{padding:22px 20px}
+    .hero-photo{width:48px;height:48px;min-width:48px;min-height:48px}
+    .hero-photo-sep{font-size:15px}
+    .story-modal-panel{width:95vw;padding:28px 22px}
+  }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logos">
+      <img class="prospect-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADvklEQVR42u2XQWwbVRCGv2ebpKUxcoNFG5w06xKpRRywFRRACsquhES4pRWp1FMccQOJpj4WgdcFcU1yhBY5XLhEIumBWByo00PViEpJekABlGRdalBTSrWpXOFGlodD7ZJdO4md0lveZaU3OzPfzv/2vXmKXQ7LsjSlfCmlVLZU8ibD4bbsbuKoXSQOeDzehIgacQRSMlYqPTPeKEhDADdv3jojggkEtgiXFSklw+EjE/8rgGXd0pViFIjUGTYrwolwuH3xiQAqOgO629a8do3W60k88+v89f5FNkKvVAdXamKn9aG21tl3RoQRd7l9+RzPX42zb+3ao4n5R498zyDr/XGKre01QDA7OzuSdQFY1u8xpdSoO7Fn4z7+pa95bukino37/xnmnf52f5z1/rN1rw/l0jlRq9wHViZpvW46E5fzlQEcsMXWduz+OA96BrcA8RoVWTyV6amp71L5fF5363zoh1MEr8arkwvjlAgDUeAbh0z3cgS/jRM6/ya+ezmHW6Hwj3bnzp+ZqgqY5ucWiNbV1cVrXUFCK1/RsjJZS7RZIKk+YdbBM4AGZADN7ZLvGeTvtz/irqeFfD4PqKyu94YBfO6Xl5eXCa1c4Ji67DZly4lr/uNqmiwQlgFiQGIzSMtPk9z1+Mm/MVzl56nrtxaSlIiqT9lxg1HTTJRlSdYT2lfHO1mVwGxoe53GBkwZYKiWJI1X4CmOPYA9gD2A7QGagS40SZNoJKhMEZA0CfrQ8O8GwAu8CLxcPucEU2aw5HtiOyZPE6OZBQSTY8BpoLtBgBveKItNUfc+qaFIyQwLkq7e3SSNLjNkEFJVu183HH51hkPFdH0A9sMAl1ZP8uXPH2A/POg2RxAsSZOSNFq53CmETK1eojL2yW2Ob3xBd2GY/aVcLYCiAcrRu91+0Mb4jTiXVk9WgwgxhAzNWIhTmoJq45emc1z47WPb7VdUfvZLbuuWzDTPx8CTAHGUMdBsEwnO0xfKbKlnUfn5w/ceOd8piqqFubk5CoUCkeACr3csYR84wZrvXUc/ULMpNU0zAN6R8rmOG6QvdJlIcMEpmzfKr03nKKjDj+cqAACapqFp2uO2bFuATSAaeE1gyG07fnCJd46k8T77gr3q+zBge6NV/tsALOp6b7Tui4lpfjYAatQtC4Cu11x3syIkr1z5MVv5gE0A0yLFs4ZhZBu+mtVaHy4AW0QlDaN3zP0BHR0dQ0ePvjRuGG/NPtHl1C1LBUCEJBTHDMOwn+rt2A2i63qnSHG4UtJGx7/cCXouQY7xYwAAAABJRU5ErkJggg==" alt="IonQ" loading="eager" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='inline')"><span class="logo-text-fallback" style="display:none">IonQ</span>
+      <span class="logo-sep">×</span>
+      <svg class="airtable-logo" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" aria-label="Airtable"><path d="M21.16 15.916l-12.878 5.33c-.716.296-.7 1.314.012 1.6l12.932 5.128a4.8 4.8 0 003.538 0l12.932-5.128c.72-.286.728-1.303.012-1.6l-12.878-5.33a4.8 4.8 0 00-3.67 0" fill="#fcb400"/><path d="M24.144 30.773v12.8c0 .6.614 1.027 1.18.802l14.4-5.593a.86.86 0 00.545-.802v-12.8c0-.6-.614-1.027-1.18-.802l-14.4 5.593a.86.86 0 00-.545.802" fill="#18bfff"/><path d="M20.78 31.434l-4.7 2.275-9.028 4.326c-.572.276-1.303-.14-1.303-.777V25.234c0-.23.118-.43.276-.578a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#f82b60"/><path d="M20.78 31.434L16.502 33.5l-10.5-8.844a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#ba1e45"/><path d="M54.388 31.064l-1.74-4.693c-.07-.192-.343-.192-.414 0l-1.74 4.693a.22.22 0 00.207.297h3.48a.22.22 0 00.207-.297m.804 2.637H49.7a.22.22 0 00-.207.144l-1.083 2.92a.22.22 0 01-.207.144h-2.385a.22.22 0 01-.205-.303l5.5-13.68a.22.22 0 01.205-.138h2.284a.22.22 0 01.205.138l5.5 13.68a.22.22 0 01-.205.303H56.7a.22.22 0 01-.207-.144l-1.083-2.92a.22.22 0 00-.207-.144m5.204-6.112h2.04a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221v-8.9a.22.22 0 01.221-.221m9.7 2.16a.22.22 0 01-.221.221h-.062c-1 0-1.75.242-2.22.726s-.706 1.284-.706 2.4v3.592a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h2a.22.22 0 01.221.221v1.756h.04c.242-.726.625-1.284 1.15-1.674s1.17-.585 1.936-.585h.1zm5.578-.082a.22.22 0 00-.221.221v3.693c0 .377.074.645.222.807s.403.242.766.242h.203a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221h-.87c-.9 0-1.594-.232-2.078-.696s-.726-1.153-.726-2.068v-4.278a.22.22 0 00-.221-.221h-1.273a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h1.273a.22.22 0 00.221-.221v-3.3a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v3.3a.22.22 0 00.221.221h1.475a.22.22 0 01.221.221v1.637a.22.22 0 01-.221.221zm9.34 4.478c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.36.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-4.7 2.48a4.14 4.14 0 01-1.624-1.705c-.397-.746-.595-1.637-.595-2.673s.198-1.926.595-2.673.938-1.314 1.624-1.705a4.49 4.49 0 012.259-.585c.726 0 1.348.14 1.866.424s.93.68 1.24 1.2h.04V27.8a.22.22 0 01.221-.221h2.02a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221v-1.1h-.04c-.3.5-.723.908-1.24 1.2s-1.14.424-1.866.424c-.82 0-1.573-.195-2.26-.585m16.268-2.48c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.362.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-3.066 2.643a3.24 3.24 0 01-1.241-1.19h-.04v1.1a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v5.9h.04a3.24 3.24 0 011.241-1.19c.518-.283 1.14-.424 1.866-.424a4.49 4.49 0 012.259.585c.686.4 1.227.958 1.624 1.705s.595 1.638.595 2.673-.2 1.927-.595 2.673-.938 1.315-1.624 1.705-1.44.585-2.26.585c-.726 0-1.348-.14-1.866-.424m9.78.12h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221m4.812-7.16c-.338.264-.567.645-.685 1.143-.032.137.075.27.216.27h3.882c.135 0 .24-.12.22-.254-.078-.47-.28-.847-.606-1.128-.383-.33-.884-.494-1.503-.494s-1.126.155-1.523.464m4.973-1.16c.793.868 1.2 2.095 1.2 3.68v.264a.22.22 0 01-.221.221h-6.486c-.137 0-.242.125-.218.26.104.6.364 1.058.782 1.405.477.397 1.08.595 1.805.595.938 0 1.805-.366 2.603-1.098a.22.22 0 01.328.038l.992 1.424a.22.22 0 01-.034.292 7.29 7.29 0 01-1.61 1.07c-.645.316-1.405.474-2.28.474-1 0-1.9-.205-2.643-.615a4.35 4.35 0 01-1.755-1.735c-.417-.746-.625-1.6-.625-2.592s.202-1.85.605-2.602.968-1.338 1.695-1.755 1.573-.625 2.542-.625c1.425 0 2.535.434 3.328 1.3m-50.15-4.28a1.51 1.51 0 01-1.507 1.507 1.51 1.51 0 01-1.507-1.507 1.51 1.51 0 011.507-1.507 1.51 1.51 0 011.507 1.507" fill="rgba(240,240,248,0.88)"/></svg>
+    </div>
+    <div class="nav-tag">
+      <div class="nav-prepared">Prepared for IonQ by Jason Accomando</div>
+    </div>
+    <a class="nav-cta" href="https://meet.airtable.com/c/Jason_Accomando#/" target="_blank" rel="noopener noreferrer">Book time →</a>
+  </nav>
+
+  <section class="hero">
+    
+    <div class="chip">IonQ × Airtable</div>
+    <h1 class="typing"><span class="typed-text"></span><span class="typed-caret">&nbsp;</span></h1>
+    <p class="hero-sub">New product introduction now spans College Park, Bothell, Boulder, and a foundry partner, with hardware from eight acquired lines converging. Airtable gives program management one stage-gate system, cross-site task boards, and supplier coordination in a single connected view. Launch-readiness becomes a live scorecard, not a slide someone rebuilds every week.</p>
+    <a class="btn" href="https://meet.airtable.com/c/Jason_Accomando#/" target="_blank" rel="noopener noreferrer">See how this works for your team</a>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">What this means for IonQ</div>
+      <h2>Stage-gate discipline across every site and supplier</h2>
+
+      <div class="cards">
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div>
+          <div class="card-title">One stage-gate tracker</div>
+          <div class="card-body">Every program moves through the same gates with clear entry and exit criteria. See where each product sits and what is blocking the next gate.</div>
+        </div>
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="6" cy="18" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="M8.5 6 L15.5 6"/><path d="M6 8.5 L6 15.5"/><path d="M8.5 18 L15.5 18"/><path d="M18 8.5 L18 15.5"/></svg></div>
+          <div class="card-title">Cross-site task boards</div>
+          <div class="card-body">College Park, Bothell, Boulder, and your foundry partner work from linked boards. Dependencies across sites are visible instead of buried in separate trackers.</div>
+        </div>
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><circle cx="12" cy="12" r="9"/><path d="M12 3 L12 21"/><path d="M3 12 L21 12"/></svg></div>
+          <div class="card-title">Supplier coordination in one view</div>
+          <div class="card-body">Track supplier commitments, lead times, and risks next to the programs they feed. When a part slips, you see the downstream impact immediately.</div>
+        </div>
+        <div class="card fade">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" width="20" height="20"><line x1="4" y1="20" x2="20" y2="20"/><rect x="5" y="12" width="3" height="8" rx="1"/><rect x="10.5" y="7" width="3" height="13" rx="1"/><rect x="16" y="4" width="3" height="16" rx="1"/></svg></div>
+          <div class="card-title">Launch-readiness scorecards</div>
+          <div class="card-body">Roll every gate, task, and risk into a live readiness scorecard per program. Leadership reviews real status, not a hand-built deck.</div>
+        </div>
+      </div>
+
+      <div class="diagram-label">Stage-gate, concept to launch</div>
+      <div class="diagram-wrap"><svg viewBox="0 0 920 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;color:var(--text-1)">
+        <defs>
+          <marker id="wf-arr" markerWidth="7" markerHeight="7" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#FF5000" opacity="0.7"/>
+          </marker>
+        </defs>
+        <line x1="155" y1="65" x2="173" y2="65" stroke="#FF5000" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="333" y1="65" x2="351" y2="65" stroke="#FF5000" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="511" y1="65" x2="529" y2="65" stroke="#FF5000" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="689" y1="65" x2="707" y2="65" stroke="#FF5000" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/><line x1="867" y1="65" x2="885" y2="65" stroke="#FF5000" stroke-width="1.3" stroke-opacity="0.65" marker-end="url(#wf-arr)"/>
+        <rect x="0" y="41" width="152" height="48" rx="8" fill="rgba(255,80,0,0.06)" stroke="rgba(255,80,0,0.55)" stroke-width="1.2"/><text x="76" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Concept</text><rect x="178" y="41" width="152" height="48" rx="8" fill="rgba(255,80,0,0.06)" stroke="rgba(255,80,0,0.55)" stroke-width="1.2"/><text x="254" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Design</text><rect x="356" y="41" width="152" height="48" rx="8" fill="rgba(255,80,0,0.06)" stroke="rgba(255,80,0,0.55)" stroke-width="1.2"/><text x="432" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Build</text><rect x="534" y="41" width="152" height="48" rx="8" fill="rgba(255,80,0,0.06)" stroke="rgba(255,80,0,0.55)" stroke-width="1.2"/><text x="610" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Validate</text><rect x="712" y="41" width="152" height="48" rx="8" fill="rgba(255,80,0,0.06)" stroke="rgba(255,80,0,0.55)" stroke-width="1.2"/><text x="788" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Ramp</text><rect x="890" y="41" width="152" height="48" rx="8" fill="rgba(255,80,0,0.06)" stroke="rgba(255,80,0,0.55)" stroke-width="1.2"/><text x="966" y="69" text-anchor="middle" font-family="Inter,system-ui,sans-serif" font-size="11" fill="currentColor">Launch</text>
+      </svg></div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">Proven at scale</div>
+      <h2>Companies like yours already use Airtable</h2>
+      <div class="stories">
+        <div class="story-card fade">
+          <div class="story-tag">Customer Story</div>
+          <div class="story-title">Baker Hughes</div>
+          <div class="story-csr">
+            <div class="story-csr-line"><span class="story-csr-label">Challenge</span>Coordinating complex hardware programs across sites.</div><div class="story-csr-line"><span class="story-csr-label">Solution</span>Airtable for stage-gate tracking and cross-team visibility.</div><div class="story-csr-line"><span class="story-csr-label">Result</span>Programs delivered with fewer surprises.</div>
+          </div>
+          <button class="story-btn" onclick="openStoryModal('story-modal-0')">Read story</button>
+        </div>
+        <div class="story-card fade">
+          <div class="story-tag">Customer Story</div>
+          <div class="story-title">Benchling</div>
+          <div class="story-csr">
+            <div class="story-csr-line"><span class="story-csr-label">Challenge</span>Coordinating fast-moving R and D across teams.</div><div class="story-csr-line"><span class="story-csr-label">Solution</span>A connected system for tracking work and decisions.</div><div class="story-csr-line"><span class="story-csr-label">Result</span>Faster, better-coordinated development cycles.</div>
+          </div>
+          <button class="story-btn" onclick="openStoryModal('story-modal-1')">Read story</button>
+        </div>
+      </div>
+      <div class="proof-quote">"Multi-site NPI does not fail at the gates. It fails in the gaps between them."</div>
+    </div>
+  </section>
+
+  <section class="cta-sec">
+    <h2>Ready to see it for IonQ?</h2>
+    <p>20 minutes. No deck. Just a live look at how your team could use Airtable.</p>
+    <a class="btn" href="https://meet.airtable.com/c/Jason_Accomando#/" target="_blank" rel="noopener noreferrer">Book 20 minutes</a>
+  </section>
+
+  <footer>
+    <div class="footer-logos">
+      <img class="prospect-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAADvklEQVR42u2XQWwbVRCGv2ebpKUxcoNFG5w06xKpRRywFRRACsquhES4pRWp1FMccQOJpj4WgdcFcU1yhBY5XLhEIumBWByo00PViEpJekABlGRdalBTSrWpXOFGlodD7ZJdO4md0lveZaU3OzPfzv/2vXmKXQ7LsjSlfCmlVLZU8ibD4bbsbuKoXSQOeDzehIgacQRSMlYqPTPeKEhDADdv3jojggkEtgiXFSklw+EjE/8rgGXd0pViFIjUGTYrwolwuH3xiQAqOgO629a8do3W60k88+v89f5FNkKvVAdXamKn9aG21tl3RoQRd7l9+RzPX42zb+3ao4n5R498zyDr/XGKre01QDA7OzuSdQFY1u8xpdSoO7Fn4z7+pa95bukino37/xnmnf52f5z1/rN1rw/l0jlRq9wHViZpvW46E5fzlQEcsMXWduz+OA96BrcA8RoVWTyV6amp71L5fF5363zoh1MEr8arkwvjlAgDUeAbh0z3cgS/jRM6/ya+ezmHW6Hwj3bnzp+ZqgqY5ucWiNbV1cVrXUFCK1/RsjJZS7RZIKk+YdbBM4AGZADN7ZLvGeTvtz/irqeFfD4PqKyu94YBfO6Xl5eXCa1c4Ji67DZly4lr/uNqmiwQlgFiQGIzSMtPk9z1+Mm/MVzl56nrtxaSlIiqT9lxg1HTTJRlSdYT2lfHO1mVwGxoe53GBkwZYKiWJI1X4CmOPYA9gD2A7QGagS40SZNoJKhMEZA0CfrQ8O8GwAu8CLxcPucEU2aw5HtiOyZPE6OZBQSTY8BpoLtBgBveKItNUfc+qaFIyQwLkq7e3SSNLjNkEFJVu183HH51hkPFdH0A9sMAl1ZP8uXPH2A/POg2RxAsSZOSNFq53CmETK1eojL2yW2Ob3xBd2GY/aVcLYCiAcrRu91+0Mb4jTiXVk9WgwgxhAzNWIhTmoJq45emc1z47WPb7VdUfvZLbuuWzDTPx8CTAHGUMdBsEwnO0xfKbKlnUfn5w/ceOd8piqqFubk5CoUCkeACr3csYR84wZrvXUc/ULMpNU0zAN6R8rmOG6QvdJlIcMEpmzfKr03nKKjDj+cqAACapqFp2uO2bFuATSAaeE1gyG07fnCJd46k8T77gr3q+zBge6NV/tsALOp6b7Tui4lpfjYAatQtC4Cu11x3syIkr1z5MVv5gE0A0yLFs4ZhZBu+mtVaHy4AW0QlDaN3zP0BHR0dQ0ePvjRuGG/NPtHl1C1LBUCEJBTHDMOwn+rt2A2i63qnSHG4UtJGx7/cCXouQY7xYwAAAABJRU5ErkJggg==" alt="IonQ" loading="eager" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <span class="logo-sep">×</span>
+      <svg class="airtable-logo" viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg" aria-label="Airtable"><path d="M21.16 15.916l-12.878 5.33c-.716.296-.7 1.314.012 1.6l12.932 5.128a4.8 4.8 0 003.538 0l12.932-5.128c.72-.286.728-1.303.012-1.6l-12.878-5.33a4.8 4.8 0 00-3.67 0" fill="#fcb400"/><path d="M24.144 30.773v12.8c0 .6.614 1.027 1.18.802l14.4-5.593a.86.86 0 00.545-.802v-12.8c0-.6-.614-1.027-1.18-.802l-14.4 5.593a.86.86 0 00-.545.802" fill="#18bfff"/><path d="M20.78 31.434l-4.7 2.275-9.028 4.326c-.572.276-1.303-.14-1.303-.777V25.234c0-.23.118-.43.276-.578a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#f82b60"/><path d="M20.78 31.434L16.502 33.5l-10.5-8.844a.98.98 0 01.218-.164.92.92 0 01.785-.061l13.7 5.424c.696.276.75 1.25.072 1.58" fill="#ba1e45"/><path d="M54.388 31.064l-1.74-4.693c-.07-.192-.343-.192-.414 0l-1.74 4.693a.22.22 0 00.207.297h3.48a.22.22 0 00.207-.297m.804 2.637H49.7a.22.22 0 00-.207.144l-1.083 2.92a.22.22 0 01-.207.144h-2.385a.22.22 0 01-.205-.303l5.5-13.68a.22.22 0 01.205-.138h2.284a.22.22 0 01.205.138l5.5 13.68a.22.22 0 01-.205.303H56.7a.22.22 0 01-.207-.144l-1.083-2.92a.22.22 0 00-.207-.144m5.204-6.112h2.04a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221v-8.9a.22.22 0 01.221-.221m9.7 2.16a.22.22 0 01-.221.221h-.062c-1 0-1.75.242-2.22.726s-.706 1.284-.706 2.4v3.592a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h2a.22.22 0 01.221.221v1.756h.04c.242-.726.625-1.284 1.15-1.674s1.17-.585 1.936-.585h.1zm5.578-.082a.22.22 0 00-.221.221v3.693c0 .377.074.645.222.807s.403.242.766.242h.203a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221h-.87c-.9 0-1.594-.232-2.078-.696s-.726-1.153-.726-2.068v-4.278a.22.22 0 00-.221-.221h-1.273a.22.22 0 01-.221-.221V27.8a.22.22 0 01.221-.221h1.273a.22.22 0 00.221-.221v-3.3a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v3.3a.22.22 0 00.221.221h1.475a.22.22 0 01.221.221v1.637a.22.22 0 01-.221.221zm9.34 4.478c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.36.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-4.7 2.48a4.14 4.14 0 01-1.624-1.705c-.397-.746-.595-1.637-.595-2.673s.198-1.926.595-2.673.938-1.314 1.624-1.705a4.49 4.49 0 012.259-.585c.726 0 1.348.14 1.866.424s.93.68 1.24 1.2h.04V27.8a.22.22 0 01.221-.221h2.02a.22.22 0 01.221.221v8.88a.22.22 0 01-.221.221h-2.02a.22.22 0 01-.221-.221v-1.1h-.04c-.3.5-.723.908-1.24 1.2s-1.14.424-1.866.424c-.82 0-1.573-.195-2.26-.585m16.268-2.48c.464-.484.696-1.116.696-1.896s-.232-1.412-.696-1.896-1.073-.726-1.826-.726-1.362.242-1.826.726-.696 1.116-.696 1.896.232 1.412.696 1.896 1.072.726 1.826.726 1.362-.242 1.826-.726m-3.066 2.643a3.24 3.24 0 01-1.241-1.19h-.04v1.1a.22.22 0 01-.221.221h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221v5.9h.04a3.24 3.24 0 011.241-1.19c.518-.283 1.14-.424 1.866-.424a4.49 4.49 0 012.259.585c.686.4 1.227.958 1.624 1.705s.595 1.638.595 2.673-.2 1.927-.595 2.673-.938 1.315-1.624 1.705-1.44.585-2.26.585c-.726 0-1.348-.14-1.866-.424m9.78.12h-2.04a.22.22 0 01-.221-.221V23a.22.22 0 01.221-.221h2.04a.22.22 0 01.221.221V36.7a.22.22 0 01-.221.221m4.812-7.16c-.338.264-.567.645-.685 1.143-.032.137.075.27.216.27h3.882c.135 0 .24-.12.22-.254-.078-.47-.28-.847-.606-1.128-.383-.33-.884-.494-1.503-.494s-1.126.155-1.523.464m4.973-1.16c.793.868 1.2 2.095 1.2 3.68v.264a.22.22 0 01-.221.221h-6.486c-.137 0-.242.125-.218.26.104.6.364 1.058.782 1.405.477.397 1.08.595 1.805.595.938 0 1.805-.366 2.603-1.098a.22.22 0 01.328.038l.992 1.424a.22.22 0 01-.034.292 7.29 7.29 0 01-1.61 1.07c-.645.316-1.405.474-2.28.474-1 0-1.9-.205-2.643-.615a4.35 4.35 0 01-1.755-1.735c-.417-.746-.625-1.6-.625-2.592s.202-1.85.605-2.602.968-1.338 1.695-1.755 1.573-.625 2.542-.625c1.425 0 2.535.434 3.328 1.3m-50.15-4.28a1.51 1.51 0 01-1.507 1.507 1.51 1.51 0 01-1.507-1.507 1.51 1.51 0 011.507-1.507 1.51 1.51 0 011.507 1.507" fill="rgba(240,240,248,0.88)"/></svg>
+    </div>
+    <span class="footer-note">Prepared by Jason Accomando · Airtable</span>
+  </footer>
+
+  <div class="story-modal-bg" id="story-modal-0" onclick="if(event.target===this)closeStoryModal('story-modal-0')">
+    <div class="story-modal-panel" role="dialog" aria-modal="true">
+      <button class="story-modal-close" onclick="closeStoryModal('story-modal-0')" aria-label="Close">&times;</button>
+      <div class="story-modal-tag">Customer Story</div>
+      <div class="story-modal-headline">Baker Hughes: complex hardware programs, coordinated</div>
+      <div class="story-modal-section"><div class="story-modal-section-label">Challenge</div><div class="story-modal-body" style="margin-bottom:0">Complex hardware programs ran across sites with dependencies that were hard to see.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Solution</div><div class="story-modal-body" style="margin-bottom:0">Baker Hughes used Airtable for stage-gate tracking and cross-team visibility.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Result</div><div class="story-modal-body" style="margin-bottom:0">Programs moved with fewer surprises and clearer handoffs.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Why it matters for IonQ</div><div class="story-modal-body" style="margin-bottom:0">Four-site NPI with converging hardware lines needs exactly this gate-by-gate visibility.</div></div>
+      <div class="story-modal-cta">
+        <a class="btn" href="https://meet.airtable.com/c/Jason_Accomando#/" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 30px;font-size:.9rem">See how this works for your team →</a>
+      </div>
+    </div>
+  </div>
+  <div class="story-modal-bg" id="story-modal-1" onclick="if(event.target===this)closeStoryModal('story-modal-1')">
+    <div class="story-modal-panel" role="dialog" aria-modal="true">
+      <button class="story-modal-close" onclick="closeStoryModal('story-modal-1')" aria-label="Close">&times;</button>
+      <div class="story-modal-tag">Customer Story</div>
+      <div class="story-modal-headline">Benchling: coordinated R and D at pace</div>
+      <div class="story-modal-section"><div class="story-modal-section-label">Challenge</div><div class="story-modal-body" style="margin-bottom:0">Fast-moving R and D work was spread across teams and tools.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Solution</div><div class="story-modal-body" style="margin-bottom:0">A connected Airtable system tracked work, decisions, and dependencies.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Result</div><div class="story-modal-body" style="margin-bottom:0">Development cycles ran faster and stayed coordinated.</div></div><div class="story-modal-section"><div class="story-modal-section-label">Why it matters for IonQ</div><div class="story-modal-body" style="margin-bottom:0">Bringing acquired hardware lines to launch is R and D-heavy coordination at its core.</div></div>
+      <div class="story-modal-cta">
+        <a class="btn" href="https://meet.airtable.com/c/Jason_Accomando#/" target="_blank" rel="noopener noreferrer" style="display:inline-block;padding:13px 30px;font-size:.9rem">See how this works for your team →</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const els = document.querySelectorAll('.fade');
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const d = parseInt(e.target.dataset.d || '0');
+            setTimeout(() => e.target.classList.add('in'), d);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      els.forEach((el, i) => { el.dataset.d = String(i * 60); obs.observe(el); });
+    } else {
+      els.forEach(el => el.classList.add('in'));
+    }
+    function openStoryModal(id) {
+      var m = document.getElementById(id);
+      if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeStoryModal(id) {
+      var m = document.getElementById(id);
+      if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.story-modal-bg.open').forEach(function(m) {
+          m.classList.remove('open');
+        });
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Typing animation: show first half instantly, type back half slowly
+    (function(){
+      var target = document.querySelector('.hero h1 .typed-text');
+      if (!target) return;
+      var text = "Run four-site NPI on one stage-gate system";
+      var mid = Math.floor(text.length / 2);
+      var splitIdx = text.lastIndexOf(' ', mid);
+      if (splitIdx <= 0) splitIdx = text.indexOf(' ', mid);
+      if (splitIdx <= 0) splitIdx = mid;
+      var staticPart = text.slice(0, splitIdx + 1);
+      var typedPart = text.slice(splitIdx + 1);
+      target.textContent = staticPart;
+      var idx = 0;
+      function step(){
+        if (idx < typedPart.length){
+          target.textContent += typedPart.charAt(idx);
+          idx += 1;
+          var nextDelay = 85 + Math.random() * 55;
+          if (typedPart.charAt(idx-1) === ' ') nextDelay += 30;
+          if (/[.,;:!?]/.test(typedPart.charAt(idx-1))) nextDelay += 120;
+          setTimeout(step, nextDelay);
+        }
+      }
+      setTimeout(step, 500);
+    })();
+  </script>
+</body>
+</html>
