@@ -96,7 +96,7 @@
 <div id="vign"></div><div id="wet"></div>
 <div id="xh" class="hud">+</div>
 <div id="coords" class="hud"></div>
-<div id="hint" class="hud">WASD move · SPACE jump · CTRL sprint · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory · T chat &amp; /commands · 1-9 slots · G gamemode<br>R respawn · ESC pause</div>
+<div id="hint" class="hud">WASD move · double-tap W or CTRL sprint · SPACE jump · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory · T chat &amp; /commands · 1-9 slots · G gamemode<br>R respawn · ESC pause</div>
 <div id="hotbar"></div>
 <button id="invBtn" title="Inventory & crafting (E)">🎒</button>
 <button id="chatBtn" title="Chat & commands (T)">💬</button>
@@ -148,7 +148,7 @@
     <h1 style="font-size:34px;letter-spacing:8px">PAUSED</h1>
     <div class="sub">Your world is saved automatically in this browser.</div>
     <button class="go" id="resume">RESUME ▸</button>
-    <button class="go alt" id="reset">RESET WORLD</button>
+    <button class="go alt" id="reset">NEW WORLD ▸</button>
     <div class="keys">WASD move · space jump · left click mine · right click build<br>1-9 or scroll blocks · F fly · R respawn</div>
   </div>
 </div>
@@ -211,7 +211,7 @@ function noise3(x,y,z){var xi=Math.floor(x),yi=Math.floor(y),zi=Math.floor(z),xf
 var CH=16, WH=64, SEA=24, R=3;
 var AIR=0,GRASS=1,DIRT=2,STONE=3,SAND=4,LOG=5,LEAF=6,PLANK=7,GLASS=8,BRICK=9,COBBLE=10,WATER=11,BEDROCK=12;
 var SNOWGRASS=13,SNOWBLK=14,ICE=15,CACTUS=16,SANDSTONE=17,SPRUCELEAF=18,FLOWER_R=19,FLOWER_Y=20,
-    TALLGRASS=21,COAL_ORE=22,IRON_ORE=23,GOLD_ORE=24,DIAMOND_ORE=25,TORCH=26;
+    TALLGRASS=21,COAL_ORE=22,IRON_ORE=23,GOLD_ORE=24,DIAMOND_ORE=25,TORCH=26,WOOL=27;
 // tiles: [top,bottom,side]
 var BLOCKS={};
 BLOCKS[GRASS]={n:'Grass',t:[0,2,1]};BLOCKS[DIRT]={n:'Dirt',t:[2,2,2]};BLOCKS[STONE]={n:'Stone',t:[3,3,3]};
@@ -228,6 +228,7 @@ BLOCKS[GLASS].opaque=false;BLOCKS[GLASS].trans=true;
 //  18 cactus side        19 cactus top           20 sandstone           21 spruce leaves
 //  22 flower red         23 flower yellow        24 tall grass          25 coal ore
 //  26 iron ore           27 gold ore             28 diamond ore         29 torch
+//  30 wool (knit white)
 BLOCKS[SNOWGRASS]={n:'Snowy Grass',t:[14,2,15]};
 BLOCKS[SNOWBLK]={n:'Snow Block',t:[16,16,16]};
 BLOCKS[ICE]={n:'Ice',t:[17,17,17],opaque:false,trans:true};
@@ -242,19 +243,22 @@ BLOCKS[IRON_ORE]={n:'Iron Ore',t:[26,26,26]};
 BLOCKS[GOLD_ORE]={n:'Gold Ore',t:[27,27,27]};
 BLOCKS[DIAMOND_ORE]={n:'Diamond Ore',t:[28,28,28]};
 BLOCKS[TORCH]={n:'Torch',t:[29,29,29],opaque:false,solid:false,trans:true,shape:'torch'};
+BLOCKS[WOOL]={n:'Wool',t:[30,30,30]};
 
 // ----- registry-driven solidity/opacity -----
 function isOpaque(id){var B=BLOCKS[id];return !!B&&B.opaque!==false;}
 function isSolid(id){var B=BLOCKS[id];return !!B&&B.solid!==false;}
 
 var HOTBAR_SETS=[[GRASS,DIRT,STONE,SAND,LOG,LEAF,PLANK,GLASS,BRICK],
-                 [COBBLE,SANDSTONE,SNOWBLK,CACTUS,TORCH,COAL_ORE,IRON_ORE,GOLD_ORE,DIAMOND_ORE]];
+                 [COBBLE,SANDSTONE,SNOWBLK,CACTUS,TORCH,COAL_ORE,IRON_ORE,GOLD_ORE,DIAMOND_ORE],
+                 [WOOL,ICE,SPRUCELEAF,LEAF,LOG,PLANK,GLASS,BRICK,SNOWBLK]];
 var HOTBAR=HOTBAR_SETS[0];
 var PCOL={};PCOL[GRASS]=0x79b04a;PCOL[DIRT]=0x8a6244;PCOL[STONE]=0x8b8b8b;PCOL[SAND]=0xdcd0a2;PCOL[LOG]=0x6d5433;PCOL[LEAF]=0x4e8f35;PCOL[PLANK]=0xa8834f;PCOL[GLASS]=0xcfe6ee;PCOL[BRICK]=0x9c5a50;PCOL[COBBLE]=0x7f7f7f;
 PCOL[BEDROCK]=0x2e2e2e;PCOL[WATER]=0x3f7fd6;
 PCOL[SNOWGRASS]=0xeef4f8;PCOL[SNOWBLK]=0xf3f7fb;PCOL[ICE]=0xbfe3f0;PCOL[CACTUS]=0x2f7d3a;PCOL[SANDSTONE]=0xe0d3a0;
 PCOL[SPRUCELEAF]=0x2f5b46;PCOL[FLOWER_R]=0xd23c3c;PCOL[FLOWER_Y]=0xe0c93a;PCOL[TALLGRASS]=0x5c9a3d;
 PCOL[COAL_ORE]=0x3a3a3a;PCOL[IRON_ORE]=0xcaa87c;PCOL[GOLD_ORE]=0xe8cd4a;PCOL[DIAMOND_ORE]=0x6fe0e0;PCOL[TORCH]=0xd99a3f;
+PCOL[WOOL]=0xe8e6e0;
 
 // ===== ATLAS =====
 
@@ -367,6 +371,19 @@ speck(21,'#28503f',['#1e3f30','#325f4a','#194635'],300);        // 21 spruce lea
  ag.fillStyle='#d9922f';ag.beginPath();ag.moveTo(p[0]+16,p[1]+4);ag.lineTo(p[0]+21,p[1]+13);ag.lineTo(p[0]+11,p[1]+13);ag.closePath();ag.fill();
  ag.fillStyle='#ffe9a0';ag.beginPath();ag.moveTo(p[0]+16,p[1]+7);ag.lineTo(p[0]+19,p[1]+13);ag.lineTo(p[0]+13,p[1]+13);ag.closePath();ag.fill();
  ag.fillStyle='#fff6d8';ag.beginPath();ag.arc(p[0]+16,p[1]+11,1.6,0,7);ag.fill();})();
+(function(){var p=tileXY(30);ag.fillStyle='#e8e6e0';ag.fillRect(p[0],p[1],TS,TS);  // 30 wool: soft white base + knit weave
+ var wr,wc;
+ for(var wr2=0;wr2<TS;wr2+=4){                                    // subtle 4px knit rows
+   ag.fillStyle=(wr2%8===0)?'#d5d2ca':'#f4f2ec';
+   ag.fillRect(p[0],p[1]+wr2,TS,2);
+ }
+ for(var wc2=0;wc2<TS;wc2+=4){                                    // vertical column speckle
+   ag.fillStyle='#dddbd4';ag.fillRect(p[0]+wc2,p[1],1,TS);
+ }
+ for(var i9=0;i9<60;i9++){                                         // random knit speckles
+   ag.fillStyle=(arand()<0.5)?'#d5d2ca':'#f4f2ec';
+   ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);
+ }})();
 
 // ---------- 14_items.js ----------
 // MODULE 14: item registry + item icon atlas painters (OWNER: Pigment)
@@ -492,6 +509,38 @@ drawPickTile(6,'#4fd8d2','#9df3ef'); // diamond
  ig.fillStyle='#5a4326';
  ig.fillRect(p[0]+5,p[1]+24,6,1);})();
 
+// ----- tile10: BEEF (steak: red-brown slab + marbling streaks) -----
+(function(){var p=itileXY(10);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#7a3d22';                                           // dark outer border
+ ig.fillRect(p[0]+7,p[1]+10,18,14);
+ ig.fillStyle='#b05030';                                           // main meat body
+ ig.fillRect(p[0]+8,p[1]+11,16,12);
+ ig.fillStyle='#6e2c14';                                           // darker shading bottom
+ ig.fillRect(p[0]+8,p[1]+19,16,4);
+ ig.fillStyle='#c47050';                                           // lighter highlight top
+ ig.fillRect(p[0]+9,p[1]+12,14,3);
+ ig.fillStyle='#d8a888';                                           // marbling streaks
+ ig.fillRect(p[0]+10,p[1]+14,4,2);ig.fillRect(p[0]+17,p[1]+16,5,2);ig.fillRect(p[0]+12,p[1]+18,3,2);
+ ig.fillStyle='#e8c8a8';                                           // bright marbling accents
+ ig.fillRect(p[0]+11,p[1]+14,2,1);ig.fillRect(p[0]+18,p[1]+16,2,1);})();
+
+// ----- tile11: CHICKEN (drumstick: tan meat lobe + white bone end) -----
+(function(){var p=itileXY(11);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#b89060';                                           // meat lobe base tan
+ ig.fillRect(p[0]+9,p[1]+9,14,6);ig.fillRect(p[0]+7,p[1]+15,16,6);ig.fillRect(p[0]+9,p[1]+21,12,4);
+ ig.fillStyle='#8a6640';                                           // darker shading
+ ig.fillRect(p[0]+9,p[1]+23,12,2);ig.fillRect(p[0]+7,p[1]+19,16,2);
+ ig.fillStyle='#d4b484';                                           // lighter highlight top of lobe
+ ig.fillRect(p[0]+10,p[1]+10,10,3);ig.fillRect(p[0]+8,p[1]+15,6,3);
+ ig.fillStyle='#f0ece0';                                           // bone shaft (white-ish)
+ ig.fillRect(p[0]+20,p[1]+14,5,12);
+ ig.fillStyle='#e0dcd0';                                           // bone shadow side
+ ig.fillRect(p[0]+24,p[1]+14,1,12);
+ ig.fillStyle='#f4f0e4';                                           // bone knob top
+ ig.fillRect(p[0]+18,p[1]+12,6,4);ig.fillRect(p[0]+19,p[1]+10,4,4);
+ ig.fillStyle='#ddd8cc';                                           // bone knob shading
+ ig.fillRect(p[0]+18,p[1]+14,2,2);ig.fillRect(p[0]+22,p[1]+14,2,2);})();
+
 // ===== ITEM REGISTRY (EXACT harness ids) =====
 var ITEMS={};
 ITEMS[100]={n:'Stick',icon:0};
@@ -504,6 +553,8 @@ ITEMS[113]={n:'Diamond Pickaxe',icon:6,tool:'pick',tier:4};
 ITEMS[114]={n:'Wooden Axe',icon:7,tool:'axe',tier:1};
 ITEMS[115]={n:'Wooden Shovel',icon:8,tool:'shovel',tier:1};
 ITEMS[116]={n:'Stone Sword',icon:9,tool:'sword',tier:2};
+ITEMS[103]={n:'Beef',icon:10,food:8};
+ITEMS[104]={n:'Chicken',icon:11,food:5};
 
 // ===== HELPERS =====
 function isBlockId(id){return typeof id==='number'&&id>0&&id<100;}
@@ -650,6 +701,20 @@ var TORCHES=new Set();
 function ck(cx,cz){return cx+','+cz;}
 var EDIT_KEY='voxelcraft_world_v1';
 var edits={};try{edits=JSON.parse(localStorage.getItem(EDIT_KEY)||'{}');}catch(e){edits={};}
+var WMETA=null;
+try{WMETA=JSON.parse(localStorage.getItem('voxelcraft_meta_v1')||'null');}catch(e){WMETA=null;}
+if(!WMETA||typeof WMETA.seed!=='number'){
+ WMETA={seed:Math.floor(Math.random()*899999999)+1000,sx:8,sz:8};
+ SEED=WMETA.seed;
+ for(var att=0;att<60;att++){
+  var tx=Math.floor((Math.random()*2-1)*600),tz=Math.floor((Math.random()*2-1)*600);
+  var hh=terrainH(tx,tz);
+  if(hh>SEA+1&&hh<42){WMETA.sx=tx;WMETA.sz=tz;break;}
+ }
+ try{localStorage.setItem('voxelcraft_meta_v1',JSON.stringify(WMETA));}catch(e){}
+}
+SEED=WMETA.seed;
+var SPAWNX=WMETA.sx+0.5,SPAWNZ=WMETA.sz+0.5;
 var saveT=null;function saveEdits(){clearTimeout(saveT);saveT=setTimeout(function(){try{localStorage.setItem(EDIT_KEY,JSON.stringify(edits));}catch(e){}},700);}
 function getBlock(wx,wy,wz,fallback){
  if(wy<0)return BEDROCK; if(wy>=WH)return AIR;
@@ -919,40 +984,128 @@ function genChunk(cx,cz){
 }
 
 // ---------- 35_mobs.js ----------
-// MODULE 35: mobs - pigs (day) + zombies (night), physics, melee (OWNER: Fauna)
+// MODULE 35: mobs - pigs/sheep/cows/chickens (day) + zombies (night), physics, melee (OWNER: Fauna3)
 // CONTRACT: top-level = function declarations + plain data only. All THREE/scene work happens
 // lazily inside initMobs()/spawn functions, which run at runtime once state==='play' frames start.
 
 // ===== CONSTANTS (plain data only) =====
-var MOB_PIG=1, MOB_ZOMBIE=2;
+var MOB_PIG=1, MOB_ZOMBIE=2, MOB_SHEEP=3, MOB_COW=4, MOB_CHICKEN=5;
 var MOB_GRAV=26;
+
+// Passive cap / range (combined pool for all passive types)
+var PASSIVE_CAP=14, PASSIVE_CAP_RADIUS=75;
+var PASSIVE_RANGE_MIN=14, PASSIVE_RANGE_MAX=40;
+var PASSIVE_DESPAWN_RADIUS=90;
+
+// Legacy pig constants kept for backwards compat
 var PIG_CAP=8, PIG_CAP_RADIUS=60, PIG_RANGE_MIN=18, PIG_RANGE_MAX=45;
 var ZOMBIE_CAP=6, ZOMBIE_CAP_RADIUS=70, ZOMBIE_RANGE_MIN=20, ZOMBIE_RANGE_MAX=40, ZOMBIE_CHASE_DIST=20;
 var PIG_HP=6, ZOMBIE_HP=12;
 var PIG_SPEED=1.6, ZOMBIE_CHASE_SPEED=2.5, ZOMBIE_WANDER_SPEED=1.1;
 var MOB_AI_CULL_DIST=70;
-var HIT_RANGE=3.6, HIT_DOT_MIN=0.94, HIT_DMG=4, HIT_KNOCK=7, HIT_KNOCK_VY=4.5;
+
+// Updated hit constants (widened cone/range per brief)
+var HIT_RANGE=4.0, HIT_DOT_MIN=0.88, HIT_DMG=4, HIT_KNOCK=7, HIT_KNOCK_VY=4.5;
 var ZOMBIE_CONTACT_DIST=1.3, ZOMBIE_CONTACT_DY=2, ZOMBIE_CONTACT_DMG=2, ZOMBIE_CONTACT_CD=1.0;
 var ZOMBIE_KNOCK_H=6, ZOMBIE_KNOCK_VY=4;
 var ZOMBIE_DESPAWN_T=2.0;
 
+// ===== SPECIES CONFIG TABLE =====
+// color: main body hex
+// colorB: secondary/accent hex (optional, 0 = none)
+// speed: wander speed
+// hp: max hit points
+// soundF0/F1/dur/vol: blip params for ambient sound
+// soundInterval: avg seconds between sounds
+// dropItem: item id dropped on kill (survival)
+// dropMin/dropMax: quantity range
+// burstColor: particle hex on hit
+// eyeOffset: {x,y,z} relative to group origin for hit-centre approximation
+var SPECIES={};
+
+// Populated at runtime (inside initMobs) to avoid hoisting issues with numeric refs
+// but the table structure is defined here as plain data via a function.
+function buildSpeciesTable(){
+ SPECIES[MOB_PIG]={
+  name:'pig',
+  color:0xe89d9d, colorB:0,
+  speed:1.6, hp:6,
+  soundF0:340, soundF1:260, soundDur:0.08, soundVol:0.05,
+  soundInterval:7,
+  dropItem:101, dropMin:1, dropMax:2, // PORKCHOP
+  burstColor:0xe89d9d,
+  eyeOffsetY:0.42
+ };
+ SPECIES[MOB_SHEEP]={
+  name:'sheep',
+  color:0xd8d8d8, colorB:0x888888, // white body, gray face
+  speed:1.5, hp:6,
+  soundF0:300, soundF1:240, soundDur:0.14, soundVol:0.06,
+  soundInterval:8,
+  dropItem:27, dropMin:1, dropMax:2, // WOOL
+  burstColor:0xd8d8d8,
+  eyeOffsetY:0.52
+ };
+ SPECIES[MOB_COW]={
+  name:'cow',
+  color:0x5c3d1a, colorB:0xd8c8a0, // brown body, lighter patches
+  speed:1.3, hp:8,
+  soundF0:180, soundF1:120, soundDur:0.22, soundVol:0.07,
+  soundInterval:10,
+  dropItem:103, dropMin:1, dropMax:2, // BEEF
+  burstColor:0x5c3d1a,
+  eyeOffsetY:0.65
+ };
+ SPECIES[MOB_CHICKEN]={
+  name:'chicken',
+  color:0xf0f0f0, colorB:0xffcc00, // white body, yellow beak
+  speed:1.8, hp:3,
+  soundF0:500, soundF1:420, soundDur:0.06, soundVol:0.05,
+  soundInterval:5,
+  dropItem:104, dropMin:1, dropMax:1, // CHICKEN_MEAT
+  burstColor:0xf0f0f0,
+  eyeOffsetY:0.25
+ };
+}
+
 // ===== STATE (plain data; populated lazily) =====
 var mobsInited=false;
 var MOBS=[];
-var mobGeo=null;     // {pigBody,pigSnout,pigLeg,pigEye,zomBody,zomHead,zomArm,zomLeg,zomEye}
-var mobMat=null;     // {pigBody,pigSnout,zomBody,zomHead,eye}
-var mobClock=0;      // running time for animation phase
+var mobGeo=null;
+var mobMat=null;
+var mobClock=0;
 
-// ===== LAZY INIT (all THREE/scene creation happens here, first call only) =====
+// ===== LAZY INIT =====
 function initMobs(){
  if(mobsInited)return;
  mobsInited=true;
+ buildSpeciesTable();
  mobGeo={
+  // Pig
   pigBody:new THREE.BoxGeometry(0.9,0.55,0.55),
   pigHead:new THREE.BoxGeometry(0.42,0.4,0.4),
   pigSnout:new THREE.BoxGeometry(0.18,0.16,0.12),
   pigLeg:new THREE.BoxGeometry(0.16,0.4,0.16),
   pigEye:new THREE.BoxGeometry(0.05,0.05,0.05),
+  // Sheep (slightly bigger body, gray face box)
+  sheepBody:new THREE.BoxGeometry(1.0,0.65,0.65),
+  sheepHead:new THREE.BoxGeometry(0.38,0.38,0.38),
+  sheepLeg:new THREE.BoxGeometry(0.15,0.44,0.15),
+  sheepEye:new THREE.BoxGeometry(0.05,0.05,0.05),
+  // Cow (bigger, patches)
+  cowBody:new THREE.BoxGeometry(1.05,0.70,0.70),
+  cowHead:new THREE.BoxGeometry(0.45,0.44,0.44),
+  cowPatch:new THREE.BoxGeometry(0.28,0.28,0.08), // decorative white patch
+  cowHorn:new THREE.BoxGeometry(0.07,0.18,0.07),
+  cowLeg:new THREE.BoxGeometry(0.18,0.50,0.18),
+  cowEye:new THREE.BoxGeometry(0.05,0.05,0.05),
+  // Chicken (small 0.5 scale body)
+  chickenBody:new THREE.BoxGeometry(0.4,0.35,0.35),
+  chickenHead:new THREE.BoxGeometry(0.22,0.22,0.22),
+  chickenBeak:new THREE.BoxGeometry(0.08,0.06,0.10),
+  chickenLeg:new THREE.BoxGeometry(0.06,0.24,0.06),
+  chickenEye:new THREE.BoxGeometry(0.04,0.04,0.04),
+  // Zombie
   zomBody:new THREE.BoxGeometry(0.5,0.75,0.3),
   zomHead:new THREE.BoxGeometry(0.42,0.42,0.42),
   zomArm:new THREE.BoxGeometry(0.16,0.62,0.16),
@@ -962,13 +1115,19 @@ function initMobs(){
  mobMat={
   pigBody:new THREE.MeshLambertMaterial({color:0xe89d9d}),
   pigSnout:new THREE.MeshLambertMaterial({color:0xc47575}),
+  sheepBody:new THREE.MeshLambertMaterial({color:0xd8d8d8}),
+  sheepFace:new THREE.MeshLambertMaterial({color:0x888888}),
+  cowBody:new THREE.MeshLambertMaterial({color:0x5c3d1a}),
+  cowPatch:new THREE.MeshLambertMaterial({color:0xd8c8a0}),
+  chickenBody:new THREE.MeshLambertMaterial({color:0xf0f0f0}),
+  chickenBeak:new THREE.MeshLambertMaterial({color:0xffcc00}),
   zomBody:new THREE.MeshLambertMaterial({color:0x5d8f57}),
   zomHead:new THREE.MeshLambertMaterial({color:0x3f6b3a}),
   eye:new THREE.MeshBasicMaterial({color:0x111111})
  };
 }
 
-// ===== MOB BODY BUILDERS (shared geo/mat, unique meshes per mob instance) =====
+// ===== MOB BODY BUILDERS =====
 function buildPigModel(){
  var g=new THREE.Group();
  var body=new THREE.Mesh(mobGeo.pigBody,mobMat.pigBody);body.position.y=0.42;body.castShadow=false;body.receiveShadow=false;
@@ -988,6 +1147,72 @@ function buildPigModel(){
  }
  return {group:g,body:body,head:head,legs:legs,parts:[body,head,snout,eyeL,eyeR].concat(legs)};
 }
+
+function buildSheepModel(){
+ var g=new THREE.Group();
+ var body=new THREE.Mesh(mobGeo.sheepBody,mobMat.sheepBody);body.position.y=0.52;body.castShadow=false;body.receiveShadow=false;
+ var head=new THREE.Mesh(mobGeo.sheepHead,mobMat.sheepFace);head.position.set(0,0.58,-0.54);
+ var eyeL=new THREE.Mesh(mobGeo.sheepEye,mobMat.eye);eyeL.position.set(0.14,0.62,-0.73);
+ var eyeR=new THREE.Mesh(mobGeo.sheepEye,mobMat.eye);eyeR.position.set(-0.14,0.62,-0.73);
+ body.frustumCulled=true;head.frustumCulled=true;eyeL.frustumCulled=true;eyeR.frustumCulled=true;
+ g.add(body,head,eyeL,eyeR);
+ var legs=[];
+ var legPos=[[0.30,0,-0.22],[-0.30,0,-0.22],[0.30,0,0.22],[-0.30,0,0.22]];
+ for(var i=0;i<4;i++){
+  var leg=new THREE.Mesh(mobGeo.sheepLeg,mobMat.sheepFace);
+  leg.position.set(legPos[i][0],0.22,legPos[i][1]);
+  leg.frustumCulled=true;
+  g.add(leg);legs.push(leg);
+ }
+ return {group:g,body:body,head:head,legs:legs,parts:[body,head,eyeL,eyeR].concat(legs)};
+}
+
+function buildCowModel(){
+ var g=new THREE.Group();
+ var body=new THREE.Mesh(mobGeo.cowBody,mobMat.cowBody);body.position.y=0.65;body.castShadow=false;body.receiveShadow=false;
+ var head=new THREE.Mesh(mobGeo.cowHead,mobMat.cowBody);head.position.set(0,0.72,-0.60);
+ // white patch on body
+ var patch=new THREE.Mesh(mobGeo.cowPatch,mobMat.cowPatch);patch.position.set(0,0.70,0.35);
+ // simple horns
+ var hornL=new THREE.Mesh(mobGeo.cowHorn,mobMat.cowPatch);hornL.position.set(0.18,0.92,-0.60);
+ var hornR=new THREE.Mesh(mobGeo.cowHorn,mobMat.cowPatch);hornR.position.set(-0.18,0.92,-0.60);
+ var eyeL=new THREE.Mesh(mobGeo.cowEye,mobMat.eye);eyeL.position.set(0.17,0.74,-0.82);
+ var eyeR=new THREE.Mesh(mobGeo.cowEye,mobMat.eye);eyeR.position.set(-0.17,0.74,-0.82);
+ body.frustumCulled=true;head.frustumCulled=true;patch.frustumCulled=true;
+ hornL.frustumCulled=true;hornR.frustumCulled=true;eyeL.frustumCulled=true;eyeR.frustumCulled=true;
+ g.add(body,head,patch,hornL,hornR,eyeL,eyeR);
+ var legs=[];
+ var legPos=[[0.32,0,-0.24],[-0.32,0,-0.24],[0.32,0,0.24],[-0.32,0,0.24]];
+ for(var i=0;i<4;i++){
+  var leg=new THREE.Mesh(mobGeo.cowLeg,mobMat.cowBody);
+  leg.position.set(legPos[i][0],0.25,legPos[i][1]);
+  leg.frustumCulled=true;
+  g.add(leg);legs.push(leg);
+ }
+ return {group:g,body:body,head:head,legs:legs,parts:[body,head,patch,hornL,hornR,eyeL,eyeR].concat(legs)};
+}
+
+function buildChickenModel(){
+ // Chicken is small - placed near ground
+ var g=new THREE.Group();
+ var body=new THREE.Mesh(mobGeo.chickenBody,mobMat.chickenBody);body.position.y=0.28;body.castShadow=false;body.receiveShadow=false;
+ var head=new THREE.Mesh(mobGeo.chickenHead,mobMat.chickenBody);head.position.set(0,0.44,-0.26);
+ var beak=new THREE.Mesh(mobGeo.chickenBeak,mobMat.chickenBeak);beak.position.set(0,0.42,-0.38);
+ var eyeL=new THREE.Mesh(mobGeo.chickenEye,mobMat.eye);eyeL.position.set(0.09,0.48,-0.37);
+ var eyeR=new THREE.Mesh(mobGeo.chickenEye,mobMat.eye);eyeR.position.set(-0.09,0.48,-0.37);
+ body.frustumCulled=true;head.frustumCulled=true;beak.frustumCulled=true;eyeL.frustumCulled=true;eyeR.frustumCulled=true;
+ g.add(body,head,beak,eyeL,eyeR);
+ var legs=[];
+ var legPos=[[0.10,0,-0.04],[-0.10,0,-0.04]];
+ for(var i=0;i<2;i++){
+  var leg=new THREE.Mesh(mobGeo.chickenLeg,mobMat.chickenBeak);
+  leg.position.set(legPos[i][0],0.12,legPos[i][1]);
+  leg.frustumCulled=true;
+  g.add(leg);legs.push(leg);
+ }
+ return {group:g,body:body,head:head,legs:legs,bobHead:head,parts:[body,head,beak,eyeL,eyeR].concat(legs)};
+}
+
 function buildZombieModel(){
  var g=new THREE.Group();
  var body=new THREE.Mesh(mobGeo.zomBody,mobMat.zomBody);body.position.y=1.14;
@@ -1010,10 +1235,19 @@ function mobRand(m,salt){return h3(Math.floor(m.pos.x*4)+salt,Math.floor(mobCloc
 function mobDistToPlayer(m){var dx=m.pos.x-P.x,dz=m.pos.z-P.z;return Math.sqrt(dx*dx+dz*dz);}
 function mobFeetSolid(wx,wy,wz){return isSolid(getBlock(Math.floor(wx),Math.floor(wy),Math.floor(wz),AIR));}
 function mobWaterAhead(wx,wy,wz){
- // deeper-than-1 water check: block at feet is water AND block above feet is also water
  var b0=getBlock(Math.floor(wx),Math.floor(wy),Math.floor(wz),AIR);
  var b1=getBlock(Math.floor(wx),Math.floor(wy)+1,Math.floor(wz),AIR);
  return b0===WATER&&b1===WATER;
+}
+function countPassiveMobsNear(within){
+ var c=0;
+ for(var i=0;i<MOBS.length;i++){
+  var m=MOBS[i];
+  if(m.type===MOB_ZOMBIE||m.dying)continue;
+  var dx=m.pos.x-P.x,dz=m.pos.z-P.z;
+  if(dx*dx+dz*dz<within*within)c++;
+ }
+ return c;
 }
 function countMobsNear(type,within){
  var c=0;
@@ -1024,6 +1258,12 @@ function countMobsNear(type,within){
  }
  return c;
 }
+function isPassiveGroundOk(groundId,type){
+ // chickens also spawn on SAND; all others need GRASS or SNOWGRASS
+ if(groundId===GRASS||groundId===13)return true; // SNOWGRASS=13
+ if(type===MOB_CHICKEN&&groundId===SAND)return true;
+ return false;
+}
 
 // ===== SPAWNING =====
 function spawnAttemptPos(minR,maxR){
@@ -1033,26 +1273,47 @@ function spawnAttemptPos(minR,maxR){
  var wz=Math.floor(P.z+Math.sin(ang)*r);
  return {wx:wx,wz:wz};
 }
-function spawnPig(){
+
+function spawnPassive(){
  if(typeof P==='undefined')return;
- if(countMobsNear(MOB_PIG,PIG_CAP_RADIUS)>=PIG_CAP)return;
- var pos=spawnAttemptPos(PIG_RANGE_MIN,PIG_RANGE_MAX);
+ if(countPassiveMobsNear(PASSIVE_CAP_RADIUS)>=PASSIVE_CAP)return;
+ var pos=spawnAttemptPos(PASSIVE_RANGE_MIN,PASSIVE_RANGE_MAX);
  var gy=findGroundY(pos.wx,pos.wz);
  var groundId=getBlock(pos.wx,gy-1,pos.wz,AIR);
- if(groundId!==GRASS)return; // pigs prefer grass
- if(gy<SEA)return; // avoid underwater ground
- var model=buildPigModel();
+ if(gy<SEA)return;
+ // Pick species randomly; chickens slightly more common (weight 2 vs 1 each)
+ // weights: pig=1, sheep=1, cow=1, chicken=2 => total 5
+ var roll=Math.random()*5;
+ var type;
+ if(roll<1)type=MOB_PIG;
+ else if(roll<2)type=MOB_SHEEP;
+ else if(roll<3)type=MOB_COW;
+ else type=MOB_CHICKEN;
+ if(!isPassiveGroundOk(groundId,type))return;
+ var model;
+ if(type===MOB_PIG)model=buildPigModel();
+ else if(type===MOB_SHEEP)model=buildSheepModel();
+ else if(type===MOB_COW)model=buildCowModel();
+ else model=buildChickenModel();
  model.group.position.set(pos.wx+0.5,gy,pos.wz+0.5);
  scene.add(model.group);
+ var sp=SPECIES[type];
  MOBS.push({
-  type:MOB_PIG,group:model.group,parts:model.parts,legs:model.legs,
+  type:type,group:model.group,parts:model.parts,legs:model.legs,
+  bobHead:model.bobHead||null,
   pos:{x:pos.wx+0.5,y:gy,z:pos.wz+0.5},vel:{x:0,y:0,z:0},
   yaw:Math.random()*Math.PI*2,targetYaw:0,
-  hp:PIG_HP,maxHp:PIG_HP,hurtT:0,dying:false,despawnT:0,
+  hp:sp.hp,maxHp:sp.hp,hurtT:0,dying:false,despawnT:0,
   aiT:1+Math.random()*2,wanderTx:pos.wx+0.5,wanderTz:pos.wz+0.5,idle:false,idleT:0,
-  soundT:3+Math.random()*8,grounded:false,walkPhase:Math.random()*10
+  soundT:2+Math.random()*sp.soundInterval,grounded:false,walkPhase:Math.random()*10
  });
 }
+
+// Legacy: spawnPig kept for backwards compat
+function spawnPig(){
+ spawnPassive();
+}
+
 function spawnZombie(){
  if(typeof P==='undefined')return;
  if(!isNight())return;
@@ -1067,6 +1328,7 @@ function spawnZombie(){
  scene.add(model.group);
  MOBS.push({
   type:MOB_ZOMBIE,group:model.group,parts:model.parts,legs:model.legs,arms:model.arms,
+  bobHead:null,
   pos:{x:pos.wx+0.5,y:gy,z:pos.wz+0.5},vel:{x:0,y:0,z:0},
   yaw:Math.random()*Math.PI*2,targetYaw:0,
   hp:ZOMBIE_HP,maxHp:ZOMBIE_HP,hurtT:0,dying:false,despawnT:0,
@@ -1075,23 +1337,19 @@ function spawnZombie(){
  });
 }
 
-// ===== PHYSICS (local, matches player-style clamp/step) =====
-// Tests whether mob can occupy (tx,tz) at its current feet height, allowing a 1-block
-// auto step-up when the target cell is solid but has air above it.
+// ===== PHYSICS =====
 function mobTryAxis(m,tx,tz){
  var testFeet=Math.floor(m.pos.y+0.05);
  if(!mobFeetSolid(tx,testFeet,tz))return {x:tx,z:tz,dy:0};
  if(!mobFeetSolid(tx,testFeet+1,tz)&&testFeet+1<WH){
-  return {x:tx,z:tz,dy:1}; // step up one block
+  return {x:tx,z:tz,dy:1};
  }
- return null; // blocked, axis motion cancelled
+ return null;
 }
 function mobPhysicsStep(m,dt,wishX,wishZ,speed){
- // horizontal desired velocity, smoothed
  var k=Math.min(1,10*dt);
  m.vel.x+=(wishX*speed-m.vel.x)*k;
  m.vel.z+=(wishZ*speed-m.vel.z)*k;
- // gravity
  m.vel.y-=MOB_GRAV*dt;
  if(m.vel.y<-40)m.vel.y=-40;
 
@@ -1099,15 +1357,12 @@ function mobPhysicsStep(m,dt,wishX,wishZ,speed){
  var nz=m.pos.z+m.vel.z*dt;
  var ny=m.pos.y+m.vel.y*dt;
 
- // water-ahead avoidance: don't walk into water deeper than 1 block (per-axis so mobs can
- // still slide along a shoreline instead of fully freezing)
  if(mobWaterAhead(nx,m.pos.y,m.pos.z)){nx=m.pos.x;m.vel.x=0;}
  if(mobWaterAhead(m.pos.x,m.pos.y,nz)){nz=m.pos.z;m.vel.z=0;}
 
  m.grounded=false;
  var stepUp=0;
 
- // horizontal resolve with 1-block auto step-up (test against CURRENT pos.y, before vertical move)
  var rx=mobTryAxis(m,nx,m.pos.z);
  if(rx){m.pos.x=rx.x;if(rx.dy>0)stepUp=Math.max(stepUp,rx.dy);}
  else{m.vel.x=0;}
@@ -1115,13 +1370,11 @@ function mobPhysicsStep(m,dt,wishX,wishZ,speed){
  if(rz){m.pos.z=rz.z;if(rz.dy>0)stepUp=Math.max(stepUp,rz.dy);}
  else{m.vel.z=0;}
 
- // vertical resolve: ground clamp (feet block solid -> sit on top)
  var feetY=Math.floor(ny);
  if(mobFeetSolid(m.pos.x,feetY,m.pos.z)&&m.vel.y<=0){
   ny=feetY+1;m.vel.y=0;m.grounded=true;
  }
  if(stepUp>0){ny=Math.max(ny,Math.floor(m.pos.y)+1+0.001);m.grounded=true;if(m.vel.y<0)m.vel.y=0;}
- // ceiling clamp (mild, prevents clipping into overhangs when stepping/jumping up)
  if(m.vel.y>0&&isSolid(getBlock(Math.floor(m.pos.x),Math.floor(ny+1.6),Math.floor(m.pos.z),AIR))){
   ny=Math.floor(ny+1.6)-1.6-0.01;m.vel.y=0;
  }
@@ -1129,13 +1382,14 @@ function mobPhysicsStep(m,dt,wishX,wishZ,speed){
  m.pos.y=ny;
 }
 
-// ===== AI: PIG =====
-function aiPig(m,dt,farAI){
+// ===== GENERIC PASSIVE AI (reused for pig/sheep/cow/chicken) =====
+function aiPassive(m,dt,farAI){
+ var sp=SPECIES[m.type];
  if(m.hurtT>0)m.hurtT-=dt;
  m.soundT-=dt;
  if(m.soundT<=0){
-  m.soundT=6+mobRand(m,3)*8;
-  if(typeof blip==='function')blip(340,260,0.08,0.05);
+  m.soundT=sp.soundInterval*0.5+mobRand(m,3)*sp.soundInterval;
+  if(typeof blip==='function')blip(sp.soundF0,sp.soundF1,sp.soundDur,sp.soundVol);
  }
  if(farAI)return {wishX:0,wishZ:0,speed:0};
  m.aiT-=dt;
@@ -1156,7 +1410,12 @@ function aiPig(m,dt,farAI){
  var d=Math.sqrt(dx*dx+dz*dz);
  if(d<0.4)return {wishX:0,wishZ:0,speed:0};
  m.targetYaw=Math.atan2(dx,dz);
- return {wishX:dx/d,wishZ:dz/d,speed:PIG_SPEED};
+ return {wishX:dx/d,wishZ:dz/d,speed:sp.speed};
+}
+
+// Legacy aiPig kept for backwards compat
+function aiPig(m,dt,farAI){
+ return aiPassive(m,dt,farAI);
 }
 
 // ===== AI: ZOMBIE =====
@@ -1175,7 +1434,6 @@ function aiZombie(m,dt,farAI){
   var d=Math.sqrt(dx*dx+dz*dz);
   if(d>0.05){
    m.targetYaw=Math.atan2(dx,dz);
-   // contact damage
    var dy=Math.abs(P.y-m.pos.y);
    if(d<ZOMBIE_CONTACT_DIST&&dy<ZOMBIE_CONTACT_DY&&m.contactCd<=0){
     m.contactCd=ZOMBIE_CONTACT_CD;
@@ -1187,11 +1445,10 @@ function aiZombie(m,dt,farAI){
   }
   return {wishX:0,wishZ:0,speed:0};
  }
- // slow wander when not chasing
  m.aiT-=dt;
  if(m.aiT<=0){
-  if(m.idle){m.idle=false;var ang=Math.random()*Math.PI*2,r=2+Math.random()*4;
-   m.wanderTx=m.pos.x+Math.cos(ang)*r;m.wanderTz=m.pos.z+Math.sin(ang)*r;m.aiT=3+Math.random()*4;
+  if(m.idle){m.idle=false;var ang2=Math.random()*Math.PI*2,r2=2+Math.random()*4;
+   m.wanderTx=m.pos.x+Math.cos(ang2)*r2;m.wanderTz=m.pos.z+Math.sin(ang2)*r2;m.aiT=3+Math.random()*4;
   }else{m.idle=true;m.aiT=1.5+Math.random()*2;}
  }
  if(m.idle)return {wishX:0,wishZ:0,speed:0};
@@ -1202,9 +1459,8 @@ function aiZombie(m,dt,farAI){
  return {wishX:wdx/wd,wishZ:wdz/wd,speed:ZOMBIE_WANDER_SPEED};
 }
 
-// ===== VISUAL SYNC (position, yaw smoothing, leg swing, hurt flash) =====
+// ===== VISUAL SYNC =====
 function mobSyncVisual(m,dt){
- // yaw smoothing toward targetYaw (shortest path)
  var diff=m.targetYaw-m.yaw;
  while(diff>Math.PI)diff-=Math.PI*2;
  while(diff<-Math.PI)diff+=Math.PI*2;
@@ -1232,11 +1488,14 @@ function mobSyncVisual(m,dt){
    m.arms[j].rotation.x=sa*0.7;
   }
  }
+ // Chicken bob: slight head dip on walk
+ if(m.bobHead){
+  m.bobHead.position.y=0.44+Math.sin(m.walkPhase*2)*0.04;
+ }
 
- // hurt flash: scale pulse (perf-friendly, avoids per-mob material clones)
  if(m.hurtT>0){
-  var s2=1+Math.sin(m.hurtT*40)*0.08;
-  m.group.scale.set(s2,s2,s2);
+  var sc=1+Math.sin(m.hurtT*40)*0.08;
+  m.group.scale.set(sc,sc,sc);
  } else {
   m.group.scale.set(1,1,1);
  }
@@ -1244,36 +1503,80 @@ function mobSyncVisual(m,dt){
 
 // ===== DEATH / DESPAWN =====
 function mobDie(m){
- if(typeof burst==='function')burst(Math.floor(m.pos.x),Math.floor(m.pos.y),Math.floor(m.pos.z),m.type===MOB_ZOMBIE?0x3f6b3a:0xe89d9d);
+ var sp=SPECIES[m.type];
+ var bc=sp?sp.burstColor:(m.type===MOB_ZOMBIE?0x3f6b3a:0xe89d9d);
+ if(typeof burst==='function')burst(Math.floor(m.pos.x),Math.floor(m.pos.y),Math.floor(m.pos.z),bc);
  mobRemove(m);
 }
 function mobRemove(m){
- // all mob part meshes reference SHARED geometries/materials (mobGeo/mobMat) - never dispose
- // those here, only detach this mob's own Group from the scene and drop it from MOBS.
  scene.remove(m.group);
  var idx=MOBS.indexOf(m);
  if(idx>=0)MOBS.splice(idx,1);
 }
 
-// ===== MAIN UPDATE (called every frame while state==='play') =====
+// ===== DROP HELPER =====
+function mobDrops(m){
+ var sp=SPECIES[m.type];
+ if(!sp)return;
+ if(typeof gamemode==='undefined'||gamemode!=='survival')return;
+ if(typeof invAdd!=='function')return;
+ var qty=sp.dropMin+(Math.random()<0.5&&sp.dropMax>sp.dropMin?1:0);
+ invAdd(sp.dropItem,qty);
+ var label='+ ';
+ if(sp.dropItem===101)label+='Porkchop';
+ else if(sp.dropItem===27)label+='Wool';
+ else if(sp.dropItem===103)label+='Beef';
+ else if(sp.dropItem===104)label+='Chicken';
+ else label+=sp.name;
+ if(typeof toast==='function')toast(label);
+}
+
+// ===== CROSSHAIR MOB TEST (cheap, no allocs, no side effects) =====
+function mobUnderCrosshair(){
+ if(!mobsInited||typeof camera==='undefined')return false;
+ var camPos=camera.position;
+ var fwd=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+ for(var i=0;i<MOBS.length;i++){
+  var m=MOBS[i];
+  if(m.dying)continue;
+  var sp=SPECIES[m.type];
+  var eyeY=sp?sp.eyeOffsetY:0.42;
+  var dx=m.pos.x-camPos.x,dy=(m.pos.y+eyeY)-camPos.y,dz=m.pos.z-camPos.z;
+  var d=Math.sqrt(dx*dx+dy*dy+dz*dz);
+  if(d>HIT_RANGE)continue;
+  if(d<0.0001)return true;
+  var dot=(dx*fwd.x+dy*fwd.y+dz*fwd.z)/d;
+  if(dot>=HIT_DOT_MIN)return true;
+ }
+ return false;
+}
+
+// ===== MAIN UPDATE =====
 var mobSpawnT=0;
 function updateMobs(dt){
  if(!mobsInited)initMobs();
  if(typeof P==='undefined'||typeof scene==='undefined')return;
  mobClock+=dt;
 
- // periodic spawn attempts
  mobSpawnT-=dt;
  if(mobSpawnT<=0){
   mobSpawnT=1.2+Math.random()*1.0;
-  if(!isNight())spawnPig();
+  if(!isNight())spawnPassive();
   else spawnZombie();
  }
 
  for(var i=MOBS.length-1;i>=0;i--){
   var m=MOBS[i];
 
-  // dawn despawn for zombies (poof over ~2s)
+  // Despawn passive mobs that roamed too far
+  if(m.type!==MOB_ZOMBIE&&!m.dying){
+   var ddx=m.pos.x-P.x,ddz=m.pos.z-P.z;
+   if(ddx*ddx+ddz*ddz>PASSIVE_DESPAWN_RADIUS*PASSIVE_DESPAWN_RADIUS){
+    mobRemove(m);continue;
+   }
+  }
+
+  // Dawn despawn for zombies
   if(m.type===MOB_ZOMBIE&&!isNight()&&!m.dying){
    m.dying=true;m.despawnT=ZOMBIE_DESPAWN_T;
   }
@@ -1288,16 +1591,16 @@ function updateMobs(dt){
    continue;
   }
 
-  // safety despawn far below world
   if(m.pos.y<-10){mobRemove(m);continue;}
 
   var dist=mobDistToPlayer(m);
   var farAI=dist>MOB_AI_CULL_DIST;
 
-  var wish=(m.type===MOB_PIG)?aiPig(m,dt,farAI):aiZombie(m,dt,farAI);
+  var wish;
+  if(m.type===MOB_ZOMBIE)wish=aiZombie(m,dt,farAI);
+  else wish=aiPassive(m,dt,farAI);
 
   if(farAI){
-   // gravity-only physics far away (perf)
    mobPhysicsStep(m,dt,0,0,0);
   } else {
    mobPhysicsStep(m,dt,wish.wishX,wish.wishZ,wish.speed);
@@ -1307,7 +1610,7 @@ function updateMobs(dt){
  }
 }
 
-// ===== MELEE: hitMob() called by player attack (mine action) =====
+// ===== MELEE: hitMob() =====
 function hitMob(){
  if(!mobsInited||typeof camera==='undefined')return false;
  var camPos=camera.position;
@@ -1316,8 +1619,9 @@ function hitMob(){
  for(var i=0;i<MOBS.length;i++){
   var m=MOBS[i];
   if(m.dying)continue;
-  var mx=m.pos.x,my=m.pos.y+(m.type===MOB_ZOMBIE?0.9:0.42),mz=m.pos.z;
-  var dx=mx-camPos.x,dy=my-camPos.y,dz=mz-camPos.z;
+  var sp=SPECIES[m.type];
+  var eyeY=sp?sp.eyeOffsetY:0.42;
+  var dx=m.pos.x-camPos.x,dy=(m.pos.y+eyeY)-camPos.y,dz=m.pos.z-camPos.z;
   var d=Math.sqrt(dx*dx+dy*dy+dz*dz);
   if(d>HIT_RANGE)continue;
   var dot=(d>0.0001)?((dx*fwd.x+dy*fwd.y+dz*fwd.z)/d):1;
@@ -1332,18 +1636,31 @@ function hitMob(){
 
  best.hp-=dmg;
  best.hurtT=0.28;
+
+ // Knockback away from player
  var kdx=best.pos.x-P.x,kdz=best.pos.z-P.z;
  var kd=Math.sqrt(kdx*kdx+kdz*kdz);
  if(kd<0.001){kdx=Math.sin(best.yaw);kdz=Math.cos(best.yaw);kd=1;}
  best.vel.x+=(kdx/kd)*HIT_KNOCK*knockMul;
  best.vel.z+=(kdz/kd)*HIT_KNOCK*knockMul;
  best.vel.y=HIT_KNOCK_VY;
- if(typeof blip==='function')blip(200,120,0.08,0.1);
+
+ // Per-hit feedback: blip + burst at mob
+ if(typeof blip==='function')blip(200,120,0.08,0.12);
+ var spHit=SPECIES[best.type];
+ var hitColor=spHit?spHit.burstColor:0xff8888;
+ if(typeof burst==='function')burst(Math.floor(best.pos.x),Math.floor(best.pos.y+0.5),Math.floor(best.pos.z),hitColor);
 
  if(best.hp<=0){
-  if(best.type===MOB_PIG&&typeof gamemode!=='undefined'&&gamemode==='survival'&&typeof invAdd==='function'){
-   invAdd(101,1+(Math.random()<0.5?1:0));
-   if(typeof toast==='function')toast('+ Porkchop');
+  // Bigger burst on kill
+  if(typeof burst==='function'){
+   burst(Math.floor(best.pos.x),Math.floor(best.pos.y),Math.floor(best.pos.z),hitColor);
+   burst(Math.floor(best.pos.x),Math.floor(best.pos.y+1),Math.floor(best.pos.z),hitColor);
+  }
+  // Drops + toast (survival only)
+  if(best.type!==MOB_ZOMBIE)mobDrops(best);
+  else if(typeof gamemode!=='undefined'&&gamemode==='survival'&&typeof invAdd==='function'){
+   // Zombies drop nothing currently, but keep the hook
   }
   mobDie(best);
  }
@@ -1354,8 +1671,8 @@ function hitMob(){
 // MODULE 40: player physics + input + look (OWNER: core)
 // ===== PLAYER =====
 
-var P={x:8.5,y:40,z:8.5,vx:0,vy:0,vz:0,grounded:false,fly:false};
-(function(){P.y=terrainH(8,8)+2;})();
+var P={x:SPAWNX,y:40,z:SPAWNZ,vx:0,vy:0,vz:0,grounded:false,fly:false};
+(function(){P.y=terrainH(Math.floor(SPAWNX),Math.floor(SPAWNZ))+2;})();
 var spawnY=P.y;
 var yaw=0,pitch=-0.1,sel=0,mode='mine';
 var EYE=1.62,HW=0.3,HH=1.8;
@@ -1415,7 +1732,7 @@ var plForceOff=(typeof location!=='undefined'&&location.search.indexOf('nolock')
 var expectUnlock=false;
 function suppressNextUnlockPause(){expectUnlock=true;}
 function clearKeys(){for(var k in keys)keys[k]=false;} // ?nolock=1: never grab the cursor, pure mouse-move look
-var bobPhase=0,bobOff=0,stepT=1;
+var bobPhase=0,bobOff=0,stepT=1,sprintOn=false,lastWTap=0;
 function lookDelta(dx,dy){yaw-=dx*0.0024;pitch-=dy*0.0024;pitch=Math.max(-1.45,Math.min(1.45,pitch));}
 function plocked(){return document.pointerLockElement===canvas;}
 function tryLock(){
@@ -1439,12 +1756,13 @@ document.addEventListener('pointerlockchange',function(){
 });
 document.addEventListener('keydown',function(e){
  if(typeof chatKeydown==='function'&&chatKeydown(e))return;
+ if(e.code==='KeyW'&&!e.repeat&&state==='play'){var nw=performance.now();if(nw-lastWTap<300)sprintOn=true;lastWTap=nw;}
  keys[e.code]=true;
  if(e.code==='Space')e.preventDefault();
  if(state==='title'&&e.code==='Enter')startGame('survival');
  if(state==='play'){
    if(e.code==='KeyF'){P.fly=!P.fly;toast(P.fly?'Flight ON':'Flight OFF');}
-   if(e.code==='KeyR'){P.x=8.5;P.z=8.5;P.y=spawnY;P.vx=P.vy=P.vz=0;toast('Respawned');}
+   if(e.code==='KeyR'){P.x=SPAWNX;P.z=SPAWNZ;P.y=spawnY;P.vx=P.vy=P.vz=0;toast('Respawned');}
    if(e.code==='KeyG'&&typeof toggleGamemode==='function')toggleGamemode();
    if(e.code==='KeyE'&&typeof openInventory==='function')openInventory();
    if(e.code==='KeyX'&&typeof swapHotbarSet==='function')swapHotbarSet();
@@ -1456,7 +1774,7 @@ document.addEventListener('keydown',function(e){
    if(e.code.indexOf('Digit')===0){var n2=+e.code.slice(5);if(n2>=1&&n2<=9)selSlot(n2-1);}
  }
 });
-document.addEventListener('keyup',function(e){keys[e.code]=false;});
+document.addEventListener('keyup',function(e){keys[e.code]=false;if(e.code==='KeyW')sprintOn=false;});
 // LOOK: pointer-lock deltas when locked; bare mouse-move deltas when lock is unavailable.
 // No click-drag requirement anywhere.
 document.addEventListener('mousemove',function(e){
@@ -2397,7 +2715,7 @@ function chatRunCommand(body){
    break;
   }
   case 'seed':{
-   addChatMsg('World seed: 1337','sys');
+   addChatMsg('World seed: '+SEED,'sys');
    break;
   }
   default:{
@@ -2662,7 +2980,7 @@ function playerDied(cause){
 }
 function respawn(){
  dead=false;document.getElementById('death').style.display='none';state='play';
- P.x=8.5;P.z=8.5;P.y=spawnY;P.vx=P.vy=P.vz=0;
+ P.x=SPAWNX;P.z=SPAWNZ;P.y=spawnY;P.vx=P.vy=P.vz=0;
  if(typeof survivalOnRespawn==='function')survivalOnRespawn();
  tryLock();
 }
@@ -2689,12 +3007,13 @@ function closeInventory(){
  state='play';tryLock();
 }
 document.getElementById('reset').addEventListener('click',function(){
- if(confirm('Reset the whole world? This clears your saved edits and inventory.')){localStorage.removeItem(EDIT_KEY);localStorage.removeItem('voxelcraft_inv_v1');location.reload();}});
+ if(confirm('Generate a NEW world? Fresh seed, fresh spawn — clears this world\'s blocks and inventory.')){localStorage.removeItem(EDIT_KEY);localStorage.removeItem('voxelcraft_inv_v1');localStorage.removeItem('voxelcraft_meta_v1');location.reload();}});
 
 // ===== MAIN LOOP =====
-function initWorld(){for(var idx=-1;idx<=1;idx++)for(var jdx=-1;jdx<=1;jdx++)genChunk(idx,jdx);chunks.forEach(function(c){buildChunk(c);});}
+function initWorld(){var scx=Math.floor(SPAWNX/CH),scz=Math.floor(SPAWNZ/CH);for(var idx=scx-1;idx<=scx+1;idx++)for(var jdx=scz-1;jdx<=scz+1;jdx++)genChunk(idx,jdx);chunks.forEach(function(c){buildChunk(c);});}
 initWorld();
 
+var lastAimMob=false;
 var hookErr={};
 function safeHook(name,fn){
  if(hookErr[name]>=5)return;
@@ -2723,7 +3042,8 @@ function frame(now){
    wish.add(f.clone().multiplyScalar(-joyVec.y)).add(r.clone().multiplyScalar(joyVec.x));
    if(wish.lengthSq()>0)wish.normalize();
    var water=inWater();
-   var spd=P.fly?14:(water?3.2:(keys.ControlLeft?7.2:4.4));
+   var canSprint=!(gamemode==='survival'&&typeof hunger!=='undefined'&&hunger<=6);
+   var spd=P.fly?14:(water?3.2:(((keys.ControlLeft||sprintOn)&&canSprint)?7.2:4.4));
    var ax=wish.x*spd,az=wish.z*spd,k2=Math.min(1,(P.fly?8:12)*dt);
    P.vx+=(ax-P.vx)*k2;P.vz+=(az-P.vz)*k2;
    if(P.fly){P.vy+=(((keys.Space?9:0)+(keys.ShiftLeft?-9:0))-P.vy)*k2;}
@@ -2735,7 +3055,7 @@ function frame(now){
    if(P.grounded&&preVy<-11&&!P.fly&&typeof onFallImpact==='function')onFallImpact(-preVy);
    moveAxis('x',P.vx*dt);
    moveAxis('z',P.vz*dt);
-   if(P.y<-12){P.x=8.5;P.z=8.5;P.y=spawnY;P.vy=0;toast('The void spat you back out');}
+   if(P.y<-12){P.x=SPAWNX;P.z=SPAWNZ;P.y=spawnY;P.vy=0;toast('The void spat you back out');}
    var hsp=Math.sqrt(P.vx*P.vx+P.vz*P.vz);
    var tf=74+(hsp>5.6?6:0)+(P.fly?4:0);
    if(Math.abs(camera.fov-tf)>0.05){camera.fov+=(tf-camera.fov)*Math.min(1,8*dt);camera.updateProjectionMatrix();}
@@ -2749,16 +3069,17 @@ function frame(now){
    // highlight
    var rr=raycast(7);
    if(rr){hl.visible=true;hl.position.set(rr.x+0.5,rr.y+0.5,rr.z+0.5);}else hl.visible=false;
+   var aimMob=(typeof mobUnderCrosshair==='function')&&mobUnderCrosshair();
+   if(aimMob!==lastAimMob){lastAimMob=aimMob;var xhEl=document.getElementById('xh');if(xhEl)xhEl.style.color=aimMob?'#ff5b4d':'rgba(255,255,255,.85)';}
    // HUD
    fpsN++;fpsT+=dt;if(fpsT>0.5){fps=Math.round(fpsN/fpsT);fpsN=0;fpsT=0;}
    document.getElementById('coords').innerHTML='XYZ '+P.x.toFixed(0)+' '+P.y.toFixed(0)+' '+P.z.toFixed(0)+'<br>'+fps+' fps · '+chunks.size+' chunks'+(P.fly?' · FLY':'');
  } else if(state==='title'){
    // cinematic orbit
    var t=now/1000;
-   var cx=8.5+Math.cos(t*0.12)*26,cz=8.5+Math.sin(t*0.12)*26;
-   var cy=terrainH(8,8)+14;
-   camera.position.set(cx,cy,cz);
-   camera.lookAt(8.5,terrainH(8,8)+2,8.5);
+   var cx=SPAWNX+Math.cos(t*0.12)*26,cz=SPAWNZ+Math.sin(t*0.12)*26;
+   camera.position.set(cx,spawnY+12,cz);
+   camera.lookAt(SPAWNX,spawnY,SPAWNZ);
  }
  if(state==='play'){
    if(mining)mineFrame(dt);
