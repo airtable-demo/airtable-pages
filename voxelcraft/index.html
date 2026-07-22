@@ -226,6 +226,7 @@ var CH=16, WH=64, SEA=24, R=3;
 var AIR=0,GRASS=1,DIRT=2,STONE=3,SAND=4,LOG=5,LEAF=6,PLANK=7,GLASS=8,BRICK=9,COBBLE=10,WATER=11,BEDROCK=12;
 var SNOWGRASS=13,SNOWBLK=14,ICE=15,CACTUS=16,SANDSTONE=17,SPRUCELEAF=18,FLOWER_R=19,FLOWER_Y=20,
     TALLGRASS=21,COAL_ORE=22,IRON_ORE=23,GOLD_ORE=24,DIAMOND_ORE=25,TORCH=26,WOOL=27;
+var FURNACE=31;
 // tiles: [top,bottom,side]
 var BLOCKS={};
 BLOCKS[GRASS]={n:'Grass',t:[0,2,1]};BLOCKS[DIRT]={n:'Dirt',t:[2,2,2]};BLOCKS[STONE]={n:'Stone',t:[3,3,3]};
@@ -243,6 +244,7 @@ BLOCKS[GLASS].opaque=false;BLOCKS[GLASS].trans=true;
 //  22 flower red         23 flower yellow        24 tall grass          25 coal ore
 //  26 iron ore           27 gold ore             28 diamond ore         29 torch
 //  30 wool (knit white)
+//  34 furnace side (mouth)  35 furnace top (plain dark stone)
 BLOCKS[SNOWGRASS]={n:'Snowy Grass',t:[14,2,15]};
 BLOCKS[SNOWBLK]={n:'Snow Block',t:[16,16,16]};
 BLOCKS[ICE]={n:'Ice',t:[17,17,17],opaque:false,trans:true};
@@ -258,6 +260,7 @@ BLOCKS[GOLD_ORE]={n:'Gold Ore',t:[27,27,27]};
 BLOCKS[DIAMOND_ORE]={n:'Diamond Ore',t:[28,28,28]};
 BLOCKS[TORCH]={n:'Torch',t:[29,29,29],opaque:false,solid:false,trans:true,shape:'torch'};
 BLOCKS[WOOL]={n:'Wool',t:[30,30,30]};
+BLOCKS[FURNACE]={n:'Furnace',t:[35,35,34]};
 
 // ----- registry-driven solidity/opacity -----
 function isOpaque(id){var B=BLOCKS[id];return !!B&&B.opaque!==false;}
@@ -265,7 +268,7 @@ function isSolid(id){var B=BLOCKS[id];return !!B&&B.solid!==false;}
 
 var HOTBAR_SETS=[[GRASS,DIRT,STONE,SAND,LOG,LEAF,PLANK,GLASS,BRICK],
                  [COBBLE,SANDSTONE,SNOWBLK,CACTUS,TORCH,COAL_ORE,IRON_ORE,GOLD_ORE,DIAMOND_ORE],
-                 [WOOL,ICE,SPRUCELEAF,LEAF,LOG,PLANK,GLASS,BRICK,SNOWBLK]];
+                 [WOOL,ICE,SPRUCELEAF,LEAF,LOG,PLANK,GLASS,FURNACE,SNOWBLK]];
 var HOTBAR=HOTBAR_SETS[0];
 var PCOL={};PCOL[GRASS]=0x79b04a;PCOL[DIRT]=0x8a6244;PCOL[STONE]=0x8b8b8b;PCOL[SAND]=0xdcd0a2;PCOL[LOG]=0x6d5433;PCOL[LEAF]=0x4e8f35;PCOL[PLANK]=0xa8834f;PCOL[GLASS]=0xcfe6ee;PCOL[BRICK]=0x9c5a50;PCOL[COBBLE]=0x7f7f7f;
 PCOL[BEDROCK]=0x2e2e2e;PCOL[WATER]=0x3f7fd6;
@@ -273,6 +276,7 @@ PCOL[SNOWGRASS]=0xeef4f8;PCOL[SNOWBLK]=0xf3f7fb;PCOL[ICE]=0xbfe3f0;PCOL[CACTUS]=
 PCOL[SPRUCELEAF]=0x2f5b46;PCOL[FLOWER_R]=0xd23c3c;PCOL[FLOWER_Y]=0xe0c93a;PCOL[TALLGRASS]=0x5c9a3d;
 PCOL[COAL_ORE]=0x3a3a3a;PCOL[IRON_ORE]=0xcaa87c;PCOL[GOLD_ORE]=0xe8cd4a;PCOL[DIAMOND_ORE]=0x6fe0e0;PCOL[TORCH]=0xd99a3f;
 PCOL[WOOL]=0xe8e6e0;
+PCOL[FURNACE]=0x6f6f6f;
 
 // ===== ATLAS =====
 
@@ -386,12 +390,12 @@ speck(21,'#28503f',['#1e3f30','#325f4a','#194635'],300);        // 21 spruce lea
  ag.fillStyle='#ffe9a0';ag.beginPath();ag.moveTo(p[0]+16,p[1]+7);ag.lineTo(p[0]+19,p[1]+13);ag.lineTo(p[0]+13,p[1]+13);ag.closePath();ag.fill();
  ag.fillStyle='#fff6d8';ag.beginPath();ag.arc(p[0]+16,p[1]+11,1.6,0,7);ag.fill();})();
 (function(){var p=tileXY(30);ag.fillStyle='#e8e6e0';ag.fillRect(p[0],p[1],TS,TS);  // 30 wool: soft white base + knit weave
- var wr,wc;
- for(var wr2=0;wr2<TS;wr2+=4){                                    // subtle 4px knit rows
+ var wr2,wc2;
+ for(wr2=0;wr2<TS;wr2+=4){                                    // subtle 4px knit rows
    ag.fillStyle=(wr2%8===0)?'#d5d2ca':'#f4f2ec';
    ag.fillRect(p[0],p[1]+wr2,TS,2);
  }
- for(var wc2=0;wc2<TS;wc2+=4){                                    // vertical column speckle
+ for(wc2=0;wc2<TS;wc2+=4){                                    // vertical column speckle
    ag.fillStyle='#dddbd4';ag.fillRect(p[0]+wc2,p[1],1,TS);
  }
  for(var i9=0;i9<60;i9++){                                         // random knit speckles
@@ -399,12 +403,36 @@ speck(21,'#28503f',['#1e3f30','#325f4a','#194635'],300);        // 21 spruce lea
    ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);
  }})();
 
+// ----- FURNACE TILES (31-35) -----
+
+// tile 34: furnace side — stone-gray cobbled texture with dark rectangular mouth + orange embers
+(function(){var p=tileXY(34);ag.fillStyle='#7a7a7a';ag.fillRect(p[0],p[1],TS,TS);  // stone-gray base
+ for(var i=0;i<160;i++){ag.fillStyle=(arand()<0.5)?'#6a6a6a':'#8a8a8a';ag.fillRect(p[0]+Math.floor(arand()*TS),p[1]+Math.floor(arand()*TS),2,2);}
+ // dark rectangular mouth in the lower half
+ ag.fillStyle='#1a1a1a';ag.fillRect(p[0]+9,p[1]+17,14,11);
+ // dark border around mouth
+ ag.fillStyle='#111111';ag.fillRect(p[0]+8,p[1]+16,16,1);ag.fillRect(p[0]+8,p[1]+28,16,1);
+ ag.fillRect(p[0]+8,p[1]+16,1,13);ag.fillRect(p[0]+24,p[1]+16,1,13);
+ // 3-4 orange ember pixels inside the mouth
+ ag.fillStyle='#e87820';ag.fillRect(p[0]+11,p[1]+24,4,2);ag.fillRect(p[0]+17,p[1]+23,3,2);
+ ag.fillStyle='#ffb040';ag.fillRect(p[0]+13,p[1]+25,3,1);ag.fillRect(p[0]+19,p[1]+24,2,1);
+ ag.fillStyle='#ff6010';ag.fillRect(p[0]+12,p[1]+23,2,1);})();
+
+// tile 35: furnace top — plain darker stone
+speck(35,'#6a6a6a',['#5c5c5c','#787878','#636363'],200);         // 35 furnace top (plain darker stone)
+
 // ---------- 14_items.js ----------
 // MODULE 14: item registry + item icon atlas painters (OWNER: Pigment)
 // ===== ITEM ATLAS =====
-// 4x4 grid of 32px tiles => 128x128 canvas, transparent background, chunky pixel-art icons.
+// 8x4 grid of 32px tiles => 256x128 canvas, transparent background, chunky pixel-art icons.
+// Icon index layout with ICOLS=8:
+//   row0: indices 0-7   (pixel y=0)
+//   row1: indices 8-15  (pixel y=32)
+//   row2: indices 16-23 (pixel y=64)
+//   row3: indices 24-31 (pixel y=96)
+// Existing icons keep their same index numbers; itileXY recomputes pixel coords automatically.
 
-var ITS=32, ICOLS=4, itemAtlasC=document.createElement('canvas');itemAtlasC.width=ITS*ICOLS;itemAtlasC.height=ITS*ICOLS;
+var ITS=32, ICOLS=8, itemAtlasC=document.createElement('canvas');itemAtlasC.width=ITS*ICOLS;itemAtlasC.height=ITS*4;
 var ig=itemAtlasC.getContext('2d');
 var irand=mulberry32(777);
 function itileXY(t){return [ (t%ICOLS)*ITS, Math.floor(t/ICOLS)*ITS ];}
@@ -507,7 +535,7 @@ drawPickTile(6,'#4fd8d2','#9df3ef'); // diamond
  ig.fillStyle='#8f8f8f';
  ig.fillRect(p[0]+17,p[1]+13,10,2);})();
 
-// ----- tile9: SWORD (diagonal light-gray blade + brown hilt + guard) -----
+// ----- tile9: STONE SWORD (diagonal light-gray blade + brown hilt + guard) -----
 (function(){var p=itileXY(9);ig.clearRect(p[0],p[1],ITS,ITS);
  ig.fillStyle='#d8d8d8';
  ig.fillRect(p[0]+21,p[1]+5,4,4);ig.fillRect(p[0]+17,p[1]+9,4,4);ig.fillRect(p[0]+13,p[1]+13,4,4);
@@ -555,6 +583,152 @@ drawPickTile(6,'#4fd8d2','#9df3ef'); // diamond
  ig.fillStyle='#ddd8cc';                                           // bone knob shading
  ig.fillRect(p[0]+18,p[1]+14,2,2);ig.fillRect(p[0]+22,p[1]+14,2,2);})();
 
+// ----- NEW ICONS (indices 12+) -----
+
+// ----- tile12: IRON_INGOT (two stacked silver-gray bars + highlight edge) -----
+(function(){var p=itileXY(12);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#9a9a9a';                                           // main silver-gray top bar
+ ig.fillRect(p[0]+6,p[1]+9,20,8);
+ ig.fillStyle='#bdbdbd';                                           // highlight edge top bar
+ ig.fillRect(p[0]+6,p[1]+9,20,2);ig.fillRect(p[0]+6,p[1]+9,2,8);
+ ig.fillStyle='#6e6e6e';                                           // shadow bottom/right top bar
+ ig.fillRect(p[0]+6,p[1]+15,20,2);ig.fillRect(p[0]+24,p[1]+9,2,8);
+ ig.fillStyle='#9a9a9a';                                           // main silver-gray bottom bar
+ ig.fillRect(p[0]+6,p[1]+19,20,8);
+ ig.fillStyle='#bdbdbd';                                           // highlight edge bottom bar
+ ig.fillRect(p[0]+6,p[1]+19,20,2);ig.fillRect(p[0]+6,p[1]+19,2,8);
+ ig.fillStyle='#6e6e6e';                                           // shadow bottom/right bottom bar
+ ig.fillRect(p[0]+6,p[1]+25,20,2);ig.fillRect(p[0]+24,p[1]+19,2,8);
+ ig.fillStyle='#d8d8d8';                                           // bright sparkle highlight
+ ig.fillRect(p[0]+8,p[1]+11,3,2);ig.fillRect(p[0]+8,p[1]+21,3,2);})();
+
+// ----- tile13: GOLD_INGOT (same shape, warm gold) -----
+(function(){var p=itileXY(13);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#e8a820';                                           // main warm gold top bar
+ ig.fillRect(p[0]+6,p[1]+9,20,8);
+ ig.fillStyle='#ffd040';                                           // highlight edge top bar
+ ig.fillRect(p[0]+6,p[1]+9,20,2);ig.fillRect(p[0]+6,p[1]+9,2,8);
+ ig.fillStyle='#b07810';                                           // shadow bottom/right top bar
+ ig.fillRect(p[0]+6,p[1]+15,20,2);ig.fillRect(p[0]+24,p[1]+9,2,8);
+ ig.fillStyle='#e8a820';                                           // main warm gold bottom bar
+ ig.fillRect(p[0]+6,p[1]+19,20,8);
+ ig.fillStyle='#ffd040';                                           // highlight edge bottom bar
+ ig.fillRect(p[0]+6,p[1]+19,20,2);ig.fillRect(p[0]+6,p[1]+19,2,8);
+ ig.fillStyle='#b07810';                                           // shadow bottom/right bottom bar
+ ig.fillRect(p[0]+6,p[1]+25,20,2);ig.fillRect(p[0]+24,p[1]+19,2,8);
+ ig.fillStyle='#ffe880';                                           // bright sparkle highlight
+ ig.fillRect(p[0]+8,p[1]+11,3,2);ig.fillRect(p[0]+8,p[1]+21,3,2);})();
+
+// ----- tile14: DIAMOND (cyan gem, faceted diamond silhouette + white sparkle) -----
+(function(){var p=itileXY(14);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#3fd8d8';                                           // main cyan gem body
+ ig.fillRect(p[0]+10,p[1]+12,12,4);ig.fillRect(p[0]+8,p[1]+16,16,4);ig.fillRect(p[0]+10,p[1]+20,12,4);
+ // top facet point
+ ig.fillStyle='#3fd8d8';ig.fillRect(p[0]+13,p[1]+9,6,4);
+ // bottom point taper
+ ig.fillRect(p[0]+12,p[1]+23,8,3);ig.fillRect(p[0]+14,p[1]+25,4,3);
+ ig.fillStyle='#8ff5f5';                                           // highlight upper-left facet
+ ig.fillRect(p[0]+10,p[1]+12,5,2);ig.fillRect(p[0]+13,p[1]+9,3,3);
+ ig.fillStyle='#20a8a8';                                           // shadow lower-right facet
+ ig.fillRect(p[0]+18,p[1]+18,5,2);ig.fillRect(p[0]+16,p[1]+22,5,2);
+ ig.fillStyle='#ffffff';                                           // white sparkle
+ ig.fillRect(p[0]+12,p[1]+13,2,2);ig.fillRect(p[0]+11,p[1]+12,1,1);})();
+
+// ----- tile15: COAL (irregular black lump + gray facets) -----
+(function(){var p=itileXY(15);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#1e1e1e';                                           // black lump base
+ ig.fillRect(p[0]+8,p[1]+10,16,4);ig.fillRect(p[0]+6,p[1]+14,20,8);ig.fillRect(p[0]+8,p[1]+22,16,4);
+ ig.fillRect(p[0]+10,p[1]+8,12,3);ig.fillRect(p[0]+10,p[1]+24,12,3);
+ ig.fillStyle='#3a3a3a';                                           // gray facet highlights
+ ig.fillRect(p[0]+9,p[1]+11,4,3);ig.fillRect(p[0]+18,p[1]+14,5,3);ig.fillRect(p[0]+10,p[1]+20,3,3);
+ ig.fillStyle='#555555';                                           // lighter gray accent
+ ig.fillRect(p[0]+10,p[1]+12,2,2);ig.fillRect(p[0]+20,p[1]+15,2,2);
+ ig.fillStyle='#0a0a0a';                                           // very dark edge detail
+ ig.fillRect(p[0]+8,p[1]+10,16,1);ig.fillRect(p[0]+6,p[1]+22,20,1);})();
+
+// ----- tile16: IRON_SWORD (bright silver blade + brown hilt + guard) -----
+(function(){var p=itileXY(16);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#e0e0e0';                                           // bright silver blade
+ ig.fillRect(p[0]+21,p[1]+5,4,4);ig.fillRect(p[0]+17,p[1]+9,4,4);ig.fillRect(p[0]+13,p[1]+13,4,4);
+ ig.fillRect(p[0]+9,p[1]+17,4,4);
+ ig.fillStyle='#ffffff';                                           // bright highlight edge
+ ig.fillRect(p[0]+21,p[1]+5,2,4);ig.fillRect(p[0]+17,p[1]+9,2,4);ig.fillRect(p[0]+13,p[1]+13,2,2);
+ ig.fillStyle='#a0a0a0';                                           // shadow edge
+ ig.fillRect(p[0]+23,p[1]+7,2,2);ig.fillRect(p[0]+19,p[1]+11,2,2);
+ // guard (crosspiece)
+ ig.fillStyle='#8a6a3d';
+ ig.fillRect(p[0]+6,p[1]+19,6,3);ig.fillRect(p[0]+11,p[1]+15,3,6);
+ // hilt handle
+ ig.fillStyle='#6e5230';
+ ig.fillRect(p[0]+5,p[1]+21,6,4);
+ ig.fillStyle='#5a4326';
+ ig.fillRect(p[0]+5,p[1]+24,6,1);})();
+
+// ----- tile17: STEAK (browner cooked version of beef slab) -----
+(function(){var p=itileXY(17);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#4a2010';                                           // dark outer border (browned)
+ ig.fillRect(p[0]+7,p[1]+10,18,14);
+ ig.fillStyle='#7a3c18';                                           // main cooked meat body
+ ig.fillRect(p[0]+8,p[1]+11,16,12);
+ ig.fillStyle='#3a1608';                                           // darker shading bottom
+ ig.fillRect(p[0]+8,p[1]+19,16,4);
+ ig.fillStyle='#9a5428';                                           // lighter highlight top
+ ig.fillRect(p[0]+9,p[1]+12,14,3);
+ ig.fillStyle='#b87840';                                           // cooked surface striping
+ ig.fillRect(p[0]+10,p[1]+14,4,2);ig.fillRect(p[0]+17,p[1]+16,5,2);ig.fillRect(p[0]+12,p[1]+18,3,2);
+ ig.fillStyle='#d0a060';                                           // bright highlight accents
+ ig.fillRect(p[0]+11,p[1]+14,2,1);ig.fillRect(p[0]+18,p[1]+16,2,1);})();
+
+// ----- tile18: COOKED_CHICKEN (golden-brown drumstick) -----
+(function(){var p=itileXY(18);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#8a6030';                                           // golden-brown meat base
+ ig.fillRect(p[0]+9,p[1]+9,14,6);ig.fillRect(p[0]+7,p[1]+15,16,6);ig.fillRect(p[0]+9,p[1]+21,12,4);
+ ig.fillStyle='#5a3c18';                                           // darker shading (cooked)
+ ig.fillRect(p[0]+9,p[1]+23,12,2);ig.fillRect(p[0]+7,p[1]+19,16,2);
+ ig.fillStyle='#c09050';                                           // lighter highlight top
+ ig.fillRect(p[0]+10,p[1]+10,10,3);ig.fillRect(p[0]+8,p[1]+15,6,3);
+ ig.fillStyle='#d4a860';                                           // golden-brown highlight streak
+ ig.fillRect(p[0]+11,p[1]+12,5,2);
+ ig.fillStyle='#f0ece0';                                           // bone shaft (white-ish)
+ ig.fillRect(p[0]+20,p[1]+14,5,12);
+ ig.fillStyle='#e0dcd0';                                           // bone shadow side
+ ig.fillRect(p[0]+24,p[1]+14,1,12);
+ ig.fillStyle='#f4f0e4';                                           // bone knob top
+ ig.fillRect(p[0]+18,p[1]+12,6,4);ig.fillRect(p[0]+19,p[1]+10,4,4);
+ ig.fillStyle='#ddd8cc';                                           // bone knob shading
+ ig.fillRect(p[0]+18,p[1]+14,2,2);ig.fillRect(p[0]+22,p[1]+14,2,2);})();
+
+// ----- tile19: COOKED_PORKCHOP (browned chop) -----
+(function(){var p=itileXY(19);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#7a4828';                                           // browned main lobe
+ ig.fillRect(p[0]+8,p[1]+8,14,4);ig.fillRect(p[0]+6,p[1]+12,16,4);ig.fillRect(p[0]+6,p[1]+16,14,4);
+ ig.fillRect(p[0]+8,p[1]+20,10,4);
+ ig.fillStyle='#4a2810';                                           // dark shadow edges
+ ig.fillRect(p[0]+8,p[1]+8,14,2);ig.fillRect(p[0]+6,p[1]+16,14,2);ig.fillRect(p[0]+10,p[1]+22,6,2);
+ ig.fillStyle='#b07040';                                           // lighter highlight
+ ig.fillRect(p[0]+10,p[1]+10,4,2);ig.fillRect(p[0]+14,p[1]+14,4,2);
+ ig.fillStyle='#f4ecd8';                                           // bone end (white)
+ ig.fillRect(p[0]+20,p[1]+18,6,4);ig.fillRect(p[0]+24,p[1]+16,4,4);
+ ig.fillStyle='#d8cba8';                                           // bone shading
+ ig.fillRect(p[0]+22,p[1]+20,4,2);})();
+
+// ----- tile20: GOLDEN_APPLE (gold apple with white sparkle pixels) -----
+(function(){var p=itileXY(20);ig.clearRect(p[0],p[1],ITS,ITS);
+ ig.fillStyle='#e8a820';                                           // gold apple body
+ ig.fillRect(p[0]+10,p[1]+10,12,4);ig.fillRect(p[0]+8,p[1]+14,16,4);ig.fillRect(p[0]+8,p[1]+18,16,4);
+ ig.fillRect(p[0]+10,p[1]+22,12,3);
+ ig.fillStyle='#b07810';                                           // darker shading bottom
+ ig.fillRect(p[0]+8,p[1]+18,16,2);ig.fillRect(p[0]+10,p[1]+22,12,2);
+ ig.fillStyle='#ffd040';                                           // bright gold highlight
+ ig.fillRect(p[0]+11,p[1]+11,4,3);ig.fillRect(p[0]+9,p[1]+15,3,3);
+ ig.fillStyle='#5a3a22';                                           // stem
+ ig.fillRect(p[0]+15,p[1]+7,2,4);
+ ig.fillStyle='#3f8a35';                                           // leaf
+ ig.fillRect(p[0]+17,p[1]+7,5,3);
+ // white sparkle pixels
+ ig.fillStyle='#ffffff';
+ ig.fillRect(p[0]+12,p[1]+12,2,2);ig.fillRect(p[0]+21,p[1]+15,2,1);ig.fillRect(p[0]+10,p[1]+19,1,2);})();
+
 // ===== ITEM REGISTRY (EXACT harness ids) =====
 var ITEMS={};
 ITEMS[100]={n:'Stick',icon:0};
@@ -570,14 +744,25 @@ ITEMS[116]={n:'Stone Sword',icon:9,tool:'sword',tier:2};
 ITEMS[103]={n:'Beef',icon:10,food:8};
 ITEMS[104]={n:'Chicken',icon:11,food:5};
 
+// ----- V6 new items -----
+var IRON_INGOT=105; ITEMS[105]={n:'Iron Ingot',icon:12};
+var GOLD_INGOT=106; ITEMS[106]={n:'Gold Ingot',icon:13};
+var DIAMOND=107;    ITEMS[107]={n:'Diamond',icon:14};
+var COAL=108;       ITEMS[108]={n:'Coal',icon:15};
+var IRON_SWORD=117; ITEMS[117]={n:'Iron Sword',icon:16,tool:'sword',tier:3};
+var STEAK=120;      ITEMS[120]={n:'Steak',icon:17,food:10};
+var COOKED_CHICKEN=121; ITEMS[121]={n:'Cooked Chicken',icon:18,food:8};
+var COOKED_PORKCHOP=122; ITEMS[122]={n:'Cooked Porkchop',icon:19,food:10};
+var GOLDEN_APPLE=123; ITEMS[123]={n:'Golden Apple',icon:20,food:20,heal:20};
+
 // ===== HELPERS =====
 function isBlockId(id){return typeof id==='number'&&id>0&&id<100;}
 
 function drawItemIcon(g2,id,dx,dy,size){
  var it=ITEMS[id];if(!it)return;
- var c=it.icon%4,r=Math.floor(it.icon/4);
+ var c=it.icon%ICOLS,r=Math.floor(it.icon/ICOLS);
  g2.imageSmoothingEnabled=false;
- g2.drawImage(itemAtlasC,c*32,r*32,32,32,dx,dy,size,size);
+ g2.drawImage(itemAtlasC,c*ITS,r*ITS,ITS,ITS,dx,dy,size,size);
 }
 
 // optional: draw either a block tile (via atlasC) or an item icon (via itemAtlasC) at (dx,dy,size)
@@ -1647,8 +1832,9 @@ function hitMob(){
  }
  if(!best)return false;
 
- var isSword=(typeof getSelectedItemId==='function'&&getSelectedItemId()===116);
- var dmg=isSword?8:HIT_DMG;
+ var selW=(typeof getSelectedItemId==='function')?getSelectedItemId():null;
+ var isSword=(selW===116||selW===117);
+ var dmg=(selW===117)?12:(selW===116?8:HIT_DMG);
  var knockMul=isSword?1.3:1;
 
  best.hp-=dmg;
@@ -1866,6 +2052,7 @@ function act(kind){
    if(typeof hitMob==='function'&&hitMob())return;
    doBreak(r);
  }else{
+   if(typeof FURNACE!=='undefined'&&r.id===FURNACE&&gamemode==='survival'&&typeof openInventory==='function'){openInventory();return;}
    var pid=(typeof getSelectedItemId==='function')?getSelectedItemId():HOTBAR[sel];
    if(pid===null||pid===undefined)return;
    if(typeof tryEat==='function'&&tryEat(pid))return;
@@ -1909,6 +2096,7 @@ function survivalHardness(id){
  if(typeof CACTUS!=='undefined'&&id===CACTUS)return 0.7;
  if(id===GLASS)return 0.25;
  if(typeof ICE!=='undefined'&&id===ICE)return 0.25;
+ if(typeof FURNACE!=='undefined'&&id===FURNACE)return 1.2;
  if(id===STONE||id===COBBLE||id===BRICK)return 1.1;
  if(typeof SANDSTONE!=='undefined'&&id===SANDSTONE)return 1.1;
  if(typeof COAL_ORE!=='undefined'&&id===COAL_ORE)return 1.3;
@@ -1931,6 +2119,8 @@ function survivalDrop(id){
  if(typeof FLOWER_Y!=='undefined'&&id===FLOWER_Y)return FLOWER_Y;
  if(id===LEAF)return null; // leaves: block itself never drops — APPLE handled separately in onBlockMined
  if(typeof ICE!=='undefined'&&id===ICE)return null;
+ if(typeof COAL_ORE!=='undefined'&&id===COAL_ORE)return (typeof COAL!=='undefined')?COAL:id;
+ if(typeof DIAMOND_ORE!=='undefined'&&id===DIAMOND_ORE)return (typeof DIAMOND!=='undefined')?DIAMOND:id;
  return id;
 }
 
@@ -1953,6 +2143,7 @@ function survivalPickTierReq(id){
  if(typeof IRON_ORE!=='undefined'&&id===IRON_ORE)return 2;
  if(id===STONE||id===COBBLE||id===BRICK)return 1;
  if(typeof SANDSTONE!=='undefined'&&id===SANDSTONE)return 1;
+ if(typeof FURNACE!=='undefined'&&id===FURNACE)return 1;
  if(typeof ICE!=='undefined'&&id===ICE)return 1;
  return 0;
 }
@@ -2220,6 +2411,7 @@ function tryEat(id){
  }
  if(typeof invTake==='function'&&invTake(id,1)){
   hunger=Math.min(20,hunger+it.food);
+  if(it.heal){hp=Math.min(20,hp+it.heal);survivalRenderHearts();toast('You feel renewed');}
   blip(150,90,0.2,0.09);
   survivalRenderHunger();
   survivalRefreshCounts();
@@ -2277,6 +2469,12 @@ var invSaveT=null;
 var INV_STICK=(typeof STICK!=='undefined')?STICK:100;
 var INV_PORKCHOP=(typeof PORKCHOP!=='undefined')?PORKCHOP:101;
 var INV_APPLE=(typeof APPLE!=='undefined')?APPLE:102;
+var INV_BEEF=(typeof BEEF!=='undefined')?BEEF:103;
+var INV_CHICKEN_MEAT=(typeof CHICKEN_MEAT!=='undefined')?CHICKEN_MEAT:104;
+var INV_IRON_INGOT=(typeof IRON_INGOT!=='undefined')?IRON_INGOT:105;
+var INV_GOLD_INGOT=(typeof GOLD_INGOT!=='undefined')?GOLD_INGOT:106;
+var INV_DIAMOND=(typeof DIAMOND!=='undefined')?DIAMOND:107;
+var INV_COAL=(typeof COAL!=='undefined')?COAL:108;
 var INV_WOOD_PICK=(typeof WOOD_PICK!=='undefined')?WOOD_PICK:110;
 var INV_STONE_PICK=(typeof STONE_PICK!=='undefined')?STONE_PICK:111;
 var INV_IRON_PICK=(typeof IRON_PICK!=='undefined')?IRON_PICK:112;
@@ -2284,11 +2482,23 @@ var INV_DIAMOND_PICK=(typeof DIAMOND_PICK!=='undefined')?DIAMOND_PICK:113;
 var INV_WOOD_AXE=(typeof WOOD_AXE!=='undefined')?WOOD_AXE:114;
 var INV_WOOD_SHOVEL=(typeof WOOD_SHOVEL!=='undefined')?WOOD_SHOVEL:115;
 var INV_STONE_SWORD=(typeof STONE_SWORD!=='undefined')?STONE_SWORD:116;
+var INV_IRON_SWORD=(typeof IRON_SWORD!=='undefined')?IRON_SWORD:117;
+var INV_STEAK=(typeof STEAK!=='undefined')?STEAK:120;
+var INV_COOKED_CHICKEN=(typeof COOKED_CHICKEN!=='undefined')?COOKED_CHICKEN:121;
+var INV_COOKED_PORKCHOP=(typeof COOKED_PORKCHOP!=='undefined')?COOKED_PORKCHOP:122;
+var INV_GOLDEN_APPLE=(typeof GOLDEN_APPLE!=='undefined')?GOLDEN_APPLE:123;
+// block ids used in recipes/smelting
 var INV_LOG=(typeof LOG!=='undefined')?LOG:5;
 var INV_PLANK=(typeof PLANK!=='undefined')?PLANK:7;
+var INV_GLASS=8;
+var INV_STONE=3;
+var INV_SAND=4;
 var INV_COBBLE=(typeof COBBLE!=='undefined')?COBBLE:10;
 var INV_IRON_ORE=(typeof IRON_ORE!=='undefined')?IRON_ORE:23;
+var INV_GOLD_ORE=(typeof GOLD_ORE!=='undefined')?GOLD_ORE:24;
 var INV_DIAMOND_ORE=(typeof DIAMOND_ORE!=='undefined')?DIAMOND_ORE:25;
+var INV_TORCH_BLOCK=26;
+var INV_FURNACE_BLOCK=31;
 
 // ----- persistence -----
 function invLoad(){
@@ -2400,18 +2610,22 @@ function refreshCounts(){
  else setSlotCounts(null);
 }
 
-// ----- canonical recipes (HARNESS.md V3 ADDENDUM) -----
+// ----- canonical recipes v2 (HARNESS.md V6 ADDENDUM) -----
 function invRecipes(){
  return [
   {out:INV_PLANK,outN:4,label:'1 Log -> 4 Planks',ing:[{id:INV_LOG,n:1}]},
   {out:INV_STICK,outN:4,label:'2 Planks -> 4 Sticks',ing:[{id:INV_PLANK,n:2}]},
   {out:INV_WOOD_PICK,outN:1,label:'3 Planks + 2 Sticks -> Wooden Pickaxe',ing:[{id:INV_PLANK,n:3},{id:INV_STICK,n:2}]},
   {out:INV_STONE_PICK,outN:1,label:'3 Cobble + 2 Sticks -> Stone Pickaxe',ing:[{id:INV_COBBLE,n:3},{id:INV_STICK,n:2}]},
-  {out:INV_IRON_PICK,outN:1,label:'3 Iron Ore + 2 Sticks -> Iron Pickaxe',ing:[{id:INV_IRON_ORE,n:3},{id:INV_STICK,n:2}]},
-  {out:INV_DIAMOND_PICK,outN:1,label:'3 Diamond Ore + 2 Sticks -> Diamond Pickaxe',ing:[{id:INV_DIAMOND_ORE,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_IRON_PICK,outN:1,label:'3 Iron Ingot + 2 Sticks -> Iron Pickaxe',ing:[{id:INV_IRON_INGOT,n:3},{id:INV_STICK,n:2}]},
+  {out:INV_DIAMOND_PICK,outN:1,label:'3 Diamond + 2 Sticks -> Diamond Pickaxe',ing:[{id:INV_DIAMOND,n:3},{id:INV_STICK,n:2}]},
   {out:INV_WOOD_AXE,outN:1,label:'3 Planks + 2 Sticks -> Wooden Axe',ing:[{id:INV_PLANK,n:3},{id:INV_STICK,n:2}]},
   {out:INV_WOOD_SHOVEL,outN:1,label:'1 Plank + 2 Sticks -> Wooden Shovel',ing:[{id:INV_PLANK,n:1},{id:INV_STICK,n:2}]},
-  {out:INV_STONE_SWORD,outN:1,label:'2 Cobble + 1 Stick -> Stone Sword',ing:[{id:INV_COBBLE,n:2},{id:INV_STICK,n:1}]}
+  {out:INV_STONE_SWORD,outN:1,label:'2 Cobble + 1 Stick -> Stone Sword',ing:[{id:INV_COBBLE,n:2},{id:INV_STICK,n:1}]},
+  {out:INV_IRON_SWORD,outN:1,label:'2 Iron Ingot + 1 Stick -> Iron Sword',ing:[{id:INV_IRON_INGOT,n:2},{id:INV_STICK,n:1}]},
+  {out:INV_FURNACE_BLOCK,outN:1,label:'8 Cobble -> Furnace',ing:[{id:INV_COBBLE,n:8}]},
+  {out:INV_TORCH_BLOCK,outN:4,label:'1 Coal + 1 Stick -> 4 Torches',ing:[{id:INV_COAL,n:1},{id:INV_STICK,n:1}]},
+  {out:INV_GOLDEN_APPLE,outN:1,label:'1 Apple + 4 Gold Ingot -> Golden Apple',ing:[{id:INV_APPLE,n:1},{id:INV_GOLD_INGOT,n:4}]}
  ];
 }
 function invCanAfford(recipe){
@@ -2427,6 +2641,36 @@ function invCraft(recipe){
  }
  invAdd(recipe.out,recipe.outN);
  return true;
+}
+
+// ----- smelting helpers -----
+function nearFurnace(){
+ var px=Math.floor(P.x);
+ var py=Math.floor(P.y);
+ var pz=Math.floor(P.z);
+ for(var dx=-4;dx<=4;dx++){
+  for(var dy=-4;dy<=4;dy++){
+   var wy=py+dy;
+   if(wy<1)wy=1;
+   if(wy>62)wy=62;
+   for(var dz=-4;dz<=4;dz++){
+    if(getBlock(px+dx,wy,pz+dz,0)===INV_FURNACE_BLOCK)return true;
+   }
+  }
+ }
+ return false;
+}
+
+function invSmeltRecipes(){
+ return [
+  {inId:INV_IRON_ORE,outId:INV_IRON_INGOT,label:'Iron Ore + Coal -> Iron Ingot'},
+  {inId:INV_GOLD_ORE,outId:INV_GOLD_INGOT,label:'Gold Ore + Coal -> Gold Ingot'},
+  {inId:INV_PORKCHOP,outId:INV_COOKED_PORKCHOP,label:'Porkchop + Coal -> Cooked Porkchop'},
+  {inId:INV_BEEF,outId:INV_STEAK,label:'Beef + Coal -> Steak'},
+  {inId:INV_CHICKEN_MEAT,outId:INV_COOKED_CHICKEN,label:'Chicken + Coal -> Cooked Chicken'},
+  {inId:INV_SAND,outId:INV_GLASS,label:'Sand + Coal -> Glass'},
+  {inId:INV_COBBLE,outId:INV_STONE,label:'Cobble + Coal -> Stone'}
+ ];
 }
 
 // ----- E-screen rendering -----
@@ -2463,6 +2707,7 @@ function renderInventory(){
  var list=document.getElementById('craftList');
  if(list){
   list.innerHTML='';
+  // --- craft recipes ---
   var recipes=invRecipes();
   for(var r=0;r<recipes.length;r++){
    (function(recipe){
@@ -2480,6 +2725,43 @@ function renderInventory(){
     row.appendChild(btn);
     list.appendChild(row);
    })(recipes[r]);
+  }
+  // --- smelting section ---
+  var hasFurnace=nearFurnace();
+  var smeltHeading=document.createElement('div');
+  smeltHeading.className='crow';
+  smeltHeading.style.cssText='opacity:0.6;pointer-events:none;justify-content:center;';
+  var smeltLabel=document.createElement('div');smeltLabel.className='cing';
+  smeltLabel.textContent=hasFurnace
+   ? 'SMELTING — needs a furnace within 4 blocks'
+   : 'SMELTING — needs a furnace within 4 blocks (none nearby)';
+  smeltHeading.appendChild(smeltLabel);
+  list.appendChild(smeltHeading);
+
+  var smelts=invSmeltRecipes();
+  for(var s=0;s<smelts.length;s++){
+   (function(sr){
+    var canSmelt=hasFurnace&&invCount(sr.inId)>=1&&invCount(INV_COAL)>=1;
+    var row=document.createElement('div');row.className='crow';
+    row.appendChild(invMakeIconCanvas(sr.outId));
+    var ing=document.createElement('div');ing.className='cing';ing.textContent=sr.label;
+    row.appendChild(ing);
+    var btn=document.createElement('button');
+    btn.textContent='SMELT';
+    btn.disabled=!canSmelt;
+    btn.style.cssText='background:rgba(255,150,60,.16);border:1px solid rgba(255,150,60,.6);color:#ffcf9a;';
+    btn.addEventListener('click',function(){
+     if(!hasFurnace)return;
+     if(!invTake(sr.inId,1))return;
+     if(!invTake(INV_COAL,1)){invAdd(sr.inId,1);return;}
+     invAdd(sr.outId,1);
+     if(typeof blip==='function')blip(700,300,0.12,0.09);
+     renderInventory();
+     if(typeof refreshCounts==='function')refreshCounts();
+    });
+    row.appendChild(btn);
+    list.appendChild(row);
+   })(smelts[s]);
   }
  }
 }
@@ -3096,7 +3378,7 @@ function dragonUnderCrosshair(){return dragonCone(8,0.8);}
 function hitDragon(){
  if(!dragonCone(8,0.8))return false;
  var dmg=4;
- if(typeof getSelectedItemId==='function'&&getSelectedItemId()===116)dmg=8;
+ if(typeof getSelectedItemId==='function'){var sw=getSelectedItemId();if(sw===117)dmg=12;else if(sw===116)dmg=8;}
  dragon.hp-=dmg;dragon.hurtT=0.3;
  burst(dragon.g.position.x-0.5,dragon.g.position.y-1,dragon.g.position.z-0.5,0xb24bf3);
  blip(120,55,0.12,0.14);
