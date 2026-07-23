@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>VOXELCRAFT — a playable browser Minecraft</title>
+<style>
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#0a0d14;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#eef2fb;touch-action:none}
+  #c{display:block;width:100%;height:100%}
+  .hud{position:fixed;z-index:5;pointer-events:none;text-shadow:0 1px 4px rgba(0,0,0,.8)}
+  #xh{top:50%;left:50%;transform:translate(-50%,-50%);font-size:22px;font-weight:300;color:rgba(255,255,255,.85)}
+  #coords{top:12px;left:14px;font-size:12px;color:rgba(255,255,255,.75);font-family:monospace;line-height:1.5}
+  #hint{top:12px;right:14px;font-size:11.5px;letter-spacing:1px;color:rgba(255,255,255,.65);text-align:right;line-height:1.7}
+  #hotbar{position:fixed;bottom:14px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:5px;background:rgba(8,10,18,.55);padding:6px;border-radius:10px;border:1px solid rgba(255,255,255,.14)}
+  .slot{width:46px;height:46px;border-radius:7px;border:2px solid rgba(255,255,255,.18);background:#151a26;position:relative;cursor:pointer}
+  .slot.sel{border-color:#fff;box-shadow:0 0 10px rgba(255,255,255,.45)}
+  .slot canvas{width:100%;height:100%;border-radius:5px;image-rendering:pixelated}
+  .slot span{position:absolute;bottom:1px;right:4px;font-size:10px;color:rgba(255,255,255,.8);text-shadow:0 1px 2px #000}
+  #toasts{position:fixed;left:50%;transform:translateX(-50%);bottom:76px;z-index:6;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+  .toast{background:rgba(10,13,22,.85);border:1px solid rgba(255,255,255,.15);padding:7px 14px;border-radius:8px;font-size:13px;color:#ffe9c8;opacity:0;transform:translateY(6px);transition:all .35s}
+  .toast.on{opacity:1;transform:none}
+  .overlay{position:fixed;inset:0;z-index:10;background:radial-gradient(ellipse at 50% 35%,rgba(24,34,58,.92),rgba(6,8,14,.97));display:flex;align-items:center;justify-content:center;text-align:center}
+  .in{max-width:620px;padding:0 26px}
+  h1{font-size:56px;letter-spacing:12px;margin:0 0 4px;font-weight:900;color:#eaf3ff;text-shadow:0 4px 24px rgba(90,160,255,.35)}
+  .sub{color:#93a5c9;font-size:14.5px;line-height:1.7;margin:12px 0 22px}
+  .go{display:inline-block;background:#8fd15c;color:#0c1a06;font-weight:800;letter-spacing:2px;padding:14px 40px;border-radius:10px;cursor:pointer;font-size:15px;border:none}
+  .go:disabled{background:#3a4356;color:#8a93a8;cursor:wait}
+  .go.alt{background:transparent;color:#aab6d4;border:1px solid rgba(170,182,212,.4);font-weight:600;margin-left:10px}
+  .keys{margin-top:20px;font-size:11.5px;letter-spacing:1.6px;color:#5f6f96;text-transform:uppercase;line-height:2}
+  #bar{width:260px;height:6px;background:#1c2334;border-radius:3px;margin:16px auto 0;overflow:hidden}
+  #barF{height:100%;width:0%;background:linear-gradient(90deg,#8fd15c,#c8f09a);transition:width .2s}
+  #pause{display:none}
+  #vign{position:fixed;inset:0;pointer-events:none;z-index:4;box-shadow:inset 0 0 140px rgba(0,0,0,.55)}
+  #wet{position:fixed;inset:0;pointer-events:none;z-index:4;background:rgba(20,60,160,.28);display:none}
+  .tbtn{position:fixed;z-index:8;background:rgba(10,14,26,.6);border:1.5px solid rgba(255,255,255,.35);color:#fff;border-radius:50%;width:64px;height:64px;font-size:11px;letter-spacing:1px;display:none;align-items:center;justify-content:center;user-select:none;-webkit-user-select:none}
+  #btnJump{right:22px;bottom:120px}
+  #btnMode{right:100px;bottom:44px}
+  #joy{position:fixed;left:26px;bottom:44px;width:120px;height:120px;border-radius:50%;border:1.5px solid rgba(255,255,255,.25);background:rgba(10,14,26,.35);z-index:8;display:none}
+  #joyK{position:absolute;left:38px;top:38px;width:44px;height:44px;border-radius:50%;background:rgba(255,255,255,.35)}
+  @media(pointer:coarse){.tbtn,#joy{display:flex}#joy{display:block}#hint{display:none}}
+  .slot .cnt{position:absolute;top:1px;left:4px;font-size:10px;font-weight:700;color:#ffe9a8;text-shadow:0 1px 2px #000}
+  #hearts{position:fixed;bottom:74px;left:calc(50% - 236px);z-index:6;font-size:17px;letter-spacing:2.5px;pointer-events:none;text-shadow:0 1px 3px #000}
+  #hearts .hp{color:#ff4b4b}#hearts .hd{color:#57241f}
+  #hunger{position:fixed;bottom:74px;right:calc(50% - 236px);z-index:6;font-size:15px;letter-spacing:2.5px;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
+  #hunger .hf{color:#d98e2b}#hunger .he{color:#4d3413}
+  #bubbles{position:fixed;bottom:96px;right:calc(50% - 236px);z-index:6;font-size:15px;letter-spacing:3px;color:#7fd0ff;pointer-events:none;text-align:right;text-shadow:0 1px 3px #000}
+  #gm{top:56px;left:14px;font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.55);font-family:monospace}
+  #mpchip{position:fixed;top:74px;left:14px;z-index:7;font-size:10px;letter-spacing:2px;color:#9fe6ff;font-family:monospace;background:rgba(8,10,18,.55);padding:4px 9px;border-radius:6px;border:1px solid rgba(140,200,255,.3);display:none;pointer-events:none}
+  #mineprog{position:fixed;top:calc(50% + 26px);left:calc(50% - 34px);width:68px;height:5px;background:rgba(0,0,0,.45);border-radius:3px;z-index:6;display:none;pointer-events:none}
+  #mineprogF{height:100%;width:0%;background:#ffd75e;border-radius:3px}
+  #chatlog{position:fixed;left:14px;bottom:136px;z-index:7;display:flex;flex-direction:column;gap:3px;max-width:470px;pointer-events:none}
+  .cmsg{background:rgba(8,10,18,.62);padding:4px 10px;border-radius:6px;font-size:13px;color:#e6ecfb;font-family:monospace;transition:opacity .7s}
+  .cmsg.sys{color:#9fe6ff}.cmsg.err{color:#ff9d8f}
+  #chatwrap{position:fixed;left:14px;bottom:98px;z-index:9;width:470px;display:none}
+  #chatline{width:100%;box-sizing:border-box;background:rgba(8,10,18,.88);border:1px solid rgba(140,160,220,.45);border-radius:8px;color:#fff;font-size:14px;padding:10px 12px;font-family:monospace;outline:none}
+  #chatBtn{position:fixed;bottom:16px;left:calc(50% + 300px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:20px;cursor:pointer}
+  #chatBtn:hover{border-color:#fff}
+  #nooksPanel{position:fixed;left:12px;top:70px;width:330px;z-index:8;display:none;flex-direction:column;background:rgba(8,10,18,.66);border:1px solid rgba(255,255,255,.16);border-radius:12px;overflow:hidden;box-shadow:0 10px 30px rgba(0,0,0,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  #nooksHead{display:flex;align-items:center;gap:8px;padding:9px 12px;cursor:move;user-select:none;-webkit-user-select:none;font-size:11px;letter-spacing:3px;color:#aab6d8;font-family:monospace;border-bottom:1px solid rgba(255,255,255,.09);text-shadow:0 1px 3px rgba(0,0,0,.8)}
+  #nooksHead .sp{flex:1}
+  #nooksHead button{background:transparent;border:1px solid rgba(255,255,255,.22);color:#aab6d8;border-radius:6px;padding:3px 9px;font-size:11px;cursor:pointer;font-family:monospace}
+  #nooksHead button:hover{border-color:#fff;color:#fff}
+  #nooksStage{position:relative;flex:1;min-height:360px;background:rgba(6,8,14,.55)}
+  #nooksFrame{position:absolute;inset:0;width:100%;height:100%;border:0;background:#0b0e18}
+  #nooksOverlay{position:absolute;inset:0;display:none;flex-direction:column;justify-content:center;gap:11px;padding:22px;box-sizing:border-box;font-family:monospace;background:rgba(8,10,18,.92);text-align:left}
+  #nooksOverlay.on{display:flex}
+  #nooksConnecting{color:#9fb2dd;font-size:12px;letter-spacing:1.5px}
+  #nooksOverlay .big{color:#e8ecf7;font-size:13px;letter-spacing:1px;margin-bottom:2px}
+  #nooksOverlay .note{color:#8fa0c8;font-size:11px;line-height:1.65}
+  #nooksOverlay .note b{color:#c8d3ee}
+  #nooksOverlay button.go{width:100%;background:rgba(143,209,92,.16);border:1px solid rgba(143,209,92,.65);color:#c8f09a;font-weight:700;border-radius:8px;padding:12px;letter-spacing:2px;cursor:pointer;font-size:11px;font-family:monospace;text-shadow:0 0 8px rgba(143,209,92,.45)}
+  #nooksOverlay button.go:hover{background:rgba(143,209,92,.28);border-color:#c8f09a}
+  #nooksOverlay button.mini{background:transparent;border:0;color:#6b7ba3;text-decoration:underline;padding:2px;font-size:10.5px;letter-spacing:1px;cursor:pointer;font-family:monospace}
+  #nooksResize{position:absolute;right:0;bottom:0;width:18px;height:18px;cursor:nwse-resize;background:linear-gradient(135deg,transparent 55%,rgba(255,255,255,.3) 55%)}
+  #invBtn{position:fixed;bottom:16px;left:calc(50% + 242px);z-index:7;width:52px;height:52px;border-radius:10px;background:rgba(8,10,18,.62);border:1px solid rgba(255,255,255,.2);color:#e8ecf7;font-size:22px;cursor:pointer}
+  #invBtn:hover{border-color:#fff}
+  #armorbar{position:fixed;bottom:96px;left:calc(50% - 236px);z-index:6;font-size:14px;letter-spacing:2.5px;pointer-events:none;color:#cfd6e4;text-shadow:0 1px 3px #000;display:none}
+  #chestOv{background:rgba(8,10,18,.82)}
+  #chestOv .invwrap{max-width:720px}
+    #bossbar{position:fixed;top:52px;left:50%;transform:translateX(-50%);z-index:7;width:340px;display:none;pointer-events:none;text-align:center}
+  #bossbar .bn{font-family:monospace;font-size:11px;letter-spacing:5px;color:#d9b3ff;text-shadow:0 0 12px rgba(178,75,243,.75);margin-bottom:4px}
+  #bossT{height:7px;background:rgba(10,6,18,.72);border:1px solid rgba(178,75,243,.55);border-radius:4px;overflow:hidden}
+  #bossF{height:100%;width:100%;background:linear-gradient(90deg,#7a2bc4,#b24bf3);box-shadow:0 0 10px rgba(178,75,243,.8);transition:width .25s}
+  #victory .in h1{color:#d9b3ff;text-shadow:0 4px 34px rgba(178,75,243,.6)}
+  #death .in h1{color:#ff6b5e;text-shadow:0 4px 30px rgba(255,60,40,.4)}
+  #inv{background:rgba(8,10,18,.82)}
+  .invwrap{display:flex;gap:22px;max-width:860px;width:92vw;align-items:flex-start}
+  .invpane{flex:1;background:rgba(14,18,32,.92);border:1px solid rgba(140,160,220,.28);border-radius:14px;padding:18px 20px;max-height:64vh;overflow-y:auto;text-align:left}
+  .invpane h3{margin:0 0 12px;font-size:12px;letter-spacing:3px;color:#9fb2dd}
+  #invGrid{display:grid;grid-template-columns:repeat(auto-fill,48px);gap:6px}
+  .icell{width:48px;height:48px;border-radius:7px;border:2px solid rgba(255,255,255,.16);background:#151a26;position:relative;cursor:pointer}
+  .icell:hover{border-color:#fff}
+  .icell canvas{width:100%;height:100%;border-radius:5px;image-rendering:pixelated}
+  .icell .icnt{position:absolute;bottom:1px;right:4px;font-size:11px;font-weight:700;color:#ffe9a8;text-shadow:0 1px 2px #000}
+  .crow{display:flex;align-items:center;gap:10px;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.07)}
+  .crow canvas{width:34px;height:34px;image-rendering:pixelated;border-radius:5px;background:#151a26}
+  .crow .cing{font-size:12px;color:#aab6d4;flex:1;line-height:1.4}
+  .crow button{background:#8fd15c;color:#0c1a06;font-weight:800;border:none;border-radius:7px;padding:8px 14px;font-size:12px;letter-spacing:1px;cursor:pointer}
+  .crow button:disabled{background:#3a4356;color:#8a93a8;cursor:default}
+  .invhint{margin-top:14px;font-size:11px;letter-spacing:1.5px;color:#5f6f96;text-transform:uppercase;text-align:center}
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="vign"></div><div id="wet"></div>
+<div id="xh" class="hud">+</div>
+<div id="coords" class="hud"></div>
+<div id="hint" class="hud">WASD move · double-tap W or CTRL sprint · SPACE jump · F fly<br>HOLD left click mine · RIGHT click build/eat<br>E inventory · T chat &amp; /commands · /host multiplayer · G gamemode<br>R respawn · ESC pause</div>
+<div id="hotbar"></div>
+<button id="invBtn" title="Inventory & crafting (E)">🎒</button>
+<button id="chatBtn" title="Chat & commands (T)">💬</button>
+<div id="chatlog"></div>
+<div id="chatwrap"><input id="chatline" autocomplete="off" spellcheck="false" placeholder="chat or /command — try /help"></div>
+<div id="nooksPanel">
+ <div id="nooksHead"><span>☎ NOOKS</span><span class="sp"></span><button id="nooksPop" title="Launch dialer in docked window">↗</button><button id="nooksClose">✕</button></div>
+ <div id="nooksStage">
+  <iframe id="nooksFrame" allow="microphone; camera; autoplay; clipboard-read; clipboard-write; display-capture" referrerpolicy="origin" allowfullscreen></iframe>
+  <div id="nooksOverlay" class="on">
+   <div id="nooksConnecting"><span class="ndot"></span> Trying to embed Nooks in-page…</div>
+   <div id="nooksExplain" style="display:none">
+    <div class="big"><span class="ndot"></span>Nooks blocks in-page embedding</div>
+    <div class="note">Nooks sends a <b>frame-ancestors</b> security header that stops its app loading inside any other site — the same shield that keeps your live calls from being hijacked. It only runs in its own window, so the dialer opens docked to the left edge of your screen while the world keeps running.</div>
+    <button id="nooksOpenWin" class="go">▶ LAUNCH DIALER</button>
+    <button id="nooksRaw" class="mini">⟳ show me the raw frame (see the block)</button>
+   </div>
+  </div>
+ </div>
+ <div id="nooksResize"></div>
+</div>
+</div>
+</div>
+<div id="hearts"></div>
+<div id="hunger"></div>
+<div id="bubbles"></div>
+<div id="gm" class="hud">SURVIVAL</div>
+<div id="mpchip"></div>
+<div id="armorbar"></div>
+<div id="mineprog"><div id="mineprogF"></div></div>
+<div id="bossbar"><div class="bn">ENDER DRAGON</div><div id="bossT"><div id="bossF"></div></div></div>
+<div id="toasts"></div>
+<div id="joy"><div id="joyK"></div></div>
+<button class="tbtn" id="btnJump">JUMP</button>
+<button class="tbtn" id="btnMode">MINE</button>
+
+<div class="overlay" id="title">
+  <div class="in">
+    <h1>VOXELCRAFT</h1>
+    <div style="font-size:10px;letter-spacing:3px;color:#5f6f96">V3 — SURVIVAL UPDATE</div>
+    <div class="sub">An infinite blocky world, carved by noise and lit by a moving sun.<br>
+    Mine it. Build on it. It saves itself as you go.</div>
+    <button class="go" id="play" disabled>FORGING TERRAIN…</button>
+    <button class="go alt" id="playC" disabled>CREATIVE ▸</button>
+    <div id="bar"><div id="barF"></div></div>
+    <div class="keys">WASD move · space jump · hold left click to mine · right click build<br>1-9 / scroll blocks · X more blocks · G gamemode · F fly · esc pause</div>
+  </div>
+</div>
+
+<div class="overlay" id="pause">
+  <div class="in">
+    <h1 style="font-size:34px;letter-spacing:8px">PAUSED</h1>
+    <div class="sub">Your world is saved automatically in this browser.</div>
+    <button class="go" id="resume">RESUME ▸</button>
+    <button class="go alt" id="reset">NEW WORLD ▸</button>
+    <div class="keys">WASD move · space jump · left click mine · right click build<br>1-9 or scroll blocks · F fly · R respawn</div>
+  </div>
+</div>
+
+
+<div class="overlay" id="death" style="display:none;background:radial-gradient(ellipse at 50% 40%,rgba(80,16,10,.92),rgba(12,4,3,.97))">
+  <div class="in">
+    <h1 style="font-size:44px;letter-spacing:10px">YOU DIED</h1>
+    <div class="sub" id="deathCause"></div>
+    <button class="go" id="respawn">RESPAWN ▸</button>
+  </div>
+</div>
+
+<div class="overlay" id="inv" style="display:none">
+  <div style="width:100%">
+    <div class="invwrap" style="margin:0 auto">
+      <div class="invpane"><h3>INVENTORY</h3><div id="invGrid"></div></div>
+      <div class="invpane"><h3>CRAFTING</h3><div id="craftGridWrap"></div><div id="craftList"></div></div>
+    </div>
+    <div class="invhint">E / ESC close · click item = hotbar slot · SHIFT+click item = crafting grid · 1-9 pick slot</div>
+  </div>
+</div>
+
+<div class="overlay" id="victory" style="display:none;background:radial-gradient(ellipse at 50% 38%,rgba(52,16,80,.93),rgba(8,4,14,.97))">
+  <div class="in">
+    <h1 style="font-size:40px;letter-spacing:9px">THE DRAGON FALLS</h1>
+    <div class="sub">You crossed the void with tools you punched out of trees, and the End is quiet now.<br>Its egg rests at the island's heart — yours to take home.</div>
+    <button class="go" id="victoryBtn">CONTINUE ▸</button>
+  </div>
+</div>
+
+<div class="overlay" id="chestOv" style="display:none">
+  <div style="width:100%">
+    <div class="invwrap" style="margin:0 auto">
+      <div class="invpane"><h3>CHEST</h3><div id="chestGrid" class="igrid" style="display:grid;grid-template-columns:repeat(auto-fill,48px);gap:6px"></div></div>
+      <div class="invpane"><h3>YOUR ITEMS</h3><div id="chestPlayerGrid" style="display:grid;grid-template-columns:repeat(auto-fill,48px);gap:6px"></div></div>
+    </div>
+    <div class="invhint">click items to move them · E / ESC close</div>
+  </div>
+</div>
