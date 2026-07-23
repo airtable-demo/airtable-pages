@@ -178,9 +178,9 @@
   <div style="width:100%">
     <div class="invwrap" style="margin:0 auto">
       <div class="invpane"><h3>INVENTORY</h3><div id="invGrid"></div></div>
-      <div class="invpane"><h3>CRAFTING</h3><div id="craftList"></div></div>
+      <div class="invpane"><h3>CRAFTING</h3><div id="craftGridWrap"></div><div id="craftList"></div></div>
     </div>
-    <div class="invhint">E / ESC close · click an item to put it in the selected hotbar slot · 1-9 pick slot</div>
+    <div class="invhint">E / ESC close · click item = hotbar slot · SHIFT+click item = crafting grid · 1-9 pick slot</div>
   </div>
 </div>
 
@@ -472,7 +472,7 @@ speck(35,'#6a6a6a',['#5c5c5c','#787878','#636363'],200);         // 35 furnace t
 //   row3: indices 24-31 (pixel y=96)
 // Existing icons keep their same index numbers; itileXY recomputes pixel coords automatically.
 
-var ITS=32, ICOLS=8, itemAtlasC=document.createElement('canvas');itemAtlasC.width=ITS*ICOLS;itemAtlasC.height=ITS*4;
+var ITS=32, ICOLS=8, itemAtlasC=document.createElement('canvas');itemAtlasC.width=ITS*ICOLS;itemAtlasC.height=ITS*5;
 var ig=itemAtlasC.getContext('2d');
 var irand=mulberry32(777);
 function itileXY(t){return [ (t%ICOLS)*ITS, Math.floor(t/ICOLS)*ITS ];}
@@ -794,6 +794,142 @@ var STEAK=120;      ITEMS[120]={n:'Steak',icon:17,food:10};
 var COOKED_CHICKEN=121; ITEMS[121]={n:'Cooked Chicken',icon:18,food:8};
 var COOKED_PORKCHOP=122; ITEMS[122]={n:'Cooked Porkchop',icon:19,food:10};
 var GOLDEN_APPLE=123; ITEMS[123]={n:'Golden Apple',icon:20,food:20,heal:20};
+
+// ===== V7 ARMOR ICONS (indices 21-32, rows 2-3-4 of the 8x5 atlas) =====
+
+// Helper: draw a helmet icon at atlas tile t with main color mc and shade color sc
+function drawArmorHelmTile(t,mc,sc){
+ var p=itileXY(t);ig.clearRect(p[0],p[1],ITS,ITS);
+ // dome outer top
+ ig.fillStyle=mc;
+ ig.fillRect(p[0]+8,p[1]+6,16,4);
+ ig.fillRect(p[0]+6,p[1]+10,20,4);
+ ig.fillRect(p[0]+6,p[1]+14,20,8);
+ ig.fillRect(p[0]+6,p[1]+22,6,4);
+ ig.fillRect(p[0]+20,p[1]+22,6,4);
+ // eye slot gap (transparent) = clearRect across middle
+ ig.clearRect(p[0]+12,p[1]+18,8,4);
+ // shading strip on right and bottom
+ ig.fillStyle=sc;
+ ig.fillRect(p[0]+22,p[1]+10,4,4);
+ ig.fillRect(p[0]+22,p[1]+14,4,8);
+ ig.fillRect(p[0]+6,p[1]+22,4,4);
+ ig.fillRect(p[0]+22,p[1]+22,4,4);
+ // highlight strip on left and top
+ ig.fillStyle='#ffffff';
+ ig.globalAlpha=0.18;
+ ig.fillRect(p[0]+8,p[1]+6,16,2);
+ ig.fillRect(p[0]+6,p[1]+10,2,12);
+ ig.globalAlpha=1;
+}
+
+// Helper: draw a chestplate icon at atlas tile t
+function drawArmorChestTile(t,mc,sc){
+ var p=itileXY(t);ig.clearRect(p[0],p[1],ITS,ITS);
+ // shoulder caps left & right
+ ig.fillStyle=mc;
+ ig.fillRect(p[0]+2,p[1]+6,8,8);
+ ig.fillRect(p[0]+22,p[1]+6,8,8);
+ // central torso neck notch
+ ig.fillRect(p[0]+10,p[1]+8,12,4);
+ // main torso body
+ ig.fillRect(p[0]+4,p[1]+14,24,14);
+ // shading right side & bottom
+ ig.fillStyle=sc;
+ ig.fillRect(p[0]+26,p[1]+14,2,14);
+ ig.fillRect(p[0]+22,p[1]+6,2,8);
+ ig.fillRect(p[0]+4,p[1]+26,24,2);
+ // highlight
+ ig.fillStyle='#ffffff';
+ ig.globalAlpha=0.18;
+ ig.fillRect(p[0]+4,p[1]+14,2,14);
+ ig.fillRect(p[0]+2,p[1]+6,2,8);
+ ig.fillRect(p[0]+10,p[1]+8,12,2);
+ ig.globalAlpha=1;
+}
+
+// Helper: draw leggings icon at atlas tile t
+function drawArmorLegsTile(t,mc,sc){
+ var p=itileXY(t);ig.clearRect(p[0],p[1],ITS,ITS);
+ // waistband
+ ig.fillStyle=mc;
+ ig.fillRect(p[0]+4,p[1]+5,24,5);
+ // left leg
+ ig.fillRect(p[0]+4,p[1]+10,10,18);
+ // right leg
+ ig.fillRect(p[0]+18,p[1]+10,10,18);
+ // crotch gap (transparent)
+ ig.clearRect(p[0]+14,p[1]+10,4,6);
+ // shading
+ ig.fillStyle=sc;
+ ig.fillRect(p[0]+12,p[1]+10,2,18);
+ ig.fillRect(p[0]+26,p[1]+10,2,18);
+ ig.fillRect(p[0]+4,p[1]+26,10,2);
+ ig.fillRect(p[0]+18,p[1]+26,10,2);
+ // highlight
+ ig.fillStyle='#ffffff';
+ ig.globalAlpha=0.18;
+ ig.fillRect(p[0]+4,p[1]+5,24,2);
+ ig.fillRect(p[0]+4,p[1]+10,2,16);
+ ig.fillRect(p[0]+18,p[1]+10,2,16);
+ ig.globalAlpha=1;
+}
+
+// Helper: draw boots icon at atlas tile t
+function drawArmorBootsTile(t,mc,sc){
+ var p=itileXY(t);ig.clearRect(p[0],p[1],ITS,ITS);
+ // left boot
+ ig.fillStyle=mc;
+ ig.fillRect(p[0]+2,p[1]+8,10,14);
+ ig.fillRect(p[0]+2,p[1]+22,12,5);
+ // right boot
+ ig.fillRect(p[0]+20,p[1]+8,10,14);
+ ig.fillRect(p[0]+18,p[1]+22,12,5);
+ // shading
+ ig.fillStyle=sc;
+ ig.fillRect(p[0]+10,p[1]+8,2,14);
+ ig.fillRect(p[0]+2,p[1]+25,12,2);
+ ig.fillRect(p[0]+28,p[1]+8,2,14);
+ ig.fillRect(p[0]+18,p[1]+25,12,2);
+ // highlight
+ ig.fillStyle='#ffffff';
+ ig.globalAlpha=0.18;
+ ig.fillRect(p[0]+2,p[1]+8,2,14);
+ ig.fillRect(p[0]+20,p[1]+8,2,14);
+ ig.globalAlpha=1;
+}
+
+// Iron armor: indices 21-24 (row2 slots 5-7 + row3 slot 0)
+drawArmorHelmTile(21,'#d8d8d8','#9a9a9a');
+drawArmorChestTile(22,'#d8d8d8','#9a9a9a');
+drawArmorLegsTile(23,'#d8d8d8','#9a9a9a');
+drawArmorBootsTile(24,'#d8d8d8','#9a9a9a');
+
+// Gold armor: indices 25-28
+drawArmorHelmTile(25,'#e8c84a','#b8983a');
+drawArmorChestTile(26,'#e8c84a','#b8983a');
+drawArmorLegsTile(27,'#e8c84a','#b8983a');
+drawArmorBootsTile(28,'#e8c84a','#b8983a');
+
+// Diamond armor: indices 29-32
+drawArmorHelmTile(29,'#4fd8d2','#2fa8a2');
+drawArmorChestTile(30,'#4fd8d2','#2fa8a2');
+drawArmorLegsTile(31,'#4fd8d2','#2fa8a2');
+drawArmorBootsTile(32,'#4fd8d2','#2fa8a2');
+
+// ===== V7 ARMOR ITEMS =====
+var IRON_HELM=130;  ITEMS[130]={n:'Iron Helmet',   icon:21,armor:2,slot:'helm'};
+var IRON_CHEST=131; ITEMS[131]={n:'Iron Chestplate',icon:22,armor:6,slot:'chest'};
+var IRON_LEGS=132;  ITEMS[132]={n:'Iron Leggings',  icon:23,armor:5,slot:'legs'};
+var IRON_BOOTS=133; ITEMS[133]={n:'Iron Boots',     icon:24,armor:2,slot:'boots'};
+var GOLD_HELM=134;  ITEMS[134]={n:'Gold Helmet',    icon:25,armor:2,slot:'helm'};
+var GOLD_CHEST=135; ITEMS[135]={n:'Gold Chestplate',icon:26,armor:5,slot:'chest'};
+var GOLD_LEGS=136;  ITEMS[136]={n:'Gold Leggings',  icon:27,armor:3,slot:'legs'};
+var GOLD_BOOTS=137; ITEMS[137]={n:'Gold Boots',     icon:28,armor:1,slot:'boots'};
+var DIA_HELM=138;   ITEMS[138]={n:'Diamond Helmet',   icon:29,armor:3,slot:'helm'};
+var DIA_CHEST=139;  ITEMS[139]={n:'Diamond Chestplate',icon:30,armor:8,slot:'chest'};
+var DIA_LEGS=140;   ITEMS[140]={n:'Diamond Leggings',  icon:31,armor:6,slot:'legs'};
+var DIA_BOOTS=141;  ITEMS[141]={n:'Diamond Boots',     icon:32,armor:3,slot:'boots'};
 
 // ===== HELPERS =====
 function isBlockId(id){return typeof id==='number'&&id>0&&id<100;}
@@ -1776,7 +1912,8 @@ function mobDrops(m){
  if(typeof gamemode==='undefined'||gamemode!=='survival')return;
  if(typeof invAdd!=='function')return;
  var qty=sp.dropMin+(Math.random()<0.5&&sp.dropMax>sp.dropMin?1:0);
- invAdd(sp.dropItem,qty);
+ if(typeof spawnDrop==='function'&&m.pos)spawnDrop(Math.floor(m.pos.x),Math.floor(m.pos.y),Math.floor(m.pos.z),sp.dropItem,qty);
+ else invAdd(sp.dropItem,qty);
  var label='+ ';
  if(sp.dropItem===101)label+='Porkchop';
  else if(sp.dropItem===27)label+='Wool';
@@ -2085,7 +2222,8 @@ function doBreak(r){
  setBlock(r.x,r.y,r.z,AIR);
  burst(r.x,r.y,r.z,PCOL[r.id]||0x999999);
  blip(300,90,0.09,0.12);
- if(typeof onBlockMined==='function')onBlockMined(r.id);
+ if(typeof CHEST!=='undefined'&&r.id===CHEST&&typeof chestOnBroken==='function')chestOnBroken(r.x,r.y,r.z);
+ if(typeof onBlockMined==='function')onBlockMined(r.id,r.x,r.y,r.z);
 }
 function mineFrame(dt){
  mineCd-=dt;
@@ -2105,6 +2243,7 @@ function act(kind){
    if(typeof hitMob==='function'&&hitMob())return;
    doBreak(r);
  }else{
+   if(typeof CRAFT_TABLE!=='undefined'&&r.id===CRAFT_TABLE&&typeof openCraftTable==='function'){openCraftTable();return;}
    if(typeof CHEST!=='undefined'&&r.id===CHEST&&typeof openChest==='function'){openChest(r.x,r.y,r.z);return;}
    if(typeof BED!=='undefined'&&r.id===BED&&typeof useBed==='function'){useBed(r.x,r.y,r.z);return;}
    if(typeof FURNACE!=='undefined'&&r.id===FURNACE&&gamemode==='survival'&&typeof openInventory==='function'){openInventory();return;}
@@ -2440,19 +2579,22 @@ function survivalRefreshCounts(){
  if(typeof refreshCounts==='function')refreshCounts();
 }
 
-function onBlockMined(id){
+function onBlockMined(id,bx,by,bz){
  if(gamemode!=='survival')return;
  if(!canHarvest(id))return; // wrong/no tool on a needsPick block: breaks, but drops nothing
+ var hasEnt=(typeof spawnDrop==='function'&&bx!==undefined);
  if(id===LEAF){
-  if(Math.random()<0.08){
-   if(typeof invAdd==='function'&&typeof APPLE!=='undefined')invAdd(APPLE,1);
+  if(Math.random()<0.08&&typeof APPLE!=='undefined'){
+   if(hasEnt)spawnDrop(bx,by,bz,APPLE,1);
+   else if(typeof invAdd==='function')invAdd(APPLE,1);
   }
   survivalRefreshCounts();
   return;
  }
  var drop=survivalDrop(id);
  if(drop===null||drop===undefined)return;
- if(typeof invAdd==='function')invAdd(drop,1);
+ if(hasEnt)spawnDrop(bx,by,bz,drop,1);
+ else if(typeof invAdd==='function')invAdd(drop,1);
  survivalRefreshCounts();
 }
 
@@ -2679,6 +2821,21 @@ function invRecipes(){
   {out:INV_WOOD_AXE,outN:1,label:'3 Planks + 2 Sticks -> Wooden Axe',ing:[{id:INV_PLANK,n:3},{id:INV_STICK,n:2}]},
   {out:INV_WOOD_SHOVEL,outN:1,label:'1 Plank + 2 Sticks -> Wooden Shovel',ing:[{id:INV_PLANK,n:1},{id:INV_STICK,n:2}]},
   {out:INV_STONE_SWORD,outN:1,label:'2 Cobble + 1 Stick -> Stone Sword',ing:[{id:INV_COBBLE,n:2},{id:INV_STICK,n:1}]},
+  {out:32,outN:1,label:'8 Planks -> Chest',ing:[{id:INV_PLANK,n:8}]},
+  {out:34,outN:1,label:'4 Planks -> Crafting Table',ing:[{id:INV_PLANK,n:4}]},
+  {out:33,outN:1,label:'3 Wool + 3 Planks -> Bed',ing:[{id:27,n:3},{id:INV_PLANK,n:3}]},
+  {out:130,outN:1,label:'5 Iron Ingot -> Iron Helmet',ing:[{id:105,n:5}]},
+  {out:131,outN:1,label:'8 Iron Ingot -> Iron Chestplate',ing:[{id:105,n:8}]},
+  {out:132,outN:1,label:'7 Iron Ingot -> Iron Leggings',ing:[{id:105,n:7}]},
+  {out:133,outN:1,label:'4 Iron Ingot -> Iron Boots',ing:[{id:105,n:4}]},
+  {out:134,outN:1,label:'5 Gold Ingot -> Gold Helmet',ing:[{id:106,n:5}]},
+  {out:135,outN:1,label:'8 Gold Ingot -> Gold Chestplate',ing:[{id:106,n:8}]},
+  {out:136,outN:1,label:'7 Gold Ingot -> Gold Leggings',ing:[{id:106,n:7}]},
+  {out:137,outN:1,label:'4 Gold Ingot -> Gold Boots',ing:[{id:106,n:4}]},
+  {out:138,outN:1,label:'5 Diamond -> Diamond Helmet',ing:[{id:107,n:5}]},
+  {out:139,outN:1,label:'8 Diamond -> Diamond Chestplate',ing:[{id:107,n:8}]},
+  {out:140,outN:1,label:'7 Diamond -> Diamond Leggings',ing:[{id:107,n:7}]},
+  {out:141,outN:1,label:'4 Diamond -> Diamond Boots',ing:[{id:107,n:4}]},
   {out:INV_IRON_SWORD,outN:1,label:'2 Iron Ingot + 1 Stick -> Iron Sword',ing:[{id:INV_IRON_INGOT,n:2},{id:INV_STICK,n:1}]},
   {out:INV_FURNACE_BLOCK,outN:1,label:'8 Cobble -> Furnace',ing:[{id:INV_COBBLE,n:8}]},
   {out:INV_TORCH_BLOCK,outN:4,label:'1 Coal + 1 Stick -> 4 Torches',ing:[{id:INV_COAL,n:1},{id:INV_STICK,n:1}]},
@@ -2738,6 +2895,7 @@ function invMakeIconCanvas(id,px){
  return cc;
 }
 function renderInventory(){
+ if(typeof renderCraftGrid==='function')renderCraftGrid();
  var grid=document.getElementById('invGrid');
  if(grid){
   grid.innerHTML='';
@@ -2751,7 +2909,8 @@ function renderInventory(){
     cell.appendChild(invMakeIconCanvas(idNum));
     var cntEl=document.createElement('div');cntEl.className='icnt';cntEl.textContent=cnt;
     cell.appendChild(cntEl);
-    cell.addEventListener('click',function(){
+    cell.addEventListener('click',function(ev){
+     if(ev.shiftKey&&typeof craftGridAdd==='function'){craftGridAdd(idNum);return;}
      setHotbarSlot(sel,idNum);
      renderInventory();
      var nm=(typeof slotName==='function')?slotName(idNum):'';
@@ -2821,6 +2980,453 @@ function renderInventory(){
    })(smelts[s]);
   }
  }
+}
+
+// ---------- 47b_craftgrid.js ----------
+// MODULE 47b: grid crafting + crafting table (OWNER: Forge)
+// Concat order: runs right after 47_inventory.js; all core APIs and BLOCKS/PCOL/ag/tileXY available.
+
+// ===== BLOCK REGISTRATION & ATLAS PAINTING =====
+
+var CRAFT_TABLE = 34;
+BLOCKS[CRAFT_TABLE] = {n:'Crafting Table', t:[39,39,40]};
+PCOL[CRAFT_TABLE] = 0xa87c3c;
+
+(function(){
+ // tile 39: plank top with 2x2 darker grid lines (crafting surface)
+ var p = tileXY(39);
+ ag.fillStyle = '#a8824e'; ag.fillRect(p[0], p[1], TS, TS);
+ // plank grain lines horizontal
+ ag.fillStyle = '#8d6b3d';
+ for (var y = 7; y < TS; y += 8) ag.fillRect(p[0], p[1]+y, TS, 2);
+ // plank grain vertical seam
+ ag.fillStyle = '#96733f';
+ for (var i = 0; i < 10; i++) {
+  ag.fillRect(p[0]+Math.floor(arand()*TS), p[1]+Math.floor(arand()*TS), 3, 1);
+ }
+ // 2x2 grid lines in darker brown
+ ag.fillStyle = '#5c3d1a';
+ ag.fillRect(p[0]+15, p[1]+1,  2, TS-2); // vertical divider
+ ag.fillRect(p[0]+1,  p[1]+15, TS-2, 2); // horizontal divider
+ // subtle grid cell shading
+ ag.fillStyle = 'rgba(0,0,0,0.12)';
+ ag.fillRect(p[0]+1,  p[1]+1,  14, 14);
+ ag.fillRect(p[0]+17, p[1]+17, 14, 14);
+
+ // tile 40: plank side with saw/tool marks
+ p = tileXY(40);
+ ag.fillStyle = '#a8824e'; ag.fillRect(p[0], p[1], TS, TS);
+ // plank grain horizontal
+ ag.fillStyle = '#8d6b3d';
+ for (var y2 = 7; y2 < TS; y2 += 8) ag.fillRect(p[0], p[1]+y2, TS, 2);
+ // saw-cut marks (diagonal dash lines suggesting tool work)
+ ag.fillStyle = '#5c3d1a';
+ ag.fillRect(p[0]+4,  p[1]+4,  6, 1);
+ ag.fillRect(p[0]+6,  p[1]+6,  6, 1);
+ ag.fillRect(p[0]+8,  p[1]+8,  6, 1);
+ ag.fillRect(p[0]+18, p[1]+5,  6, 1);
+ ag.fillRect(p[0]+20, p[1]+7,  6, 1);
+ ag.fillRect(p[0]+22, p[1]+9,  6, 1);
+ // darker top edge (surface)
+ ag.fillStyle = '#7a5c2c';
+ ag.fillRect(p[0], p[1], TS, 3);
+
+ if (typeof atlas !== 'undefined') atlas.needsUpdate = true;
+})();
+
+// ===== GRID CRAFTING STATE =====
+
+var gridSize = 2;          // 2 = 2x2 mode, 3 = 3x3 mode
+var gridCells = [null,null,null,null,null,null,null,null,null]; // always 3x3 flat, index r*3+c
+var craftTableFlag = false; // set by openCraftTable, cleared after use
+
+// ===== ITEM ID REFERENCES (fallbacks to fixed numbers from HARNESS) =====
+var CG_STICK    = (typeof STICK         !== 'undefined') ? STICK         : 100;
+var CG_PLANK    = (typeof PLANK         !== 'undefined') ? PLANK         : 7;
+var CG_LOG      = (typeof LOG           !== 'undefined') ? LOG           : 5;
+var CG_COBBLE   = (typeof COBBLE        !== 'undefined') ? COBBLE        : 10;
+var CG_IRON_I   = (typeof IRON_INGOT    !== 'undefined') ? IRON_INGOT    : 105;
+var CG_DIAMOND  = (typeof DIAMOND       !== 'undefined') ? DIAMOND       : 107;
+var CG_COAL     = (typeof COAL          !== 'undefined') ? COAL          : 108;
+var CG_GOLD_I   = (typeof GOLD_INGOT    !== 'undefined') ? GOLD_INGOT    : 106;
+var CG_APPLE    = (typeof APPLE         !== 'undefined') ? APPLE         : 102;
+var CG_WOOL     = 27;
+var CG_TORCH    = 26;
+var CG_FURNACE  = 31;
+var CG_CHEST    = 32;
+var CG_BED      = 33;
+var CG_CT       = 34;  // crafting table itself
+var CG_WOOD_PICK   = (typeof WOOD_PICK    !== 'undefined') ? WOOD_PICK    : 110;
+var CG_STONE_PICK  = (typeof STONE_PICK   !== 'undefined') ? STONE_PICK   : 111;
+var CG_IRON_PICK   = (typeof IRON_PICK    !== 'undefined') ? IRON_PICK    : 112;
+var CG_DIA_PICK    = (typeof DIAMOND_PICK !== 'undefined') ? DIAMOND_PICK : 113;
+var CG_WOOD_AXE    = (typeof WOOD_AXE     !== 'undefined') ? WOOD_AXE     : 114;
+var CG_WOOD_SHOVEL = (typeof WOOD_SHOVEL  !== 'undefined') ? WOOD_SHOVEL  : 115;
+var CG_STONE_SWORD = (typeof STONE_SWORD  !== 'undefined') ? STONE_SWORD  : 116;
+var CG_IRON_SWORD  = (typeof IRON_SWORD   !== 'undefined') ? IRON_SWORD   : 117;
+var CG_IRON_HELM   = 130;
+var CG_IRON_CHEST  = 131;
+var CG_IRON_LEGS   = 132;
+var CG_IRON_BOOTS  = 133;
+var CG_GOLD_HELM   = 134;
+var CG_GOLD_CHEST  = 135;
+var CG_GOLD_LEGS   = 136;
+var CG_GOLD_BOOTS  = 137;
+var CG_DIA_HELM    = 138;
+var CG_DIA_CHEST   = 139;
+var CG_DIA_LEGS    = 140;
+var CG_DIA_BOOTS   = 141;
+var CG_GOLDEN_APPLE = 123;
+
+// ===== SHAPED RECIPES =====
+// Pattern arrays are row-major strings for a bounding-box normalization.
+// Letters map to item ids at match time.
+
+function cgGetShapedRecipes() {
+ // Each recipe: { pattern: [string,...], map: {letter:id}, out:id, outN:n }
+ // Pattern is an array of strings, one per row. Uses smallest bounding box.
+ var P = CG_PLANK, S = CG_STICK, C = CG_COBBLE, I = CG_IRON_I, D = CG_DIAMOND;
+ var L = CG_LOG, O = CG_COAL, W = CG_WOOL, G = CG_GOLD_I, A = CG_APPLE;
+ var F = 31; // furnace block id
+ return [
+  // 1 LOG -> 4 PLANK (1x1 shapeless-style but we put it in shaped too)
+  // handled in shapeless; skip here to avoid duplicate
+
+  // 2 PLANK -> 4 STICK (2x1)
+  {pat:['X','X'], map:{X:P}, out:CG_STICK, outN:4},
+
+  // torch: coal over stick (2x1 vertical)
+  {pat:['C','S'], map:{C:CG_COAL, S:CG_STICK}, out:CG_TORCH, outN:4},
+
+  // picks (3x2: MMM / .S. / .S.)
+  {pat:['MMM','.S.','.S.'], map:{M:P, S:S}, out:CG_WOOD_PICK,  outN:1},
+  {pat:['MMM','.S.','.S.'], map:{M:C, S:S}, out:CG_STONE_PICK, outN:1},
+  {pat:['MMM','.S.','.S.'], map:{M:I, S:S}, out:CG_IRON_PICK,  outN:1},
+  {pat:['MMM','.S.','.S.'], map:{M:D, S:S}, out:CG_DIA_PICK,   outN:1},
+
+  // wooden axe (2x3: MM / MS / .S)
+  {pat:['MM','MS','.S'], map:{M:P, S:S}, out:CG_WOOD_AXE, outN:1},
+
+  // wooden shovel (1x3: M / S / S)
+  {pat:['M','S','S'], map:{M:P, S:S}, out:CG_WOOD_SHOVEL, outN:1},
+
+  // swords (1x3: M / M / S)
+  {pat:['M','M','S'], map:{M:C, S:S}, out:CG_STONE_SWORD, outN:1},
+  {pat:['M','M','S'], map:{M:I, S:S}, out:CG_IRON_SWORD,  outN:1},
+
+  // furnace: 8 cobble ring (3x3 hollow)
+  {pat:['CCC','C.C','CCC'], map:{C:C}, out:CG_FURNACE, outN:1},
+
+  // chest: 8 planks ring (3x3 hollow)
+  {pat:['PPP','P.P','PPP'], map:{P:P}, out:CG_CHEST, outN:1},
+
+  // crafting table: 2x2 planks
+  {pat:['PP','PP'], map:{P:P}, out:CG_CT, outN:1},
+
+  // bed: WWW / PPP
+  {pat:['WWW','PPP'], map:{W:W, P:P}, out:CG_BED, outN:1},
+
+  // golden apple: apple center + 4 gold ingot corners (3x3)
+  {pat:['.G.','GAG','.G.'], map:{G:G, A:CG_APPLE}, out:CG_GOLDEN_APPLE, outN:1},
+
+  // armor — shaped patterns
+  // iron helm: 5 iron (U shape: XX / X.X)
+  {pat:['XX','X.X'], map:{X:I}, out:CG_IRON_HELM,  outN:1},
+  {pat:['XX','X.X'], map:{X:CG_GOLD_I}, out:CG_GOLD_HELM, outN:1},
+  {pat:['XX','X.X'], map:{X:D}, out:CG_DIA_HELM,   outN:1},
+  // chestplate: 8 pieces (X.X / XXX / XXX)
+  {pat:['X.X','XXX','XXX'], map:{X:I}, out:CG_IRON_CHEST,  outN:1},
+  {pat:['X.X','XXX','XXX'], map:{X:CG_GOLD_I}, out:CG_GOLD_CHEST, outN:1},
+  {pat:['X.X','XXX','XXX'], map:{X:D}, out:CG_DIA_CHEST,   outN:1},
+  // leggings: 7 pieces (XXX / X.X / X.X)
+  {pat:['XXX','X.X','X.X'], map:{X:I}, out:CG_IRON_LEGS,  outN:1},
+  {pat:['XXX','X.X','X.X'], map:{X:CG_GOLD_I}, out:CG_GOLD_LEGS, outN:1},
+  {pat:['XXX','X.X','X.X'], map:{X:D}, out:CG_DIA_LEGS,   outN:1},
+  // boots: 4 pieces (X.X / X.X)
+  {pat:['X.X','X.X'], map:{X:I}, out:CG_IRON_BOOTS,  outN:1},
+  {pat:['X.X','X.X'], map:{X:CG_GOLD_I}, out:CG_GOLD_BOOTS, outN:1},
+  {pat:['X.X','X.X'], map:{X:D}, out:CG_DIA_BOOTS,   outN:1}
+ ];
+}
+
+// ===== SHAPELESS RECIPES =====
+function cgGetShapelessRecipes() {
+ return [
+  {ing:[{id:CG_LOG,n:1}],    out:CG_PLANK,    outN:4},
+  {ing:[{id:CG_PLANK,n:2}],  out:CG_STICK,    outN:4},
+  // armor shapeless by count
+  {ing:[{id:CG_IRON_I,n:5}],  out:CG_IRON_HELM,  outN:1},
+  {ing:[{id:CG_IRON_I,n:8}],  out:CG_IRON_CHEST, outN:1},
+  {ing:[{id:CG_IRON_I,n:7}],  out:CG_IRON_LEGS,  outN:1},
+  {ing:[{id:CG_IRON_I,n:4}],  out:CG_IRON_BOOTS, outN:1},
+  {ing:[{id:CG_GOLD_I,n:5}],  out:CG_GOLD_HELM,  outN:1},
+  {ing:[{id:CG_GOLD_I,n:8}],  out:CG_GOLD_CHEST, outN:1},
+  {ing:[{id:CG_GOLD_I,n:7}],  out:CG_GOLD_LEGS,  outN:1},
+  {ing:[{id:CG_GOLD_I,n:4}],  out:CG_GOLD_BOOTS, outN:1},
+  {ing:[{id:CG_DIAMOND,n:5}], out:CG_DIA_HELM,   outN:1},
+  {ing:[{id:CG_DIAMOND,n:8}], out:CG_DIA_CHEST,  outN:1},
+  {ing:[{id:CG_DIAMOND,n:7}], out:CG_DIA_LEGS,   outN:1},
+  {ing:[{id:CG_DIAMOND,n:4}], out:CG_DIA_BOOTS,  outN:1}
+ ];
+}
+
+// ===== PATTERN MATCHING =====
+
+// Return a 2D array (array of arrays) of ids/null for the bounding box of occupied cells
+// within the active gridSize region. Returns null if grid is empty.
+function cgNormalize() {
+ var size = gridSize;
+ var minR = size, maxR = -1, minC = size, maxC = -1;
+ for (var r = 0; r < size; r++) {
+  for (var c = 0; c < size; c++) {
+   if (gridCells[r*3+c] !== null) {
+    if (r < minR) minR = r;
+    if (r > maxR) maxR = r;
+    if (c < minC) minC = c;
+    if (c > maxC) maxC = c;
+   }
+  }
+ }
+ if (maxR < 0) return null; // empty
+ var rows = [];
+ for (var rr = minR; rr <= maxR; rr++) {
+  var row = [];
+  for (var cc = minC; cc <= maxC; cc++) {
+   row.push(gridCells[rr*3+cc]); // null or id (number)
+  }
+  rows.push(row);
+ }
+ return rows; // array of arrays
+}
+
+// Check if a shaped recipe matches the current grid
+// Recipe pat rows use single letters; map translates letter -> id
+function cgMatchShaped(recipe) {
+ var pat = recipe.pat;
+ var map = recipe.map;
+ // Build reference as 2D array of ids / null
+ var refRows = [];
+ for (var ri = 0; ri < pat.length; ri++) {
+  var row = [];
+  for (var ci = 0; ci < pat[ri].length; ci++) {
+   var ch = pat[ri][ci];
+   if (ch === '.') {
+    row.push(null);
+   } else {
+    var mid = map[ch];
+    if (mid === undefined || mid === null) return false;
+    row.push(mid);
+   }
+  }
+  refRows.push(row);
+ }
+ // Compare normalized grid to reference
+ var norm = cgNormalize();
+ if (!norm) return false;
+ if (norm.length !== refRows.length) return false;
+ for (var i = 0; i < norm.length; i++) {
+  if (norm[i].length !== refRows[i].length) return false;
+  for (var j = 0; j < norm[i].length; j++) {
+   if (norm[i][j] !== refRows[i][j]) return false;
+  }
+ }
+ return true;
+}
+
+// Check if a shapeless recipe matches (only cares about item counts, not positions)
+function cgMatchShapeless(recipe) {
+ // Count ids in current grid (within gridSize region)
+ var counts = {};
+ var size = gridSize;
+ for (var r = 0; r < size; r++) {
+  for (var c = 0; c < size; c++) {
+   var v = gridCells[r*3+c];
+   if (v !== null) counts[v] = (counts[v]||0) + 1;
+  }
+ }
+ // Verify all ingredients match exactly (no leftover cells allowed)
+ var totalRequired = 0;
+ for (var i = 0; i < recipe.ing.length; i++) {
+  var ing = recipe.ing[i];
+  if ((counts[ing.id]||0) < ing.n) return false;
+  totalRequired += ing.n;
+ }
+ // Count total occupied cells
+ var totalUsed = 0;
+ for (var k in counts) {
+  if (counts.hasOwnProperty(k)) totalUsed += counts[k];
+ }
+ return totalUsed === totalRequired;
+}
+
+// Get output of current grid state; returns {out, outN} or null
+function cgGetOutput() {
+ // Try shaped first
+ var shaped = cgGetShapedRecipes();
+ for (var i = 0; i < shaped.length; i++) {
+  if (cgMatchShaped(shaped[i])) {
+   return {out: shaped[i].out, outN: shaped[i].outN};
+  }
+ }
+ // Try shapeless
+ var shapeless = cgGetShapelessRecipes();
+ for (var j = 0; j < shapeless.length; j++) {
+  if (cgMatchShapeless(shapeless[j])) {
+   return {out: shapeless[j].out, outN: shapeless[j].outN};
+  }
+ }
+ return null;
+}
+
+// ===== SMALL ICON CANVAS HELPER =====
+function cgMakeIcon(id) {
+ var cc = document.createElement('canvas');
+ var sz = (typeof TS !== 'undefined') ? TS : 32;
+ cc.width = cc.height = sz;
+ var g2 = cc.getContext('2d');
+ g2.imageSmoothingEnabled = false;
+ if (typeof drawSlotIcon === 'function') drawSlotIcon(g2, id);
+ return cc;
+}
+
+// ===== craftGridReturnAll: refund all grid cells to inventory =====
+function craftGridReturnAll() {
+ for (var i = 0; i < 9; i++) {
+  if (gridCells[i] !== null) {
+   if (typeof invAdd === 'function') invAdd(gridCells[i], 1);
+   gridCells[i] = null;
+  }
+ }
+}
+
+// ===== craftGridReset: called from renderCraftGrid when NOT opened via openCraftTable =====
+function craftGridReset() {
+ if (!craftTableFlag) {
+  // If we were in 3x3 mode but not via openCraftTable, return items and reset
+  if (gridSize === 3) {
+   craftGridReturnAll();
+   gridSize = 2;
+  }
+ }
+ craftTableFlag = false; // consume the flag
+}
+
+// ===== craftGridAdd: called on SHIFT+click in inventory =====
+function craftGridAdd(id) {
+ if (typeof invTake !== 'function') return;
+ var size = gridSize;
+ // Find first empty cell within the active region
+ for (var r = 0; r < size; r++) {
+  for (var c = 0; c < size; c++) {
+   var idx = r*3+c;
+   if (gridCells[idx] === null) {
+    if (invTake(id, 1)) {
+     gridCells[idx] = id;
+     if (typeof renderInventory === 'function') renderInventory();
+    }
+    return;
+   }
+  }
+ }
+ // Grid full
+ if (typeof toast === 'function') toast('Craft grid full');
+}
+
+// ===== renderCraftGrid: called from renderInventory =====
+function renderCraftGrid() {
+ // Reset/flag handling: if this is a normal inventory open (not via openCraftTable),
+ // and we somehow ended up in 3x3 mode, reset back to 2x2.
+ craftGridReset();
+
+ var wrap = document.getElementById('craftGridWrap');
+ if (!wrap) return;
+ wrap.innerHTML = '';
+
+ var size = gridSize;
+ var result = cgGetOutput();
+
+ // ----- header -----
+ var hdr = document.createElement('div');
+ hdr.style.cssText = 'font-size:10px;letter-spacing:2px;color:#9fb2dd;margin-bottom:8px;font-family:monospace;text-transform:uppercase;';
+ hdr.textContent = (size === 3) ? 'CRAFTING TABLE 3x3' : 'CRAFT GRID 2x2';
+ wrap.appendChild(hdr);
+
+ // ----- grid cells -----
+ var gridDiv = document.createElement('div');
+ gridDiv.style.cssText = 'display:grid;grid-template-columns:repeat('+size+',48px);gap:4px;margin-bottom:8px;';
+ wrap.appendChild(gridDiv);
+
+ for (var r = 0; r < size; r++) {
+  for (var c = 0; c < size; c++) {
+   (function(row, col) {
+    var idx = row*3+col;
+    var id = gridCells[idx];
+    var cell = document.createElement('div');
+    cell.className = 'icell';
+    cell.title = (id !== null && typeof slotName === 'function') ? slotName(id) : '';
+    if (id !== null) {
+     cell.appendChild(cgMakeIcon(id));
+    } else {
+     // empty cell with dim background
+     cell.style.opacity = '0.45';
+    }
+    cell.addEventListener('click', function() {
+     if (gridCells[idx] !== null) {
+      // Return item to inventory
+      if (typeof invAdd === 'function') invAdd(gridCells[idx], 1);
+      gridCells[idx] = null;
+      if (typeof renderInventory === 'function') renderInventory();
+     }
+    });
+    gridDiv.appendChild(cell);
+   })(r, c);
+  }
+ }
+
+ // ----- arrow -----
+ var arrow = document.createElement('div');
+ arrow.style.cssText = 'color:#9fb2dd;font-size:18px;margin:4px 0;text-align:center;';
+ arrow.textContent = '▶';
+ wrap.appendChild(arrow);
+
+ // ----- output slot -----
+ var outCell = document.createElement('div');
+ outCell.className = 'icell';
+ if (result) {
+  outCell.appendChild(cgMakeIcon(result.out));
+  if (result.outN > 1) {
+   var cnt = document.createElement('div');
+   cnt.className = 'icnt';
+   cnt.textContent = result.outN;
+   outCell.appendChild(cnt);
+  }
+  outCell.title = (typeof slotName === 'function') ? slotName(result.out) : '';
+  outCell.addEventListener('click', (function(res) {
+   return function() {
+    // Consume all grid cells (already invTaken) — just clear without refund
+    for (var i = 0; i < 9; i++) gridCells[i] = null;
+    if (typeof invAdd === 'function') invAdd(res.out, res.outN);
+    if (typeof blip === 'function') blip(600, 400, 0.08, 0.08);
+    if (typeof renderInventory === 'function') renderInventory();
+   };
+  })(result));
+ } else {
+  outCell.style.opacity = '0.25';
+  outCell.title = '';
+ }
+ wrap.appendChild(outCell);
+}
+
+// ===== openCraftTable: called when player right-clicks a placed CRAFT_TABLE block =====
+function openCraftTable() {
+ // Refund any existing 2x2 items before switching to 3x3 (size change could orphan cells)
+ // Only refund if we're switching from 2x2 to 3x3
+ if (gridSize === 2) {
+  craftGridReturnAll();
+ }
+ gridSize = 3;
+ craftTableFlag = true;
+ if (typeof openInventory === 'function') openInventory();
 }
 
 // ---------- 48_chat.js ----------
@@ -3287,6 +3893,548 @@ function nooksOnMouseUp(){
  document.addEventListener('mousemove',nooksOnMouseMove);
  document.addEventListener('mouseup',nooksOnMouseUp);
 })();
+
+// ---------- 42_drops.js ----------
+
+// ---------- 42_drops.js: item-drop entities (pop, bounce, spin, magnet, collect) ----------
+var DROPS=[],dropMatCache={};
+function dropVisual(id){
+ var key=String(id);
+ var mat=dropMatCache[key];
+ if(!mat){
+  var c=document.createElement('canvas');c.width=c.height=32;
+  var g2=c.getContext('2d');g2.imageSmoothingEnabled=false;
+  if(typeof drawSlotIcon==='function')drawSlotIcon(g2,id);
+  var tex=new THREE.CanvasTexture(c);tex.magFilter=THREE.NearestFilter;tex.minFilter=THREE.NearestFilter;
+  mat=dropMatCache[key]=new THREE.MeshLambertMaterial({map:tex,transparent:true});
+ }
+ var isB=(typeof isBlockId!=='function')||isBlockId(id);
+ var m;
+ if(isB)m=new THREE.Mesh(new THREE.BoxGeometry(0.26,0.26,0.26),mat);
+ else{m=new THREE.Mesh(new THREE.PlaneGeometry(0.32,0.32),mat);mat.side=THREE.DoubleSide;}
+ return m;
+}
+function spawnDrop(x,y,z,id,n){
+ if(gamemode!=='survival')return;
+ n=n||1;
+ for(var i=0;i<n&&DROPS.length<120;i++){
+  var m=dropVisual(id);
+  m.position.set(x+0.5,y+0.45,z+0.5);
+  scene.add(m);
+  DROPS.push({id:id,m:m,vx:(Math.random()-0.5)*2.6,vy:2.6+Math.random()*1.8,vz:(Math.random()-0.5)*2.6,
+   age:0,rest:false,restY:0});
+ }
+}
+function updateDrops(dt){
+ if(!DROPS.length)return;
+ for(var i=DROPS.length-1;i>=0;i--){
+  var d=DROPS[i];
+  d.age+=dt;
+  if(d.age>60){scene.remove(d.m);DROPS.splice(i,1);continue;}
+  var p=d.m.position;
+  // magnet + collect
+  var dx=P.x-p.x,dy=(P.y+0.9)-p.y,dz=P.z-p.z;
+  var dist=Math.sqrt(dx*dx+dy*dy+dz*dz);
+  if(dist<0.95){
+   scene.remove(d.m);DROPS.splice(i,1);
+   if(typeof invAdd==='function')invAdd(d.id,1);
+   if(typeof refreshCounts==='function')refreshCounts();
+   blip(520,760,0.06,0.07);
+   continue;
+  }
+  if(dist<2.4&&d.age>0.45){
+   var pull=Math.min(1,9*dt/Math.max(dist,0.05));
+   p.x+=dx*pull;p.y+=dy*pull;p.z+=dz*pull;
+   d.rest=false;
+  }else if(!d.rest){
+   d.vy-=17*dt;if(d.vy<-30)d.vy=-30;
+   p.x+=d.vx*dt;p.y+=d.vy*dt;p.z+=d.vz*dt;
+   var fy=Math.floor(p.y-0.14);
+   if(d.vy<0&&isSolid(getBlock(Math.floor(p.x),fy,Math.floor(p.z),AIR))){
+    var top=fy+1+0.14;
+    if(p.y<=top){p.y=top;
+     if(Math.abs(d.vy)>2.2){d.vy=-d.vy*0.35;d.vx*=0.6;d.vz*=0.6;}
+     else{d.rest=true;d.restY=top;d.vx=d.vy=d.vz=0;}}
+   }
+   if(p.y<-14){scene.remove(d.m);DROPS.splice(i,1);continue;}
+  }else{
+   p.y=d.restY+0.045+Math.sin(d.age*2.6)*0.045;
+  }
+  d.m.rotation.y+=dt*2.4;
+ }
+}
+
+// ---------- 43_beds.js ----------
+// MODULE 43: Beds (OWNER: Slumber)
+// Block BED=33, tile 38 (red blanket + cream pillow), useBed(x,y,z) hook
+
+var BED = 33;
+BLOCKS[BED] = { n: 'Bed', t: [38, 38, 38], shape: 'slab' };
+PCOL[BED] = 0xb03030;
+
+// Paint block-atlas tile 38: red blanket with cream pillow band
+(function () {
+    var p = tileXY(38);
+    var px0 = p[0], py0 = p[1];
+
+    // Base fill: crimson blanket
+    ag.fillStyle = '#b03030';
+    ag.fillRect(px0, py0, TS, TS);
+
+    // Darker fold lines across blanket (~horizontal ridges, chunky 2-3px)
+    var foldColors = ['#8c2222', '#962828', '#7a1c1c'];
+    var foldY = [5, 11, 17, 22];
+    for (var fi = 0; fi < foldY.length; fi++) {
+        ag.fillStyle = foldColors[fi % foldColors.length];
+        ag.fillRect(px0, py0 + foldY[fi], TS, 2);
+    }
+
+    // Vertical quilt-line detail (subtle, chunky)
+    ag.fillStyle = '#9a2828';
+    for (var xi = 4; xi < TS; xi += 8) {
+        ag.fillRect(px0 + xi, py0, 1, Math.round(TS * 0.7));
+    }
+
+    // Cream/white pillow band on top edge (~30% of tile height)
+    var pillowH = Math.round(TS * 0.30);
+    ag.fillStyle = '#e8e4da';
+    ag.fillRect(px0, py0, TS, pillowH);
+
+    // Pillow texture: slight warm shadow at bottom of pillow band
+    ag.fillStyle = '#d4cfc4';
+    ag.fillRect(px0, py0 + pillowH - 3, TS, 3);
+
+    // Pillow highlight dots (chunky, cream)
+    ag.fillStyle = '#f0ede6';
+    for (var pi2 = 2; pi2 < TS - 4; pi2 += 7) {
+        ag.fillRect(px0 + pi2, py0 + 3, 4, 3);
+    }
+
+    // Pillow centre crease
+    ag.fillStyle = '#c8c3b8';
+    ag.fillRect(px0 + Math.round(TS / 2) - 1, py0, 2, pillowH);
+
+    if (typeof atlas !== 'undefined') atlas.needsUpdate = true;
+})();
+
+// --- Bed sleep overlay (single reusable div, created once) ---
+var _bedFadeEl = null;
+function _getBedFadeEl() {
+    if (_bedFadeEl) return _bedFadeEl;
+    var d = document.createElement('div');
+    d.id = 'bed-sleep-fade';
+    d.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;' +
+        'background:#000;opacity:0;z-index:9;pointer-events:none;' +
+        'transition:opacity 0.35s ease;';
+    document.body.appendChild(d);
+    _bedFadeEl = d;
+    return d;
+}
+
+function useBed(x, y, z) {
+    // Night check: prefer isNight() if available, else fall back to skyK threshold
+    var night = (typeof isNight === 'function') ? isNight() : (skyK < 0.28);
+    if (!night) {
+        toast('You can only sleep at night');
+        return;
+    }
+
+    // Skip time to morning
+    if (typeof setTimeOfDay === 'function') setTimeOfDay(0.28);
+
+    // Set spawn point
+    SPAWNX = x + 0.5;
+    SPAWNZ = z + 0.5;
+    spawnY = y + 1.2;
+
+    // Persist spawn to WMETA (skip for guests)
+    if (typeof WMETA !== 'undefined' && WMETA !== null) {
+        if (!(typeof mpIsGuest === 'function' && mpIsGuest())) {
+            try {
+                WMETA.sx = x;
+                WMETA.sz = z;
+                localStorage.setItem('voxelcraft_meta_v1', JSON.stringify(WMETA));
+            } catch (e) {}
+        }
+    }
+
+    // Feedback
+    toast('You slept through the night. Spawn point set.');
+    blip(220, 140, 0.4, 0.07);
+
+    // Gentle screen fade: black 0->1->0 over ~1.2s
+    var el = _getBedFadeEl();
+    el.style.transition = 'opacity 0.35s ease';
+    el.style.opacity = '1';
+    setTimeout(function () {
+        el.style.opacity = '0';
+    }, 700);
+}
+
+// ---------- 44_armor.js ----------
+// MODULE 44: armor system — armorPoints, armorReduce, armor bar HUD (OWNER: Aegis)
+// Top-level: declarations and plain data only. No DOM side effects at init time.
+
+var _armorPtsCache = 0;
+var _armorPtsCacheT = -9999;
+var _lastArmorBarHTML = null;
+var _armorBarEl = null;
+
+// ===== armorPoints =====
+// Scan inventory for the best-owned piece (highest .armor) for each slot.
+// Uses typeof invCount guard. Caches result for 0.5s.
+function armorPoints(){
+ var now = (typeof performance !== 'undefined') ? performance.now() * 0.001 : 0;
+ if(now - _armorPtsCacheT < 0.5) return _armorPtsCache;
+ _armorPtsCacheT = now;
+
+ if(typeof invCount !== 'function' || typeof ITEMS === 'undefined'){
+  _armorPtsCache = 0;
+  return 0;
+ }
+
+ var slots = ['helm','chest','legs','boots'];
+ var best = {helm:0, chest:0, legs:0, boots:0};
+ var id;
+ for(id = 130; id <= 141; id++){
+  var it = ITEMS[id];
+  if(!it || !it.slot) continue;
+  if(invCount(id) > 0){
+   var pts = it.armor || 0;
+   if(pts > best[it.slot]) best[it.slot] = pts;
+  }
+ }
+
+ var total = 0;
+ for(var si = 0; si < slots.length; si++) total += best[slots[si]];
+ _armorPtsCache = total;
+ return total;
+}
+
+// ===== armorReduce =====
+// Only reduces damage whose cause starts with 'Slain' (combat).
+// Fall, void, starve, drown causes are NOT reduced.
+// Formula: reduction = min(0.6, 0.04 * totalPoints)
+// Returns Math.max(1, round(n * (1 - reduction))).
+function armorReduce(n, cause){
+ if(typeof gamemode === 'undefined' || gamemode !== 'survival') return n;
+ if(typeof cause !== 'string' || cause.indexOf('Slain') !== 0) return n;
+ var pts = armorPoints();
+ if(pts <= 0) return n;
+ var reduction = Math.min(0.6, 0.04 * pts);
+ return Math.max(1, Math.round(n * (1 - reduction)));
+}
+
+// ===== Armor Bar HUD =====
+
+function _armorBarEl2(){
+ if(!_armorBarEl) _armorBarEl = document.getElementById('armorbar');
+ return _armorBarEl;
+}
+
+// Render shield glyphs: filled up to Math.ceil(pts/2), dim the rest, up to 10 total.
+// Only visible in survival when pts > 0. Only touches DOM when HTML changes.
+function armorBarTick(){
+ var el = _armorBarEl2();
+ if(!el) return;
+
+ if(typeof gamemode === 'undefined' || gamemode !== 'survival'){
+  if(el.style.display !== 'none'){
+   el.style.display = 'none';
+   _lastArmorBarHTML = null;
+  }
+  return;
+ }
+
+ var pts = armorPoints();
+
+ if(pts <= 0){
+  if(el.style.display !== 'none'){
+   el.style.display = 'none';
+   _lastArmorBarHTML = null;
+  }
+  return;
+ }
+
+ // show the bar
+ if(el.style.display === 'none') el.style.display = '';
+
+ var filled = Math.min(10, Math.ceil(pts / 2));
+ var html = '';
+ var i;
+ for(i = 0; i < 10; i++){
+  if(i < filled){
+   html += '<span style="color:#cfd6e4">⛨</span>';
+  } else {
+   html += '<span style="color:#3a3d45;opacity:0.5">⛨</span>';
+  }
+ }
+
+ if(html !== _lastArmorBarHTML){
+  el.innerHTML = html;
+  _lastArmorBarHTML = html;
+ }
+}
+
+// ===== updateArmor / initArmor (entry points for the integrator) =====
+// initArmor: no-op placeholder; integrator may call this at startup.
+function initArmor(){
+ // no-op — armor requires no setup beyond DOM elements already in 00_head.html
+}
+
+// updateArmor(dt): called each frame by the integrator to tick the armor bar.
+function updateArmor(dt){
+ // invalidate cache on each tick so armorPoints re-evaluates after 0.5s
+ armorBarTick();
+}
+
+// ---------- 46_chests.js ----------
+// MODULE 46: Chests — block definition, storage, open/close UI, loot-on-break (OWNER: Casket)
+// Concat order: ...45,47,46 (wait — actually: ...45,47_inventory,46_chests,48,49,50)
+// Top-level: declarations + data + atlas painting + storage load + ONE keydown listener.
+
+// ---- block id constant ----
+var CHEST = 32;
+BLOCKS[CHEST] = {n:'Chest', t:[37,37,36]};
+PCOL[CHEST] = 0xa8834f;
+
+// ---- paint chest atlas tiles (pattern from 52_end.js) ----
+(function(){
+ // tile 36: chest side — wood-plank base + dark frame border + horizontal lid seam + dark square latch
+ var p = tileXY(36);
+ // plank base: same warm brown as planks
+ ag.fillStyle = '#a8824e'; ag.fillRect(p[0], p[1], TS, TS);
+ // horizontal plank lines
+ ag.fillStyle = '#8d6b3d';
+ for (var y = 7; y < TS; y += 8) ag.fillRect(p[0], p[1]+y, TS, 2);
+ // dark frame border (4px thick all around)
+ ag.fillStyle = '#5c4222';
+ ag.fillRect(p[0],      p[1],      TS, 4);  // top
+ ag.fillRect(p[0],      p[1]+TS-4, TS, 4);  // bottom
+ ag.fillRect(p[0],      p[1],      4, TS);  // left
+ ag.fillRect(p[0]+TS-4, p[1],      4, TS);  // right
+ // horizontal lid seam at y=14 (roughly 44% down) — 2px dark line
+ ag.fillStyle = '#3d2a12';
+ ag.fillRect(p[0]+4, p[1]+14, TS-8, 2);
+ // darker square latch at center (5x7 px, centered)
+ var lx = p[0] + Math.floor(TS/2) - 2;
+ var ly = p[1] + 11;
+ ag.fillStyle = '#2e1e08'; ag.fillRect(lx, ly, 6, 8);
+ ag.fillStyle = '#7a5c2e'; ag.fillRect(lx+1, ly+1, 4, 6);
+ ag.fillStyle = '#3d2a12'; ag.fillRect(lx+2, ly+3, 2, 2);
+ if (typeof atlas !== 'undefined') atlas.needsUpdate = true;
+})();
+
+(function(){
+ // tile 37: chest top — plank top with frame border
+ var p = tileXY(37);
+ ag.fillStyle = '#a8824e'; ag.fillRect(p[0], p[1], TS, TS);
+ ag.fillStyle = '#8d6b3d';
+ for (var y = 7; y < TS; y += 8) ag.fillRect(p[0], p[1]+y, TS, 2);
+ // cross plank seam for top
+ ag.fillStyle = '#96733f';
+ ag.fillRect(p[0] + Math.floor(TS/2)-1, p[1]+4, 2, TS-8);
+ // dark frame border
+ ag.fillStyle = '#5c4222';
+ ag.fillRect(p[0],      p[1],      TS, 4);
+ ag.fillRect(p[0],      p[1]+TS-4, TS, 4);
+ ag.fillRect(p[0],      p[1],      4, TS);
+ ag.fillRect(p[0]+TS-4, p[1],      4, TS);
+ if (typeof atlas !== 'undefined') atlas.needsUpdate = true;
+})();
+
+// ---- chest storage ----
+var CHEST_KEY = 'voxelcraft_chests_v1';
+var chestStore = {};   // { "x,y,z": { id: count, ... } }
+var chestSaveT = null;
+var chestOpenKey = null;  // currently-open chest "x,y,z" string
+
+function chestPersist() {
+ if (chestSaveT) clearTimeout(chestSaveT);
+ chestSaveT = setTimeout(function() {
+  chestSaveT = null;
+  if (typeof mpIsGuest === 'function' && mpIsGuest()) return;
+  try { localStorage.setItem(CHEST_KEY, JSON.stringify(chestStore)); } catch(e) {}
+ }, 500);
+}
+
+(function chestLoad() {
+ try {
+  var raw = localStorage.getItem(CHEST_KEY);
+  if (!raw) return;
+  var data = JSON.parse(raw);
+  if (!data || typeof data !== 'object') return;
+  var s = {};
+  for (var k in data) {
+   if (!data.hasOwnProperty(k)) continue;
+   var chest = data[k];
+   if (!chest || typeof chest !== 'object') continue;
+   var contents = {};
+   for (var id in chest) {
+    if (!chest.hasOwnProperty(id)) continue;
+    var n = chest[id];
+    if (typeof n === 'number' && n > 0) contents[id] = Math.floor(n);
+   }
+   s[k] = contents;
+  }
+  chestStore = s;
+ } catch(e) { chestStore = {}; }
+})();
+
+// ---- helper: make an icon cell (mirrors 47_inventory.js pattern) ----
+function chestMakeCell(id, count, clickFn) {
+ var cell = document.createElement('div');
+ cell.className = 'icell';
+ cell.title = (typeof slotName === 'function') ? slotName(id) : '';
+ var cc = document.createElement('canvas');
+ cc.width = cc.height = (typeof TS !== 'undefined') ? TS : 32;
+ var g2 = cc.getContext('2d'); g2.imageSmoothingEnabled = false;
+ if (typeof drawSlotIcon === 'function') drawSlotIcon(g2, id);
+ cell.appendChild(cc);
+ if (count > 1) {
+  var cntEl = document.createElement('div'); cntEl.className = 'icnt';
+  cntEl.textContent = count; cell.appendChild(cntEl);
+ }
+ cell.addEventListener('click', clickFn);
+ return cell;
+}
+
+// ---- render chest overlay contents ----
+function renderChest() {
+ var chestGrid = document.getElementById('chestGrid');
+ var playerGrid = document.getElementById('chestPlayerGrid');
+ if (!chestGrid || !playerGrid) return;
+ chestGrid.innerHTML = '';
+ playerGrid.innerHTML = '';
+
+ var key = chestOpenKey;
+ var contents = (key && chestStore[key]) ? chestStore[key] : {};
+
+ // chest side — filled slots then empty padded to 27
+ var ids = [];
+ for (var id in contents) {
+  if (contents.hasOwnProperty(id) && contents[id] > 0) ids.push(Number(id));
+ }
+ for (var i = 0; i < ids.length; i++) {
+  (function(itemId) {
+   var cnt = contents[itemId];
+   if (!cnt || cnt <= 0) return;
+   chestGrid.appendChild(chestMakeCell(itemId, cnt, function() {
+    // move 1 from chest -> player inventory
+    if (!chestOpenKey) return;
+    var c = chestStore[chestOpenKey];
+    if (!c || !c[itemId] || c[itemId] <= 0) return;
+    c[itemId]--;
+    if (c[itemId] <= 0) delete c[itemId];
+    if (typeof invAdd === 'function') invAdd(itemId, 1);
+    chestPersist();
+    renderChest();
+   }));
+  })(ids[i]);
+ }
+ // pad empty slots to 27
+ var filled = ids.length;
+ for (var j = filled; j < 27; j++) {
+  var empty = document.createElement('div');
+  empty.className = 'icell';
+  empty.style.opacity = '0.3';
+  empty.style.cursor = 'default';
+  chestGrid.appendChild(empty);
+ }
+
+ // player side — items in player inventory
+ if (typeof invAll === 'function') {
+  var inv = invAll();
+  var pids = [];
+  for (var pid in inv) {
+   if (inv.hasOwnProperty(pid) && inv[pid] > 0) pids.push(Number(pid));
+  }
+  for (var pi = 0; pi < pids.length; pi++) {
+   (function(pItemId) {
+    var pcnt = inv[pItemId];
+    if (!pcnt || pcnt <= 0) return;
+    playerGrid.appendChild(chestMakeCell(pItemId, pcnt, function() {
+     // move 1 from player -> chest
+     if (!chestOpenKey) return;
+     if (typeof invTake !== 'function' || !invTake(pItemId, 1)) return;
+     if (!chestStore[chestOpenKey]) chestStore[chestOpenKey] = {};
+     var c2 = chestStore[chestOpenKey];
+     c2[pItemId] = (c2[pItemId] || 0) + 1;
+     chestPersist();
+     renderChest();
+    }));
+   })(pids[pi]);
+  }
+ }
+}
+
+// ---- close chest overlay ----
+function closeChestOv() {
+ var ov = document.getElementById('chestOv');
+ if (ov) ov.style.display = 'none';
+ chestOpenKey = null;
+ // re-acquire pointer lock if we were in play-ish state
+ if (typeof tryLock === 'function') tryLock();
+}
+
+// ---- keydown listener: close on E or Escape when overlay is visible ----
+document.addEventListener('keydown', function(e) {
+ var ov = document.getElementById('chestOv');
+ if (!ov || ov.style.display === 'none') return;
+ if (e.code === 'KeyE' || e.code === 'Escape') {
+  closeChestOv();
+  // state is 'inv' at this point; core's own keydown will also run and call
+  // closeInventory() -> hides #inv (harmless, it's already hidden) + sets state='play'
+  // So we do NOT stop propagation — let core finish state reset.
+ }
+}, false);
+
+// ---- openChest(x,y,z) — called by core right-click handler ----
+function openChest(x, y, z) {
+ var key = x + ',' + y + ',' + z;
+ if (!chestStore[key]) chestStore[key] = {};
+ chestOpenKey = key;
+
+ // set core state to 'inv' so E/ESC (via core closeInventory) resets state properly
+ state = 'inv';
+
+ // show the chest overlay
+ var ov = document.getElementById('chestOv');
+ if (ov) ov.style.display = 'flex';
+
+ // hide the inventory overlay in case it was showing (it won't be, but defensive)
+ var invOv = document.getElementById('inv');
+ if (invOv) invOv.style.display = 'none';
+
+ // release pointer lock gracefully
+ if (typeof suppressNextUnlockPause === 'function') suppressNextUnlockPause();
+ try { document.exitPointerLock(); } catch(e2) {}
+
+ renderChest();
+}
+
+// ---- chestOnBroken(x,y,z) — called by core doBreak when a chest is mined ----
+function chestOnBroken(x, y, z) {
+ var key = x + ',' + y + ',' + z;
+ var contents = chestStore[key];
+ if (contents) {
+  for (var id in contents) {
+   if (!contents.hasOwnProperty(id)) continue;
+   var n = contents[id];
+   if (typeof n === 'number' && n > 0) {
+    if (typeof invAdd === 'function') invAdd(Number(id), n);
+   }
+  }
+  delete chestStore[key];
+  chestPersist();
+  if (typeof toast === 'function') toast('Chest contents recovered');
+ }
+ // if this chest was open, close the overlay
+ if (chestOpenKey === key) {
+  closeChestOv();
+  state = 'play';
+ }
+}
 
 // ---------- 52_end.js ----------
 
@@ -4053,6 +5201,8 @@ function frame(now){
    safeHook('mobs',function(){if(typeof updateMobs==='function')updateMobs(dt);});
    safeHook('surv',function(){if(typeof survivalTick==='function')survivalTick(dt);});
    safeHook('dragon',function(){if(typeof updateDragon==='function')updateDragon(dt);});
+   safeHook('drops',function(){if(typeof updateDrops==='function')updateDrops(dt);});
+   safeHook('armor',function(){if(typeof updateArmor==='function')updateArmor(dt);});
  }
  if(typeof updateTorchLights==='function')updateTorchLights(dt);
  safeHook('mp',function(){if(typeof updateMP==='function')updateMP(dt);});
