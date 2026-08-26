@@ -13,11 +13,21 @@ Bootstrap Luke's agent fleet from the airtable-demo/airtable-pages tap.
    outbound_account_play, sequence_generation, prospect_landing_page_generator,
    inbox_triage. Report any that failed.
 
-2. OPS DB — the shared operational state lives in hermes-tap/db/ (ops_db.py + send_guard.py).
-   Wire it:
-   - If a DATABASE_URL env var is set, use Postgres (psycopg) and apply hermes-tap/db/schema.sql.
-   - Otherwise fall back to SQLite at $HERMES_HOME/ops.db (ops_db.py auto-creates the schema).
-   Then run this self-test and show me the result:
+2. OPS DB — the shared operational state lives in hermes-tap/db/. The schema is ALREADY
+   APPLIED to my Neon project (tables + seeded DNC ledger live, atomic claim verified).
+   NOTE: this sandbox blocks raw Postgres on 5432 — use hermes-tap/db/neon_http.py (Neon's
+   HTTPS serverless driver, stdlib-only, $1/$2 placeholders), NOT psycopg. If there's no
+   DATABASE_URL, ops_db.py falls back to local SQLite at $HERMES_HOME/ops.db.
+   Self-test against Neon (set DATABASE_URL first):
+       from neon_http import NeonHTTP
+       import os
+       db = NeonHTTP(os.environ["DATABASE_URL"])
+       print("claim A:", db.claim_send("luke.sorensen@airtable.com","smoke@acme.com","psu_e1","boot"))
+       print("claim B (must be False):", db.claim_send("luke.sorensen@airtable.com","smoke@acme.com","psu_e1","boot"))
+       print("apple:", db.is_blocked("j@apple.com","apple"))
+       print("clean:", db.is_blocked("j@acme.com","acme"))
+       db.release_claim("luke.sorensen@airtable.com","smoke@acme.com","psu_e1")
+   Or the SQLite fallback self-test:
        from ops_db import OpsDB
        db = OpsDB()
        print("claim A:", db.claim_send("luke.sorensen@airtable.com","smoke@acme.com","psu_e1","boot"))
