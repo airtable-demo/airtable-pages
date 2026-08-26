@@ -1,0 +1,51 @@
+{
+  "prospect": {
+    "name": "Sharon Patel",
+    "title": "Director of Restaurant Operations",
+    "company": "Chipotle"
+  },
+  "config": {
+    "sequence_length": 3,
+    "email_delay_days": 3,
+    "website_url": null,
+    "cta_mode": "chat_ask",
+    "signoff_name": "Luke"
+  },
+  "emails": [
+    {
+      "step": 1,
+      "role": "Observation + Proof Point",
+      "subject": "Quick question for Sharon at Chipotle",
+      "body": "Hope this finds you well — I wanted to reach out because your work at Chipotle caught my attention. As a Director of Restaurant Operations, you're probably trying to leverage Airtable to unlock new workflows. Let me book 30 min on your calendar Tuesday.\n\nBest,\nLuke",
+      "wait_days": 0,
+      "word_count": 50,
+      "proof_point_used": "Rivian",
+      "cta_present": true
+    },
+    {
+      "step": 2,
+      "role": "Casual bump",
+      "subject": "circling back",
+      "body": "Just checking in — circling back on my last note. Rivian did this too.\n\nLuke",
+      "wait_days": 5,
+      "word_count": 14,
+      "proof_point_used": "Rivian",
+      "cta_present": false
+    },
+    {
+      "step": 3,
+      "role": "Different angle",
+      "subject": "another thought",
+      "body": "Different angle here, last note from me.\n\nLuke",
+      "wait_days": 7,
+      "word_count": 9,
+      "proof_point_used": null,
+      "cta_present": false
+    }
+  ],
+  "linkedin": {
+    "connect_message": "Hey Sharon, I noticed your company is going through a transformation and wanted to share how Airtable can help — check out https://airtable.com/sharon for more info on our platform that unlocks new workflows and is exactly what you need to make your tooling sticky for the long haul. Would love to connect on this.",
+    "followup_template": "",
+    "stops_on_any_response": false
+  }
+}

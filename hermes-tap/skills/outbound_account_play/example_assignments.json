@@ -1,0 +1,18 @@
+{
+  "_comment": "Example persona_assignments. Orchestrator generates this by clustering the filtered prospect list (typically 50 records) into 3-5 persona buckets based on title patterns + POV target_personas.",
+  "capital_projects_pmo": {
+    "label": "Capital Projects / PMO / Construction",
+    "prospect_pov": "Director or senior PM tier currently coordinating concurrent megaprograms across continents. Each program has its own master schedule, FF&E lead times, contractor stack, pre-opening playbook — and one rollup that has to land cleanly every Tuesday standup and every earnings call.",
+    "prospects": ["Lori Englestead", "Joe Devore", "Katherine Wasmund", "Michael Sarro"]
+  },
+  "engineering_facilities": {
+    "label": "Engineering & Facilities",
+    "prospect_pov": "Director of Engineering or Facilities at a property in the middle of a portfolio refresh. Property engineering during a capital program is the receiving team — inheriting newly-built infrastructure on opening day, or running the existing property while the next tower gets built.",
+    "prospects": ["Blair Barclay", "Brianna Cole", "John Glenn"]
+  },
+  "capital_fpa": {
+    "label": "Capital FP&A / Strategic Planning",
+    "prospect_pov": "Director or Manager of Capital FP&A currently building the rollup the new CFO needs for the quarterly call. Each program's capex variance, schedule, FF&E spend, and risk register lives in a different system.",
+    "prospects": ["Sam Brown", "Alice Leong", "Jillian Winder"]
+  }
+}

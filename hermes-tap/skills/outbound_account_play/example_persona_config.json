@@ -1,0 +1,42 @@
+{
+  "_comment": "Example persona_config for an account focused on multi-program/capital-program coordination (e.g. Wynn Resorts, large hospitality / real-estate / construction). Orchestrator generates this per-account from the POV's target_personas list.",
+  "skip_patterns": [
+    "\\bf&b\\b", "\\bbeverage\\b", "\\bbartend",
+    "\\bslot", "\\bgaming\\b", "\\btable game", "\\bdealer\\b",
+    "\\bsecurity\\b", "\\bhousekeep", "\\blaundry\\b",
+    "\\bretail\\b", "\\bmarketing\\b",
+    "\\bhuman resource", "\\bhr\\b", "\\bpeople & culture",
+    "\\btalent acquisition", "\\brecruiting\\b",
+    "\\binformation technology\\b", "\\bit manager\\b",
+    "\\bsales\\b", "\\bcustomer service",
+    "\\bevs\\b", "\\bvalet\\b", "\\bchef\\b", "\\bcook\\b",
+    "\\bfront desk\\b", "\\bconcierge\\b",
+    "\\bcustomer development\\b", "\\bplayer development\\b",
+    "\\blearning.*development\\b", "\\btalent.*development\\b",
+    "\\bpoker\\b", "\\bcasino\\b", "\\bsurveillance\\b",
+    "\\bbanquet\\b", "\\bcatering\\b"
+  ],
+  "high_patterns": [
+    "\\bcapital project", "\\bcapital program", "\\bconstruction\\b",
+    "\\bproperty development\\b", "\\bhotel development\\b", "\\bresort development\\b",
+    "\\bpre.?open", "\\bopening.*team\\b", "\\bff&e\\b",
+    "\\bprogram management\\b", "\\bpmo\\b", "\\bvmo\\b",
+    "\\bproject director\\b", "\\bproject manager\\b",
+    "\\bdesign & construction\\b", "\\bdesign and construction\\b",
+    "\\bfacilities\\b", "\\bchief engineer\\b", "\\bengineering director\\b",
+    "\\bdirector.*engineering\\b", "\\bplant manager\\b",
+    "\\barchitect", "\\binterior design\\b",
+    "\\bprocurement\\b", "\\bsupply chain\\b",
+    "\\bcapital.*fp&a\\b", "\\bcapex\\b"
+  ],
+  "medium_patterns": [
+    "\\bcontroller\\b", "\\btreasury\\b", "\\bfp&a\\b",
+    "\\bfinancial.*planning\\b", "\\bfinancial.*analysis\\b",
+    "\\bstrategic.*planning\\b", "\\bgeneral manager\\b",
+    "\\boperations director\\b", "\\boperations manager\\b"
+  ],
+  "low_patterns": [
+    "\\bdirector.*operations\\b", "\\bdirector.*finance\\b",
+    "\\baccounting\\b", "\\bplanning\\b"
+  ]
+}

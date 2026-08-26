@@ -1,0 +1,92 @@
+{
+  "prospect": {
+    "name": "Sharon Patel",
+    "title": "Director of Restaurant Operations",
+    "company": "Chipotle"
+  },
+  "config": {
+    "sequence_length": 7,
+    "email_delay_days": null,
+    "website_url": "https://example.com/sharonp-chipotle",
+    "cta_mode": "website",
+    "signoff_name": "Luke"
+  },
+  "emails": [
+    {
+      "step": 1,
+      "role": "Observation → Problem → Proof → Ask",
+      "subject": "new location ops",
+      "body": "Hi Sharon,\n\nThe 350-location ramp puts every opening team on the same clock.\n\nRivian faced a similar coordination layer across product and operations teams and built one connected view for the work moving between groups.\n\nIf this is relevant, open for a quick chat next week?\n\nLuke",
+      "wait_days": 0,
+      "word_count": 47,
+      "proof_point_used": "Rivian",
+      "cta_present": false
+    },
+    {
+      "step": 2,
+      "role": "Question → Value → Ask",
+      "subject": "rollout tracking",
+      "body": "Hi Sharon,\n\nHow are regional teams keeping each opening plan current once dates start moving?\n\nThe pattern peers flag is keeping owners, blockers, and next dates clear once field work moves faster than the weekly status readout.\n\nPage link below if useful.\n\nhttps://example.com/sharonp-chipotle\n\nLuke",
+      "wait_days": 3,
+      "word_count": 44,
+      "proof_point_used": null,
+      "cta_present": true
+    },
+    {
+      "step": 3,
+      "role": "Trigger → Insight → Ask",
+      "subject": "supplier coordination",
+      "body": "Hi Sharon,\n\nSupplier readiness becomes its own operating rhythm at this volume.\n\nSweetgreen handled a similar cross-functional handoff by giving procurement, ops, and finance one queue for what was blocked, owned, and ready.\n\nWorth 20 minutes to compare notes?\n\nhttps://example.com/sharonp-chipotle\n\nLuke",
+      "wait_days": 8,
+      "word_count": 41,
+      "proof_point_used": "Sweetgreen",
+      "cta_present": true
+    },
+    {
+      "step": 4,
+      "role": "Insight → Resource Share",
+      "subject": "field team scheduling",
+      "body": "Hi Sharon,\n\nField scheduling gets harder once launch volume spikes.\n\nThe useful shift is a shared view of opening dates, readiness blockers, and team capacity, so the field calendar reflects the actual launch plan.\n\nLeaving the page here as a reference.\n\nhttps://example.com/sharonp-chipotle\n\nLuke",
+      "wait_days": 15,
+      "word_count": 43,
+      "proof_point_used": null,
+      "cta_present": true
+    },
+    {
+      "step": 5,
+      "role": "Question → Value → Ask",
+      "subject": "opening readiness",
+      "body": "Hi Sharon,\n\nIs opening readiness tracked by location, by function, or both today?\n\nBlackRock had a different business context, but the same operating problem: teams needed one trusted view of work status instead of everyone maintaining their own version.\n\nOpen for a quick chat next week?\n\nhttps://example.com/sharonp-chipotle\n\nLuke",
+      "wait_days": 22,
+      "word_count": 48,
+      "proof_point_used": "BlackRock",
+      "cta_present": true
+    },
+    {
+      "step": 6,
+      "role": "Story → Bridge → Ask",
+      "subject": "launch coordination",
+      "body": "Hi Sharon,\n\nDraftKings had launch work moving across brand, ops, and product teams.\n\nEvery group needed a different lens on the same timeline, without losing the shared picture of what was blocked and what was next.\n\nWorth 20 minutes?\n\nhttps://example.com/sharonp-chipotle\n\nLuke",
+      "wait_days": 29,
+      "word_count": 41,
+      "proof_point_used": "DraftKings",
+      "cta_present": true
+    },
+    {
+      "step": 7,
+      "role": "Breakup",
+      "subject": "last thought",
+      "body": "Hi Sharon,\n\nLast thought from me.\n\nIf new-location readiness is already handled cleanly, no need to reply. If the bottleneck is more around handoffs, owners, or field visibility, the page is still here as a reference.\n\nhttps://example.com/sharonp-chipotle\n\nLuke",
+      "wait_days": 36,
+      "word_count": 38,
+      "proof_point_used": null,
+      "cta_present": true
+    }
+  ],
+  "linkedin": {
+    "connect_message": "Hey Sharon, came across your work at Chipotle. Would love to connect.",
+    "followup_template": "Thanks for connecting Sharon. I noticed the new-location ramp puts a lot of opening-readiness work on the same clock. Page is here if useful: https://example.com/sharonp-chipotle?src=li",
+    "voice_note_script": "[casual] Hey Sharon, quick follow up. [confident] I noticed the new-location ramp puts opening readiness on a tighter clock across teams. [friendly] Worth comparing notes for 20 minutes?",
+    "stops_on_any_response": true
+  }
+}

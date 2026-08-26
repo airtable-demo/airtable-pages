@@ -1,0 +1,33 @@
+[
+  {
+    "id": "msg-001",
+    "sender": "Jane Doe <jane@chipotle.com>",
+    "category": "prospect",
+    "labels_applied": ["1 Interested", "2 ATL", "3 Handraiser"],
+    "interest": "Interested",
+    "seniority": "ATL",
+    "source": "Handraiser"
+  },
+  {
+    "id": "msg-002",
+    "sender": "noreply@gong.io",
+    "category": "noise",
+    "archive_reason_code": "gong_recording",
+    "labels_applied": ["[ABDR Archived]"]
+  },
+  {
+    "id": "msg-003",
+    "sender": "luke.sorensen@airtable.com",
+    "category": "internal",
+    "labels_applied": []
+  },
+  {
+    "id": "msg-004",
+    "sender": "bob@cold-prospect.com",
+    "category": "prospect",
+    "labels_applied": ["1 Maybe", "2 ATL Possible"],
+    "interest": "Maybe",
+    "seniority": "ATL Possible",
+    "source": null
+  }
+]

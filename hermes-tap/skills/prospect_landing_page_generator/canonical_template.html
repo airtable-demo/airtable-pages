@@ -1,0 +1,454 @@
+<!-- THEME: {{theme_comment}} -->
+<!--
+  CANONICAL TEMPLATE — populated by build_landing_page.py via mustache-style {{KEY}}
+  substitution. Do NOT generate this HTML by hand — the build script handles all
+  base64 inlining, palette computation, sub-component rendering, and template fill-in.
+
+  See build_landing_page.py and SKILL.md for the input JSON schema.
+-->
+<!DOCTYPE html>
+<html lang="en" data-theme="{{theme}}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>{{title}}</title>
+  <link rel="icon" type="image/png" href="{{favicon}}" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+  :root {
+    --bg:            {{css_bg}};
+    --bg-card:       {{css_bg_card}};
+    --bg-cta-alt:    {{css_bg_cta_alt}};
+    --border:        {{css_border}};
+    --nav-border:    {{css_nav_border}};
+    --section-bdr:   {{css_section_bdr}};
+    --text-1:        {{css_text_1}};
+    --text-2:        {{css_text_2}};
+    --text-3:        {{css_text_3}};
+    --accent:        {{css_accent}};
+    --accent-hover:  {{css_accent_hover}};
+    --accent-glow:   {{css_accent_glow}};
+    --accent-muted:  {{css_accent_muted}};
+    --accent-ring:   {{css_accent_ring}};
+    --card-shadow:   {{css_card_shadow}};
+    --card-shadow-h: {{css_card_shadow_h}};
+    --photo-border:  {{css_photo_border}};
+    --h1-grad:       {{css_h1_grad}};
+    --hero-glow:     {{css_hero_glow}};
+    --noise-opacity: {{css_noise_opacity}};
+    --chip-bdr:      {{css_chip_bdr}};
+    --chip-text:     {{css_chip_text}};
+    --page-bg-image: {{css_page_bg_image}};
+    --story-tag:     {{css_story_tag}};
+    --proof-bg:      {{css_proof_bg}};
+    --proof-bdr:     {{css_proof_bdr}};
+    --btn-text:      {{css_btn_text}};
+  }
+
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:'Inter',system-ui,sans-serif;
+    background-color:var(--bg);
+    background-image:var(--page-bg-image,none);
+    background-attachment:fixed;
+    color:var(--text-1);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+  }
+  body::before{
+    content:'';pointer-events:none;
+    position:fixed;inset:0;z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity:var(--noise-opacity);
+    mix-blend-mode:{{css_noise_blend}};
+  }
+  nav,section,.cta-sec,footer{position:relative;z-index:1}
+
+  /* Typing animation */
+  .hero h1 .typed-caret {
+    display:inline-block; width:.06em; background:var(--accent);
+    margin-left:.05em; animation:caret-blink 1s steps(2) infinite;
+    vertical-align:baseline; height:0.95em; border-radius:1px;
+    -webkit-text-fill-color:transparent; color:transparent;
+  }
+  @keyframes caret-blink { 50% { background:transparent } }
+  .hero h1.typing { min-height:1.3em }
+
+  /* Hero photos */
+  .hero-photos {
+    display:flex; align-items:center; justify-content:center;
+    flex-wrap:nowrap; gap:12px; margin-bottom:28px;
+  }
+  .hero-photo {
+    display:block;
+    width:60px; height:60px; min-width:60px; min-height:60px;
+    border-radius:50%; overflow:hidden; object-fit:cover;
+    border:2.5px solid var(--photo-border);
+    flex-shrink:0; background:var(--border);
+  }
+  .hero-photo-sep {
+    display:block; font-size:18px; font-weight:300;
+    color:var(--text-1); opacity:0.35;
+    user-select:none; flex-shrink:0;
+  }
+
+  /* Nav */
+  nav{
+    position:sticky;top:0;z-index:100;
+    padding:14px 48px;min-height:64px;
+    display:flex;align-items:center;justify-content:space-between;
+    border-bottom:1px solid var(--nav-border);
+    background:{{css_nav_bg}};
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    gap:16px;
+  }
+  .nav-logos{display:flex;align-items:center;gap:12px}
+  .prospect-logo{
+    height:38px;width:auto;max-width:147px;object-fit:contain;
+    background:rgba(127,127,127,0.10);border-radius:10px;padding:5px 8px;overflow:hidden;
+  }
+  .logo-sep{
+    font-size:14px;font-weight:300;
+    color:var(--text-1);opacity:0.45;
+    line-height:1;flex-shrink:0;user-select:none;
+  }
+  .airtable-logo{height:38px;width:auto;flex-shrink:0;display:block}
+  .nav-tag{position:absolute;left:50%;transform:translateX(-50%);display:flex;align-items:center}
+  .nav-prepared{
+    font-size:10.5px;color:var(--text-2);
+    letter-spacing:.07em;text-transform:uppercase;white-space:nowrap;
+  }
+  .nav-cta{
+    display:inline-block;padding:9px 20px;
+    background:var(--accent);color:var(--btn-text);
+    text-decoration:none;border-radius:7px;
+    font-weight:600;font-size:13px;white-space:nowrap;
+    box-shadow:0 2px 12px var(--accent-glow);
+    transition:background .18s,transform .13s,box-shadow .18s;
+  }
+  .nav-cta:hover{opacity:0.90;transform:translateY(-1px);box-shadow:0 4px 18px var(--accent-glow)}
+
+  /* Hero */
+  .hero{
+    max-width:820px;margin:0 auto;padding:104px 32px 88px;text-align:center;
+    position:relative;
+  }
+  .hero::before{
+    content:'';pointer-events:none;
+    position:absolute;inset:0;
+    background:var(--hero-glow);
+    z-index:0;
+    animation: glow-shimmer 6s ease-in-out infinite;
+    transform-origin: 50% 0%;
+  }
+  @keyframes glow-shimmer {
+    0%, 100% { opacity: 0.55; transform: scale(1); }
+    50%      { opacity: 1.0;  transform: scale(1.09); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero::before { animation: none; opacity: 1; }
+  }
+  .hero>*{position:relative;z-index:1}
+  .chip{
+    display:inline-block;padding:5px 16px;border-radius:100px;
+    border:1px solid var(--chip-bdr);
+    font-size:12px;color:var(--chip-text);
+    margin-bottom:32px;letter-spacing:.04em;
+    background:{{css_chip_bg}};
+  }
+  h1{
+    font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+    font-size:clamp(2rem,5.2vw,3.4rem);
+    font-weight:800;line-height:1.18;letter-spacing:-.03em;
+    margin-bottom:22px;padding-bottom:0.06em;
+    background:var(--h1-grad);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  }
+  .hero-sub{font-size:1.1rem;color:var(--text-2);max-width:680px;margin:0 auto 42px;line-height:1.68}
+  .logo-text-fallback{font-size:14px;font-weight:700;color:var(--text-1);letter-spacing:.02em;white-space:nowrap}
+  .btn{
+    display:inline-block;padding:15px 38px;
+    background:var(--accent);color:var(--btn-text);text-decoration:none;
+    border-radius:8px;font-weight:600;font-size:.97rem;
+    box-shadow:0 4px 20px var(--accent-glow);
+    transition:background .18s,transform .13s,box-shadow .18s;
+  }
+  .btn:hover{opacity:0.92;transform:translateY(-2px);box-shadow:0 6px 28px var(--accent-glow)}
+
+  /* Section shell */
+  .section{padding:80px 0 88px;border-top:1px solid var(--section-bdr)}
+  .inner{max-width:1040px;margin:0 auto;padding:0 32px}
+  .section-label{
+    font-size:11px;text-transform:uppercase;letter-spacing:.11em;
+    color:var(--text-3);margin-bottom:10px;
+  }
+  h2{
+    font-family:'Plus Jakarta Sans',Inter,system-ui,sans-serif;
+    font-size:clamp(1.45rem,2.9vw,2rem);
+    font-weight:700;letter-spacing:-.018em;
+    margin-bottom:44px;color:var(--text-1);max-width:700px;line-height:1.25;
+  }
+
+  /* Value cards */
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:18px;margin-bottom:56px}
+  .card{
+    padding:26px 22px;border-radius:12px;
+    background:{{css_card_bg}};
+    border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    transition:box-shadow .2s,border-color .2s,transform .2s;
+  }
+  .card:hover{box-shadow:var(--card-shadow-h);border-color:var(--accent-ring);transform:translateY(-1px)}
+  .card-icon{color:var(--accent);margin-bottom:14px;line-height:1}
+  .card-title{font-size:.92rem;font-weight:600;margin-bottom:7px;line-height:1.4}
+  .card-body{font-size:.845rem;color:var(--text-2);line-height:1.6}
+
+  /* Diagram */
+  .diagram-label{font-size:11.5px;color:var(--text-3);letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+  .diagram-wrap{overflow-x:auto;padding:4px 0 8px}
+
+  /* Videos — native HTML5 */
+  .videos{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:28px}
+  .video-wrap{display:flex;flex-direction:column;gap:10px}
+  .video-label{font-size:.875rem;font-weight:600;color:var(--text-2)}
+  .video-card-native{
+    display:block;width:100%;aspect-ratio:16/9;
+    border-radius:10px;overflow:hidden;
+    background:#000;border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease;
+  }
+  .video-card-native:hover{transform:translateY(-1px);box-shadow:0 12px 32px var(--accent-glow),0 0 0 1px var(--accent-ring);border-color:var(--accent-ring)}
+
+  /* Stories */
+  .stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(248px,1fr));gap:18px}
+  .story-card{
+    padding:26px 24px;border-radius:12px;
+    background:{{css_card_bg}};border:1px solid var(--border);
+    box-shadow:var(--card-shadow);
+    display:flex;flex-direction:column;gap:9px;
+    transition:box-shadow .2s,border-color .2s,transform .2s;
+  }
+  .story-card:hover{box-shadow:var(--card-shadow-h);border-color:var(--accent-ring);transform:translateY(-1px)}
+  .story-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--story-tag);font-weight:600}
+  .story-title{font-size:.95rem;font-weight:600;line-height:1.4}
+  .story-csr{display:flex;flex-direction:column;gap:7px;margin-bottom:14px;flex:1}
+  .story-csr-line{font-size:.835rem;color:var(--text-2);line-height:1.5}
+  .story-csr-label{font-size:9.5px;text-transform:uppercase;letter-spacing:.09em;font-weight:700;color:var(--story-tag);margin-right:6px;display:inline}
+  .story-btn{
+    display:inline-block;padding:8px 20px;border-radius:7px;
+    background:none;border:1.5px solid var(--accent);color:var(--accent);
+    cursor:pointer;font-size:.845rem;font-weight:600;font-family:inherit;
+    transition:background .18s,color .18s;
+    text-decoration:none;
+  }
+  .story-btn:hover{background:var(--accent);color:var(--btn-text)}
+
+  /* Story modal */
+  .story-modal-bg{
+    display:none;position:fixed;inset:0;z-index:500;
+    background:{{css_modal_bg}};
+    backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+    align-items:center;justify-content:center;padding:20px;
+  }
+  .story-modal-bg.open{display:flex}
+  .story-modal-panel{
+    position:relative;max-width:840px;width:80vw;max-height:88vh;overflow-y:auto;
+    background:{{css_modal_panel_bg}};border-radius:16px;
+    border:1px solid var(--border);padding:40px 48px;
+    box-shadow:0 32px 80px {{css_modal_shadow}};
+  }
+  .story-modal-close{
+    position:absolute;top:16px;right:20px;background:none;border:none;
+    cursor:pointer;font-size:24px;color:var(--text-2);padding:4px;line-height:1;
+  }
+  .story-modal-close:hover{color:var(--text-1)}
+  .story-modal-tag{font-size:10.5px;text-transform:uppercase;letter-spacing:.1em;color:var(--story-tag);font-weight:600;margin-bottom:10px}
+  .story-modal-headline{font-size:1.35rem;font-weight:700;margin-bottom:20px;color:var(--text-1);line-height:1.3}
+  .story-modal-section{margin-bottom:20px}
+  .story-modal-section-label{font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--text-3);font-weight:700;margin-bottom:6px}
+  .story-modal-body{font-size:.94rem;color:var(--text-2);line-height:1.72;margin-bottom:28px}
+  .story-modal-cta{margin-top:28px}
+
+  /* Final CTA */
+  .cta-sec{
+    padding:88px 32px 100px;text-align:center;
+    background:var(--bg-cta-alt);border-top:1px solid var(--section-bdr);
+  }
+  .cta-sec h2{max-width:none;margin-bottom:14px}
+  .cta-sec p{color:var(--text-2);margin-bottom:36px;font-size:.97rem;max-width:420px;margin-left:auto;margin-right:auto}
+
+  /* Footer */
+  footer{
+    padding:28px 48px;border-top:1px solid var(--section-bdr);
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  }
+  .footer-logos{display:flex;align-items:center;gap:10px}
+  .footer-logos .prospect-logo{height:18px;opacity:.55;filter:grayscale(1);background:transparent;padding:0}
+  .footer-logos .logo-sep{opacity:0.30}
+  .footer-logos .airtable-logo{height:14px;opacity:0.55;filter:grayscale(1)}
+  .footer-note{font-size:11.5px;color:var(--text-3)}
+
+  /* Animations */
+  .fade{opacity:0;transform:translateY(18px);transition:opacity .52s ease,transform .52s ease}
+  .fade.in{opacity:1;transform:none}
+
+  /* Proof quote */
+  .proof-quote{
+    margin-top:44px;padding:28px 32px;border-radius:12px;
+    background:var(--proof-bg);border:1px solid var(--proof-bdr);
+    font-size:.97rem;color:var(--text-1);font-style:italic;max-width:680px;
+  }
+
+  /* Responsive */
+  @media(max-width:640px){
+    nav{padding:12px 18px}
+    .nav-tag{display:none}
+    .hero{padding:68px 20px 60px}
+    .inner{padding:0 20px}
+    .videos{grid-template-columns:1fr}
+    footer{padding:22px 20px}
+    .hero-photo{width:48px;height:48px;min-width:48px;min-height:48px}
+    .hero-photo-sep{font-size:15px}
+    .story-modal-panel{width:95vw;padding:28px 22px}
+  }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="nav-logos">
+      <img class="prospect-logo" src="{{favicon}}" alt="{{account_name}}" loading="eager" referrerpolicy="no-referrer" onerror="this.onerror=null;this.style.display='none';this.nextElementSibling&&(this.nextElementSibling.style.display='inline')"><span class="logo-text-fallback" style="display:none">{{account_name}}</span>
+      <span class="logo-sep">×</span>
+      {{airtable_logo}}
+    </div>
+    <div class="nav-tag">
+      <div class="nav-prepared">{{nav_prepared}}</div>
+    </div>
+    <a class="nav-cta" href="{{calendar_link}}" target="_blank" rel="noopener noreferrer">Book time →</a>
+  </nav>
+
+  <section class="hero">
+    {{hero_photos_block}}
+    <div class="chip">{{chip_text}}</div>
+    <h1 class="typing"><span class="typed-text"></span><span class="typed-caret">&nbsp;</span></h1>
+    <p class="hero-sub">{{hero_subhead}}</p>
+    <a class="btn" href="{{calendar_link}}" target="_blank" rel="noopener noreferrer">See how this works for your team</a>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">What this means for {{account_name}}</div>
+      <h2>{{value_headline}}</h2>
+
+      <div class="cards">
+{{value_cards}}
+      </div>
+
+{{diagram_block}}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">See it in action</div>
+      <h2>What this looks like for teams like yours</h2>
+      <div class="videos">
+{{videos}}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="inner">
+      <div class="section-label">Proven at scale</div>
+      <h2>Companies like yours already use Airtable</h2>
+      <div class="stories">
+{{stories}}
+      </div>
+      {{proof_quote_block}}
+    </div>
+  </section>
+
+  <section class="cta-sec">
+    <h2>Ready to see it for {{account_name}}?</h2>
+    <p>20 minutes. No deck. Just a live look at how your team could use Airtable.</p>
+    <a class="btn" href="{{calendar_link}}" target="_blank" rel="noopener noreferrer">Book 20 minutes</a>
+  </section>
+
+  <footer>
+    <div class="footer-logos">
+      <img class="prospect-logo" src="{{favicon}}" alt="{{account_name}}" loading="eager" referrerpolicy="no-referrer" onerror="this.style.display='none'">
+      <span class="logo-sep">×</span>
+      {{airtable_logo}}
+    </div>
+    <span class="footer-note">Prepared by {{ae_name}} · Airtable</span>
+  </footer>
+
+{{story_modals}}
+
+  <script>
+    const els = document.querySelectorAll('.fade');
+    if ('IntersectionObserver' in window) {
+      const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+          if (e.isIntersecting) {
+            const d = parseInt(e.target.dataset.d || '0');
+            setTimeout(() => e.target.classList.add('in'), d);
+            obs.unobserve(e.target);
+          }
+        });
+      }, { threshold: 0.1 });
+      els.forEach((el, i) => { el.dataset.d = String(i * 60); obs.observe(el); });
+    } else {
+      els.forEach(el => el.classList.add('in'));
+    }
+    function openStoryModal(id) {
+      var m = document.getElementById(id);
+      if (m) { m.classList.add('open'); document.body.style.overflow = 'hidden'; }
+    }
+    function closeStoryModal(id) {
+      var m = document.getElementById(id);
+      if (m) { m.classList.remove('open'); document.body.style.overflow = ''; }
+    }
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.story-modal-bg.open').forEach(function(m) {
+          m.classList.remove('open');
+        });
+        document.body.style.overflow = '';
+      }
+    });
+
+    // Typing animation: show first half instantly, type back half slowly
+    (function(){
+      var target = document.querySelector('.hero h1 .typed-text');
+      if (!target) return;
+      var text = {{headline_js}};
+      var mid = Math.floor(text.length / 2);
+      var splitIdx = text.lastIndexOf(' ', mid);
+      if (splitIdx <= 0) splitIdx = text.indexOf(' ', mid);
+      if (splitIdx <= 0) splitIdx = mid;
+      var staticPart = text.slice(0, splitIdx + 1);
+      var typedPart = text.slice(splitIdx + 1);
+      target.textContent = staticPart;
+      var idx = 0;
+      function step(){
+        if (idx < typedPart.length){
+          target.textContent += typedPart.charAt(idx);
+          idx += 1;
+          var nextDelay = 85 + Math.random() * 55;
+          if (typedPart.charAt(idx-1) === ' ') nextDelay += 30;
+          if (/[.,;:!?]/.test(typedPart.charAt(idx-1))) nextDelay += 120;
+          setTimeout(step, nextDelay);
+        }
+      }
+      setTimeout(step, 500);
+    })();
+  </script>
+</body>
+</html>

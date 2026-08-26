@@ -1,0 +1,212 @@
+{
+  "23855": {
+    "account": "Adobe",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Adobe, so I wanted to make sure you have a direct contact in case you haven't connected with anyone yet.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Teams across Adobe already use Airtable for campaign management, UX research, and creative production. If you're joining one of those teams you may be all set. If you're exploring something new, I can point you to what's already working internally so you don't start from scratch.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Would a short chat next week be helpful?</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Adobe teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23856": {
+    "account": "Blue Shield of California",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Blue Shield, and just wanted to make sure you know there's a team here if you ever want it.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">No agenda on my end. If you're evaluating a new use case or thinking about bringing new folks onto the platform, our technical team is happy to help you shape it. Teams at Blue Shield already use Airtable for vendor management, budget tracking, and program operations, so there's a lot to borrow from. If you're all set, ignore this and I won't follow up.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Glad to be a resource whenever it's useful.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Blue Shield teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23857": {
+    "account": "T-Mobile",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support T-Mobile, so I wanted to make sure you have a direct contact in case you haven't connected with anyone yet.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Teams across T-Mobile already use Airtable for product operations, OKR tracking, and digital asset management. If you're joining one of those teams you may be all set. If you're exploring something new, I can point you to what's already working internally so you don't start from scratch.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Would a short chat next week be helpful?</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other T-Mobile teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23858": {
+    "account": "Riot Games",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Riot, so I wanted to make sure you have a direct contact in case you haven't connected with anyone yet.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Teams across Riot already use Airtable for project management, product operations, and campaign planning. If you're joining one of those teams you may be all set. If you're exploring something new, I can point you to what's already working internally so you don't start from scratch.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Would a short chat next week be helpful?</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Riot teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23860": {
+    "account": "Williams-Sonoma",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Williams-Sonoma, and just wanted to make sure you know there's a team here if you ever want it.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">No agenda on my end. If you're evaluating a new use case or thinking about bringing new folks onto the platform, our technical team is happy to help you shape it. Teams at Williams-Sonoma already use Airtable for retail merchandising, product operations, and creative production, so there's a lot to borrow from. If you're all set, ignore this and I won't follow up.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Glad to be a resource whenever it's useful.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Williams-Sonoma teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23861": {
+    "account": "Roblox",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Roblox, and just wanted to make sure you know there's a team here if you ever want it.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">No agenda on my end. If you're evaluating a new use case or thinking about bringing new folks onto the platform, our technical team is happy to help you shape it. Teams at Roblox already use Airtable for creative production, product operations, and vendor management, so there's a lot to borrow from. If you're all set, ignore this and I won't follow up.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Glad to be a resource whenever it's useful.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Roblox teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23862": {
+    "account": "Meta",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Meta, so I wanted to make sure you have a direct contact in case you haven't connected with anyone yet.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Teams across Meta already use Airtable for event management, contract tracking, and product operations. If you're joining one of those teams you may be all set. If you're exploring something new, I can point you to what's already working internally so you don't start from scratch.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Would a short chat next week be helpful?</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Meta teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23863": {
+    "account": "Electronic Arts",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support EA, so I wanted to make sure you have a direct contact in case you haven't connected with anyone yet.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Teams across EA already use Airtable for creative production, campaign management, and resource planning. If you're joining one of those teams you may be all set. If you're exploring something new, I can point you to what's already working internally so you don't start from scratch.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Would a short chat next week be helpful?</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other EA teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23864": {
+    "account": "Block",
+    "n_emails": 2,
+    "has_custom85": true,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Block, and just wanted to make sure you know there's a team here if you ever want it.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">No agenda on my end. If you're evaluating a new use case or thinking about bringing new folks onto the platform, our technical team is happy to help you shape it. Teams at Block already use Airtable for product operations, project management, and creative production, so there's a lot to borrow from. If you're all set, ignore this and I won't follow up.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Glad to be a resource whenever it's useful.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Block teams structured it. Let me know if 20 minutes next week works.</span></div><div style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: Helvetica Neue, Liberation Sans, Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      }
+    ]
+  },
+  "23868": {
+    "account": "Cisco Systems, Inc.",
+    "n_emails": 2,
+    "has_custom85": false,
+    "steps": [
+      {
+        "step": "E1",
+        "wait_business_days": 0,
+        "is_reply": false,
+        "subject": "{first_name}: Airtable check-in",
+        "body_html": "<div><span style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\">Hi {first_name},</span></div><div style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\">You signed up for Airtable recently. I'm on the account team and help support Cisco, so I wanted to make sure you have a direct contact in case you haven't connected with anyone yet.</span></div><div style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\">Teams across Cisco already use Airtable for marketing project intake and AI-assisted program management. If you're joining one of those teams you may be all set. If you're exploring something new, I can point you to what's already working internally so you don't start from scratch.</span></div><div style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\">Would a short chat next week be helpful?</span></div><div style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\"><br /></div><div><span style=\"font-family: 'Helvetica Neue', 'Liberation Sans', Arial, sans serif; font-size: 13px\">{sender}</span></div>"
+      },
+      {
+        "step": "E2",
+        "wait_business_days": 3,
+        "is_reply": true,
+        "subject": "",
+        "body_html": "<p>Hi {first_name}, sending this back to the top of your inbox since last week was probably swamped.</p><p><br></p><p>If you're set, no problem at all and I'll hold off. But if you're building something new on Airtable, happy to share how other Cisco teams structured it. Let me know if 20 minutes next week works.</p><p><br></p><p>{sender}</p>"
+      }
+    ]
+  }
+}

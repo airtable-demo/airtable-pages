@@ -1,0 +1,82 @@
+{
+  "_comment": "Canonical Gmail label specs for the Inbox Triage skill. Numeric prefixes (1/2/3) force Gmail's alphabetical sort to render left-to-right in the order: interest > seniority > source. Color pairs are validated Gmail palette pairs (background, text).",
+  "interest_labels": [
+    {
+      "name": "1 Interested",
+      "background_color": "#42d692",
+      "text_color": "#094228",
+      "meaning": "Explicit interest in meeting / qualified use case / asking for time"
+    },
+    {
+      "name": "1 Maybe",
+      "background_color": "#fef1d1",
+      "text_color": "#eaa041",
+      "meaning": "Open to learning more but non-committal / soft interest"
+    },
+    {
+      "name": "1 Not Interested",
+      "background_color": "#f2b2a8",
+      "text_color": "#8a1c0a",
+      "meaning": "Explicit decline / wrong person / unsubscribe-like language"
+    }
+  ],
+  "seniority_labels": [
+    {
+      "name": "2 ATL",
+      "background_color": "#42d692",
+      "text_color": "#094228",
+      "meaning": "Above the Line: Director+, VP, Head of, Chief, C-level, or Senior Manager of program/roadmapping work"
+    },
+    {
+      "name": "2 ATL Possible",
+      "background_color": "#ffdeb5",
+      "text_color": "#7a4706",
+      "meaning": "Borderline / title ambiguous (e.g., Senior Manager in unclear function, or LinkedIn lookup failed)"
+    },
+    {
+      "name": "2 BTL",
+      "background_color": "#f2b2a8",
+      "text_color": "#8a1c0a",
+      "meaning": "Below the Line: IC, individual contributor, or Manager-and-below"
+    }
+  ],
+  "source_labels": [
+    {
+      "name": "3 Handraiser",
+      "background_color": "#fcdee8",
+      "text_color": "#b65775",
+      "meaning": "Website handraiser / explicit contact request (latest_handraiser_date_c populated)"
+    },
+    {
+      "name": "3 MQL",
+      "background_color": "#fef1d1",
+      "text_color": "#eaa041",
+      "meaning": "Marketing-generated: event, ebook, webinar, similar (lead_source_category_c = MKTG-Generated, no PSU/HR/CM signal)"
+    },
+    {
+      "name": "3 Moving Champion",
+      "background_color": "#ff7537",
+      "text_color": "#ffffff",
+      "meaning": "Known Airtable champion who changed companies (is_cr_champion_mover_c = true)"
+    },
+    {
+      "name": "3 Other",
+      "background_color": "#e7e7e7",
+      "text_color": "#464646",
+      "meaning": "Outbound-created / manual / untracked source (lead_source_category_c = Other or null)"
+    },
+    {
+      "name": "3 PSU",
+      "background_color": "#4986e7",
+      "text_color": "#ffffff",
+      "meaning": "Product Sign Up (product_sign_up_date_c populated)"
+    }
+  ],
+  "archive_label": {
+    "name": "[ABDR Archived]",
+    "background_color": "#ff7537",
+    "text_color": "#ffffff",
+    "meaning": "Auto-archived by Inbox Triage: Gong/Zoom recording-ready notification, bounce, OOO, or other noise"
+  },
+  "_color_palette_reference": "Gmail accepts only 102 specific hex values for label colors. Validated pairs in use: green (#42d692/#094228), yellow (#fef1d1/#eaa041), red (#f2b2a8/#8a1c0a), blue (#4986e7/#ffffff), pink (#fcdee8/#b65775), orange (#ff7537/#ffffff), light-orange (#ffdeb5/#7a4706), gray (#e7e7e7/#464646). GMAIL_CREATE_LABEL requires BOTH background_color AND text_color together."
+}
